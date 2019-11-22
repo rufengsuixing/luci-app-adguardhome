@@ -145,7 +145,7 @@ do_redirect()
     args=""
 	ipv6_server=0
 	tcp_server=0
-    config_get_bool "enabled" "$section" "enabled" '0'
+    enabled=$1
 	
     AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
     
@@ -273,7 +273,7 @@ start_service() {
     # pass config to script on start
     procd_set_param command $binpath $ADDITIONAL_ARGS
     procd_close_instance
-	do_redirect
+	do_redirect 1
     echo "AdGuardHome turn on"
     echo "enabled="$enabled""
 }
@@ -281,9 +281,7 @@ start_service() {
 stop_service()
 {
     config_load "${CONFIGURATION}"
-    local enabled
-    config_get_bool enabled AdGuardHome enabled 0
-    do_redirect
+    do_redirect 0
 	killall -q AdGuardHome
     echo "AdGuardHome turn off"
     echo "enabled="$enabled""
