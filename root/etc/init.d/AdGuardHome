@@ -194,7 +194,6 @@ do_redirect()
 get_filesystem()
 {
 # print out path filesystem
-    mount | awk '{print($3" "$5)}'
     echo $0 | awk '
     BEGIN{
     while (("mount"| getline ret) > 0)
@@ -253,7 +252,7 @@ start_service() {
 	
 	# for overlay data-stk-oo not suppport
     local cwdfs=$(get_filesystem $workdir)
-	if [ "$cwdfs"=="overlay" ]; then
+	if [ "${cwdfs:0:7}"=="overlay" ]; then
 		echo "fs error ln db to tmp"
 		logger "AdGuardHome" "warning db redirect to tmp"
 		touch $workdir/data/stats.db
