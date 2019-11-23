@@ -8,10 +8,13 @@ if (configpath==nil) then
 configpath="/etc/AdGuardHome.yaml"
 end
 local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
-if (configpath==nil) then
-configpath="/usr/bin/AdGuardHome/AdGuardHome"
+if (binpath==nil) then
+binpath="/usr/bin/AdGuardHome/AdGuardHome"
 end
 local httpport=luci.sys.exec("awk '/bind_port:/{printf($2)}' "..configpath.." 2>nul")
+if (httpport=="") then
+httpport=uci:get("AdGuardHome","AdGuardHome","httpport")
+end
 mp = Map("AdGuardHome", translate("AdGuard Home"))
 mp.description = translate("免费和开源，功能强大的全网络广告和跟踪程序拦截DNS服务器")
 mp:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
@@ -31,18 +34,30 @@ o.datatype="port"
 o.rmempty=false
 o.description = translate("<input type=\"button\" style=\"width:180px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
-local e=luci.sys.exec(binpath.." --check-config 2>&1")
-e=string.match(e,'(v%d+\.%d+\.%d+)')
+if fs.access(configpath) then
+	local e=luci.sys.exec(binpath.." -c "..configpath.." --check-config 2>&1")
+	e=string.match(e,'(v%d+\.%d+\.%d+)')
+	if (e==nil) then
+	e="not found bin"
+	end
+else
+	if fs.access(binpath) then
+	e="not find config"
+	else
+	e="not found bin and config"
+	end
+end
+
 o=s:option(Button,"restart",translate("手动更新"))
 o.inputtitle=translate("更新核心版本")
-if (e==nil) then
-e="not found"
-end
 o.template = "AdGuardHome/AdGuardHome_check"
 o.description=string.format(translate("目前运行主程序版本").."<strong><font color=\"green\">: %s </font></strong>",e)
 
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2)}' "..configpath.." 2>nul")
+if (port=="") then
+port="?"
+end
 ---- Redirect
 o = s:option(ListValue, "redirect", port..translate("Redirect"), translate("AdGuardHome redirect mode"))
 o.placeholder = "none"

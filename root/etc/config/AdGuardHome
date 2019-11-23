@@ -1,5 +1,4 @@
 config AdGuardHome 'AdGuardHome'
-	option port '3000'
 	option enabled '0'
 	option httport '3000'
 	option httpport '3000'
