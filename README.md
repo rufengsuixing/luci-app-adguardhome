@@ -10,3 +10,5 @@
  - 自定义log path
 #### 已知问题：
  - db数据库不支持放在比较特别的文件系统上比如 overlay data-stk-oo，请修改workdir，本软件如果检测到overlay会自动重定向到tmp，将会导致重启丢失dns数据库
+ 
+#### 项目已经基本稳定，有bug欢迎主动反馈

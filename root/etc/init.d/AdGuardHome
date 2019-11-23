@@ -242,7 +242,7 @@ start_service() {
 	mkdir -p ${binpath%/*}
 	if [ ! -f "$binpath" ]; then
 		do_redirect 0
-		/usr/share/AdGuardHome/update_core.sh
+		sh /usr/share/AdGuardHome/update_core.sh
 	fi 
 	config_get_bool verbose $CONFIGURATION verbose 0
 	if [ "$verbose" -eq 1 ]; then
