@@ -32,6 +32,10 @@ endef
 define Build/Compile
 endef
 
+define Package/luci-app-adguardhome/conffiles
+/etc/AdGuardHome.yaml
+endef
+
 define Package/luci-app-adguardhome/install
     $(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
