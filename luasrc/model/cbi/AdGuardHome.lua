@@ -7,7 +7,10 @@ local configpath=uci:get("AdGuardHome","AdGuardHome","configpath")
 if (configpath==nil) then
 configpath="/etc/AdGuardHome.yaml"
 end
-local binpath="/usr/bin/AdGuardHome/AdGuardHome"
+local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
+if (configpath==nil) then
+configpath="/usr/bin/AdGuardHome/AdGuardHome"
+end
 local httpport=luci.sys.exec("awk '/bind_port:/{printf($2)}' "..configpath.." 2>nul")
 mp = Map("AdGuardHome", translate("AdGuard Home"))
 mp.description = translate("免费和开源，功能强大的全网络广告和跟踪程序拦截DNS服务器")
@@ -35,12 +38,9 @@ o.inputtitle=translate("更新核心版本")
 if (e==nil) then
 e="not found"
 end
+o.template = "AdGuardHome/AdGuardHome_check"
 o.description=string.format(translate("目前运行主程序版本").."<strong><font color=\"green\">: %s </font></strong>",e)
-o.inputstyle="reload"
-o.write=function()
-luci.sys.exec("bash /usr/share/AdGuardHome/update_core.sh 2>&1")
-luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
-end
+
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2)}' "..configpath.." 2>nul")
 ---- Redirect

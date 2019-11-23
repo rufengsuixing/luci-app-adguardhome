@@ -1,0 +1,40 @@
+<%+cbi/valueheader%>
+<script type="text/javascript">//<![CDATA[
+function check(btn)
+	{
+		btn.disabled = true;
+		btn.value    = '<%:Check...%>';
+		var lv = document.getElementById('cbid.logview.1.conf');
+		lv.style.display="block"
+		lv.width=document.body.clientWidth
+XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,function(x, data){}
+		);
+
+XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', null,
+	function(x, data) {
+		var lv = document.getElementById('cbid.logview.1.conf');
+        console.debug(x)
+		if (x.responseText && lv) {
+			
+			if (x.responseText=="tingzhitongbu")
+			{
+				for(j = 0,len=this.XHR._q.length; j < len; j++) {
+				if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>')
+				{
+				this.XHR._q.pop();
+				btn.disabled = false;
+				btn.value    = '已更新';
+				return;}
+				}			
+			}
+			lv.innerHTML += x.responseText; 
+		}
+	}
+);}
+//]]>
+</script>
+		<input class="cbi-button cbi-button-apply" name="cbid.AdGuardHome.AdGuardHome.restart" id="cbid.AdGuardHome.AdGuardHome.restart" value="更新核心版本" onclick="return check(this)"/>
+		<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" name="vbid.logview.1.conf" rows="5" cols="70" readonly="readonly" > </textarea>
+
+	
+<%+cbi/valuefooter%>
