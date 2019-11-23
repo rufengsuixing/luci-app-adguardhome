@@ -225,10 +225,6 @@ start_service() {
 	local enabled
 	local ADDITIONAL_ARGS=""
 	config_get_bool enabled $CONFIGURATION enabled 0
-	if [ "$enabled" -eq 0 ]; then
-		echo "AdGuardHome has turned off"
-		return 1
-	fi
 	config_get httpport $CONFIGURATION httpport 3000
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
 	
@@ -245,6 +241,7 @@ start_service() {
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 	mkdir -p ${binpath%/*}
 	if [ ! -f "$binpath" ]; then
+		do_redirect 0
 		/usr/share/AdGuardHome/update_core.sh
 	fi 
 	config_get_bool verbose $CONFIGURATION verbose 0
