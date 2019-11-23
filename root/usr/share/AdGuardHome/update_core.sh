@@ -14,16 +14,16 @@ configpath="/etc/AdGuardHome.yaml"
 fi
 mkdir -p ${configpath%/*}
 
-function check_if_already_running(){
+check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
 	[ "${running_tasks}" -gt "2" ] && echo -e "\nA task is already running." >>/tmp/AdGuardHome_update.log && rm /var/run/update_core && exit 2
 }
 
-function clean_log(){
+clean_log(){
 	echo "" > /tmp/AdGuardHome_update.log
 }
 
-function check_latest_version(){
+check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
 	[ -z "${latest_ver}" ] && echo -e "\nFailed to check latest version, please try again later." >>/tmp/AdGuardHome_update.log && exit 1
 	if [ -f "$configpath" ]; then
@@ -44,7 +44,7 @@ function check_latest_version(){
 	fi
 }
 
-function doupdate_core(){
+doupdate_core(){
 	echo -e "Updating core..." >>/tmp/AdGuardHome_update.log
 	mkdir -p "/tmp/AdGuardHome/update" >/dev/null 2>&1
 	rm -rf /tmp/AdGuardHome/update/* >/dev/null 2>&1
@@ -119,7 +119,7 @@ function doupdate_core(){
 	rm /var/run/update_core
 }
 
-function main(){
+main(){
 	check_if_already_running
 	check_latest_version
 }
