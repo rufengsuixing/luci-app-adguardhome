@@ -1,12 +1,18 @@
 #!/bin/bash
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
-binpath=$(uci get AdGuardHome.AdGuardHome.binpath)
 touch /var/run/update_core
+binpath=$(uci get AdGuardHome.AdGuardHome.binpath)
 if [ -z "$binpath" ]; then
 uci get AdGuardHome.AdGuardHome.binpath="/tmp/AdGuardHome/AdGuardHome"
 binpath="/tmp/AdGuardHome/AdGuardHome"
 fi
 mkdir -p ${binpath%/*}
+configpath=$(uci get AdGuardHome.AdGuardHome.configpath)
+if [ -z "$configpath" ]; then
+uci get AdGuardHome.AdGuardHome.configpath="/etc/AdGuardHome.yaml"
+configpath="/etc/AdGuardHome.yaml"
+fi
+mkdir -p ${configpath%/*}
 
 function check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
@@ -20,7 +26,11 @@ function clean_log(){
 function check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
 	[ -z "${latest_ver}" ] && echo -e "\nFailed to check latest version, please try again later." >>/tmp/AdGuardHome_update.log && exit 1
-	now_ver="$($binpath  --check-config 2>&1| grep -E 'v[0-9.]+' -o)"
+	if [ -f "$configpath" ]; then
+	now_ver="$($binpath -c $configpath --check-config 2>&1| grep -E 'v[0-9.]+' -o)"
+	else
+	now_ver=$(uci get AdGuardHome.AdGuardHome.version)
+	fi
 	if [ "${latest_ver}"x != "${now_ver}"x ]; then
 		clean_log
 		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." >>/tmp/AdGuardHome_update.log
@@ -28,6 +38,7 @@ function check_latest_version(){
 	else
 			echo -e "\nLocal version: ${now_ver}, cloud version: ${latest_ver}." >>/tmp/AdGuardHome_update.log
 			echo -e "You're already using the latest version." >>/tmp/AdGuardHome_update.log
+			uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
 			rm /var/run/update_core
 			exit 3
 	fi
@@ -103,6 +114,7 @@ function doupdate_core(){
 	fi
 	rm -rf "/tmp/AdGuardHome/update" >/dev/null 2>&1
 	echo -e "Succeeded in updating core." >>/tmp/AdGuardHome_update.log
+	uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
 	echo -e "Local version: ${now_ver}, cloud version: ${latest_ver}.\n" >>/tmp/AdGuardHome_update.log
 	rm /var/run/update_core
 }

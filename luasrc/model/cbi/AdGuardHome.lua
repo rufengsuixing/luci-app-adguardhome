@@ -35,16 +35,20 @@ o.rmempty=false
 o.description = translate("<input type=\"button\" style=\"width:180px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
 if fs.access(configpath) then
-	local e=luci.sys.exec(binpath.." -c "..configpath.." --check-config 2>&1")
+	e=luci.sys.exec(binpath.." -c "..configpath.." --check-config 2>&1")
 	e=string.match(e,'(v%d+\.%d+\.%d+)')
 	if (e==nil) then
 	e="not found bin"
 	end
 else
 	if fs.access(binpath) then
-	e="not find config"
-	else
-	e="not found bin and config"
+		maybev=uci:get("AdGuardHome","AdGuardHome","version")
+		if (maybev==nil) then
+		e=""
+		end
+		e="not find config"..maybev
+		else
+		e="not found bin and config"
 	end
 end
 
