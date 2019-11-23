@@ -29,7 +29,9 @@ check_latest_version(){
 	if [ -f "$configpath" ]; then
 	now_ver="$($binpath -c $configpath --check-config 2>&1| grep -E 'v[0-9.]+' -o)"
 	else
+	if [ -f "$binpath" ]; then
 	now_ver=$(uci get AdGuardHome.AdGuardHome.version)
+	fi
 	fi
 	if [ "${latest_ver}"x != "${now_ver}"x ]; then
 		clean_log
