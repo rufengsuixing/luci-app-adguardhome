@@ -209,7 +209,7 @@ get_filesystem()
 	{ 
 	result=fs["/"]
 	}
-	for (i=2;i<=NF;i++)
+	for (i=2;i<=length(d);i++)
 	{
 	   p[i]=p[i-1]"/"d[i]
 	   if (p[i] in fs)
@@ -230,7 +230,7 @@ start_service() {
 	
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
-	mkdir -p $workdir
+	mkdir -p $workdir/data
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
 	
@@ -252,7 +252,7 @@ start_service() {
 	# for overlay data-stk-oo not suppport
 	local cwdfs=$(get_filesystem $workdir)
 	if [ "${cwdfs:0:7}"=="overlay" ]; then
-		echo "fs error ln db to tmp"
+		echo "fs error ln db to tmp $workdir ${cwdfs:0:7}"
 		logger "AdGuardHome" "warning db redirect to tmp"
 		touch $workdir/data/stats.db
 		if [ ! -L $workdir/data/stats.db ]; then
