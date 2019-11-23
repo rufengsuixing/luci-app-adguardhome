@@ -1,5 +1,5 @@
 # luci-app-adguardhome
-复杂的adguardhome的openwrt的luci界面，仍待测试
+复杂的adguardhome的openwrt的luci界面
 
  - 可以管理网页端口
  - luci更新核心版本
