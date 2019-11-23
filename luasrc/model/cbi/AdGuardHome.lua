@@ -44,10 +44,11 @@ else
 	if fs.access(binpath) then
 		maybev=uci:get("AdGuardHome","AdGuardHome","version")
 		if (maybev==nil) then
-		e=""
-		end
-		e="not find config"..maybev
+			e=""
 		else
+			e="not find config"..maybev
+		end
+	else
 		e="not found bin and config"
 	end
 end
