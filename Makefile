@@ -18,6 +18,7 @@ define Package/luci-app-adguardhome
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
 	TITLE:=LuCI Support for adguardhome
+	PKGARCH:=all
 	DEPENDS:=
 endef
 
