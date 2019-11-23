@@ -95,6 +95,17 @@ o.rempty      = false
 o = s:option(Flag, "verbose", translate("verbose debug"))
 o.default = 0
 o.rmempty = false
+---- gfwlist 
+o=s:option(Button,"gfwadd",translate("add gfwlist to adguardhome"))
+o.inputtitle=translate("add")
+o.write=function()
+luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
+luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
+o = s:option(Value, "gfwupstream", translate("gfw upstream dns server"), translate("gfwlist domain upstream dns service"))
+o.default     = "tcp://208.67.220.220#5353"
+o.datatype    = "string"
+o.rempty      = false
 
 local apply = luci.http.formvalue("cbi.apply")
  if apply then
