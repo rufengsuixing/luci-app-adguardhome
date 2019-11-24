@@ -149,8 +149,7 @@ do_redirect()
 	ipv6_server=0
 	tcp_server=0
 	enabled=$1
-	
-	
+
 	config_get "redirect" "$section" "redirect" "none"
 	config_get "old_redirect" "$section" "old_redirect" "none"
 	config_get "old_port" "$section" "old_port" "0"
@@ -225,6 +224,12 @@ start_service() {
 	config_load "${CONFIGURATION}"
 	local enabled
 	local ADDITIONAL_ARGS=""
+		
+	config_get hashpass $CONFIGURATION hashpass ""
+	if [ ! -z "$hashpass" ]; then
+		sed -i "1,50{/  password:/c\  password: $hashpass}" $configpath
+		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
+	fi
 	config_get_bool enabled $CONFIGURATION enabled 0
 	config_get httpport $CONFIGURATION httpport 3000
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
@@ -239,6 +244,7 @@ start_service() {
 	if [ ! -z "$logfile" ]; then
 		ADDITIONAL_ARGS="$ADDITIONAL_ARGS -l $logfile"
 	fi
+	
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 	mkdir -p ${binpath%/*}
 	if [ ! -f "$binpath" ]; then
@@ -248,7 +254,7 @@ start_service() {
 	elif [ ! -f "$configpath" ]; then
 		do_redirect 0
 	fi 
-	
+
 	config_get_bool verbose $CONFIGURATION verbose 0
 	if [ "$verbose" -eq 1 ]; then
 		ADDITIONAL_ARGS="$ADDITIONAL_ARGS -v"
