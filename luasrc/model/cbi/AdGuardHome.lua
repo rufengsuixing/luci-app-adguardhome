@@ -70,31 +70,26 @@ o:value("none", translate("none"))
 o:value("dnsmasq-upstream", translate("Run as dnsmasq upstream server"))
 o:value("redirect", translate("Redirect 53 port to AdGuardHome"))
 o.default     = "none"
-o.rempty      = false
+
 ---- bin path
 o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin path if no bin will auto download"))
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
-o.rempty      = false
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
-o.rempty      = false
 ---- work dir
 o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome work dir"))
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
-o.rempty      = false
 ---- log file
 o = s:option(Value, "logfile", translate("Log File"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
 o.default     = ""
 o.datatype    = "string"
-o.rempty      = false
 ---- debug
 o = s:option(Flag, "verbose", translate("verbose debug"))
 o.default = 0
-o.rmempty = false
 ---- gfwlist 
 o=s:option(Button,"gfwadd",translate("add gfwlist to adguardhome"))
 o.inputtitle=translate("add")
@@ -105,12 +100,10 @@ end
 o = s:option(Value, "gfwupstream", translate("gfw upstream dns server"), translate("gfwlist domain upstream dns service"))
 o.default     = "tcp://208.67.220.220#5353"
 o.datatype    = "string"
-o.rmempty      = false
 ---- chpass
 o = s:option(Value, "hashpass", translate("更改密码"), translate("点击计算后应用设置"))
 o.default     = ""
 o.datatype    = "string"
-o.rmempty     = false
 o.template = "AdGuardHome/AdGuardHome_chpass"
 
 local apply = luci.http.formvalue("cbi.apply")
