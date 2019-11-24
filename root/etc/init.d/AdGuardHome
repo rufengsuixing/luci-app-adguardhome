@@ -245,6 +245,8 @@ start_service() {
 		do_redirect 0
 		sh /usr/share/AdGuardHome/update_core.sh
 		exit 0
+	elif [ ! -f "$configpath" ]; then
+		do_redirect 0
 	fi 
 	
 	config_get_bool verbose $CONFIGURATION verbose 0
@@ -274,7 +276,9 @@ start_service() {
 		# pass config to script on start
 		procd_set_param command $binpath $ADDITIONAL_ARGS
 		procd_close_instance
-		do_redirect 1
+		if [ -f "$configpath" ]; then
+			do_redirect 1
+		fi
 		echo "AdGuardHome turn on"
 		echo "enabled="$enabled""
 	fi
