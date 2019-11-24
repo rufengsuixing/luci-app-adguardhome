@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
 PKG_VERSION:=1.5
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -34,6 +34,7 @@ endef
 
 define Package/luci-app-adguardhome/conffiles
 /etc/AdGuardHome.yaml
+/etc/config/AdGuardHome
 endef
 
 define Package/luci-app-adguardhome/install

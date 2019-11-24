@@ -1,0 +1,1 @@
+mp:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
