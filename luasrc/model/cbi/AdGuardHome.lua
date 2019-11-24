@@ -11,7 +11,7 @@ local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
 if (binpath==nil) then
 binpath="/usr/bin/AdGuardHome/AdGuardHome"
 end
-local httpport=luci.sys.exec("awk '/bind_port:/{printf($2)}' "..configpath.." 2>nul")
+local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath.." 2>nul")
 if (httpport=="") then
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport")
 end
@@ -59,7 +59,7 @@ o.template = "AdGuardHome/AdGuardHome_check"
 o.description=string.format(translate("目前运行主程序版本").."<strong><font color=\"green\">: %s </font></strong>",e)
 
 ---- port warning not safe
-local port=luci.sys.exec("awk '/  port:/{printf($2)}' "..configpath.." 2>nul")
+local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
 if (port=="") then
 port="?"
 end
@@ -105,7 +105,13 @@ end
 o = s:option(Value, "gfwupstream", translate("gfw upstream dns server"), translate("gfwlist domain upstream dns service"))
 o.default     = "tcp://208.67.220.220#5353"
 o.datatype    = "string"
-o.rempty      = false
+o.rmempty      = false
+---- chpass
+o = s:option(Value, "hashpass", translate("更改密码"), translate("点击计算后应用设置"))
+o.default     = ""
+o.datatype    = "string"
+o.rmempty     = false
+o.template = "AdGuardHome/AdGuardHome_chpass"
 
 local apply = luci.http.formvalue("cbi.apply")
  if apply then
