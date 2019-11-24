@@ -13,7 +13,6 @@ XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,
 XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', null,
 	function(x, data) {
 		var lv = document.getElementById('cbid.logview.1.conf');
-        console.debug(x)
 		if (x.responseText && lv) {
 			
 			if (x.responseText=="tingzhitongbu")
