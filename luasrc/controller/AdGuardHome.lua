@@ -20,7 +20,7 @@ function act_status()
   luci.http.write_json(e)
 end
 function do_update()
-luci.sys.exec("sh /usr/share/AdGuardHome/update_core.sh &")
+luci.sys.exec("(touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh ;rm /var/run/update_core) &")
 luci.http.prepare_content("application/json")
 luci.http.write('')
 end
