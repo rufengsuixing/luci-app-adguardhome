@@ -100,7 +100,7 @@ o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), tra
 o.default     = "tcp://208.67.220.220#5353"
 o.datatype    = "string"
 ---- chpass
-o = s:option(Value, "hashpass", translate("Change browser management password"), translate("Press load model and culculate and save/apply"))
+o = s:option(Value, "hashpass", translate("Change browser management password"), translate("Press load culculate model and culculate finally save/apply"))
 o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"

@@ -86,7 +86,7 @@ msgid "Change browser management password"
 msgstr "改变网页登录密码"
 
 msgid "Press load culculate model and culculate finally save/apply"
-msgstr "按载入模块 然后计算 最后保存/提交"
+msgstr "按载入计算模块 然后计算 最后保存/提交"
 
 msgid "loading..."
 msgstr "载入中"
