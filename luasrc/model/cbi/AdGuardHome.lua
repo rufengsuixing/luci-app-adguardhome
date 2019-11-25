@@ -79,7 +79,7 @@ o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHo
 o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
 ---- work dir
-o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome work dir"))
+o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome work dir include rules,audit log and database"))
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 ---- log file

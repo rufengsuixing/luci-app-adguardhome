@@ -58,7 +58,7 @@ msgstr "AdGuardHome 配置文件路径"
 msgid "Work dir"
 msgstr "工作目录"
 
-msgid "AdGuardHome work dir include rules,audit log and database "
+msgid "AdGuardHome work dir include rules,audit log and database"
 msgstr "AdGuardHome 工作目录包含规则，审计日志和数据库"
 
 msgid "Runtime log file"
