@@ -3,6 +3,7 @@
 
  - 可以管理网页端口
  - luci更新核心版本
+ - upx 压缩核心
  - dns重定向
  - 自定义bin path（支持tmp，每次重启时下载bin）
  - 自定义config path
