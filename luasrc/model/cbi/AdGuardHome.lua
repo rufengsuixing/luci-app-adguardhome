@@ -34,29 +34,24 @@ o.datatype="port"
 o.rmempty=false
 o.description = translate("<input type=\"button\" style=\"width:180px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
-if fs.access(configpath) then
-	e=luci.sys.exec(binpath.." -c "..configpath.." --check-config 2>&1")
-	e=string.match(e,'(v%d+\.%d+\.%d+)')
-	if (e==nil) then
-	e="not found bin"
-	end
+version=uci:get("AdGuardHome","AdGuardHome","version")
+e=""
+if not fs.access(configpath) then
+	e=e.." no config"
+end
+if not fs.access(binpath) then
+	e=e.." no bin"
 else
-	if fs.access(binpath) then
-		maybev=uci:get("AdGuardHome","AdGuardHome","version")
-		if (maybev==nil) then
-			e=""
-		else
-			e="not find config"..maybev
-		end
+	if (version ~= nil) then
+		e=version..e
 	else
-		e="not found bin and config"
+		e="unknown"..e
 	end
 end
-
 o=s:option(Button,"restart",translate("手动更新"))
 o.inputtitle=translate("更新核心版本")
 o.template = "AdGuardHome/AdGuardHome_check"
-o.description=string.format(translate("目前运行主程序版本").."<strong><font color=\"green\">: %s </font></strong>",e)
+o.description=string.format(translate("上次检测到的主程序版本: ").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
 
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
@@ -75,6 +70,10 @@ o.default     = "none"
 o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin path if no bin will auto download"))
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
+--- upx
+o = s:option(Flag, "upx", translate("下载后使用upx压缩"))
+o.default = 0
+o.description="减小空间占用，但是可能压缩后不能执行"
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"
