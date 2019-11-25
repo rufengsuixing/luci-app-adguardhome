@@ -107,7 +107,7 @@ o.template = "AdGuardHome/AdGuardHome_chpass"
 
 local apply = luci.http.formvalue("cbi.apply")
  if apply then
-     io.popen("/etc/init.d/AdGuardHome reload")
+     io.popen("/etc/init.d/AdGuardHome reload &")
 end
 
 return mp
