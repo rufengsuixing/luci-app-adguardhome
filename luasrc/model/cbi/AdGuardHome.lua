@@ -27,7 +27,7 @@ o = s:option(Flag, "enabled", translate("Enable adblock"))
 o.default = 0
 o.rmempty = false
 ---- httport
-o =s:option(Value,"httpport",translate("Browser manage port(Overlay configuration)"))
+o =s:option(Value,"httpport",translate("Browser management port"))
 o.placeholder=3000
 o.default=3000
 o.datatype="port"
@@ -90,8 +90,8 @@ o.datatype    = "string"
 o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
 ---- gfwlist 
-o=s:option(Button,"gfwadd",translate("Add gfwlist to query specific dns"))
-o.inputtitle=translate("add")
+o=s:option(Button,"gfwadd",translate("Add gfwlist"))
+o.inputtitle=translate("Add")
 o.write=function()
 luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
 luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
@@ -100,7 +100,7 @@ o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), tra
 o.default     = "tcp://208.67.220.220#5353"
 o.datatype    = "string"
 ---- chpass
-o = s:option(Value, "hashpass", translate("Change browser management password"), translate("press load model and culculate and save/apply"))
+o = s:option(Value, "hashpass", translate("Change browser management password"), translate("Press load model and culculate and save/apply"))
 o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"

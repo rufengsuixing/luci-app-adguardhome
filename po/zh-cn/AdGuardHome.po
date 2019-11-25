@@ -4,8 +4,8 @@ msgstr "免费开源，功能强大的全网络广告和跟踪程序拦截DNS服
 msgid "Enable adblock"
 msgstr "启用广告屏蔽"
 
-msgid "Browser management port(Overlay configuration)"
-msgstr "网页管理端口(覆盖配置)"
+msgid "Browser management port"
+msgstr "网页管理端口"
 
 msgid "Update"
 msgstr "更新"
@@ -70,8 +70,8 @@ msgstr "AdGuardHome 运行日志 如果填syslog将写入系统日志；如果�
 msgid "Verbose log"
 msgstr "详细日志"
 
-msgid "Add gfwlist to query specific dns"
-msgstr "加入gfw列表查询特定dns服务器"
+msgid "Add gfwlist"
+msgstr "加入gfw列表"
 
 msgid "Add"
 msgstr "添加"
