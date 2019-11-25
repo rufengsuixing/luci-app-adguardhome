@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
 PKG_VERSION:=1.6
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -17,7 +17,8 @@ define Package/luci-app-adguardhome
 	SECTION:=luci
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
-	TITLE:=LuCI Support for adguardhome
+	TITLE:=LuCI app for adguardhome
+	PKG_MAINTAINER:=<https://github.com/rufengsuixing/luci-app-adguardhome>
 	PKGARCH:=all
 	DEPENDS:=
 endef
@@ -42,6 +43,7 @@ define Package/luci-app-adguardhome/install
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
+	po2lmo ./po/zh-cn/AdGuardHome.po $(1)/usr/lib/lua/luci/i18n/AdGuardHome.zh-cn.lmo
 endef
 
 define Package/luci-app-adguardhome/postinst

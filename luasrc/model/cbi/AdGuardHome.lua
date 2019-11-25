@@ -15,19 +15,19 @@ local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath
 if (httpport=="") then
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport")
 end
-mp = Map("AdGuardHome", translate("AdGuard Home"))
-mp.description = translate("免费和开源，功能强大的全网络广告和跟踪程序拦截DNS服务器")
+mp = Map("AdGuardHome", "AdGuard Home")
+mp.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
 mp:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
 
 s = mp:section(TypedSection, "AdGuardHome")
 s.anonymous=true
 s.addremove=false
 ---- enable
-o = s:option(Flag, "enabled", translate("启用广告屏蔽"))
+o = s:option(Flag, "enabled", translate("Enable adblock"))
 o.default = 0
 o.rmempty = false
 ---- httport
-o =s:option(Value,"httpport",translate("网页管理端口(覆盖配置)"))
+o =s:option(Value,"httpport",translate("Browser manage port(Overlay configuration)"))
 o.placeholder=3000
 o.default=3000
 o.datatype="port"
@@ -48,10 +48,10 @@ else
 		e="unknown"..e
 	end
 end
-o=s:option(Button,"restart",translate("手动更新"))
-o.inputtitle=translate("更新核心版本")
+o=s:option(Button,"restart",translate("Update"))
+o.inputtitle=translate("Update core version")
 o.template = "AdGuardHome/AdGuardHome_check"
-o.description=string.format(translate("上次检测到的主程序版本: ").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
+o.description=string.format(translate("core version got last time:").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
 
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
@@ -71,9 +71,9 @@ o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 --- upx
-o = s:option(Flag, "upx", translate("下载后使用upx压缩"))
+o = s:option(Flag, "upx", translate("use upx to compress bin after download"))
 o.default = 0
-o.description="减小空间占用，但是可能压缩后不能执行"
+o.description=translate("bin use less space,but may have compatibility issues")
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"
@@ -83,24 +83,24 @@ o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome wor
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 ---- log file
-o = s:option(Value, "logfile", translate("Log File"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
+o = s:option(Value, "logfile", translate("Runtime log file"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
 o.default     = ""
 o.datatype    = "string"
 ---- debug
-o = s:option(Flag, "verbose", translate("verbose debug"))
+o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
 ---- gfwlist 
-o=s:option(Button,"gfwadd",translate("add gfwlist to adguardhome"))
+o=s:option(Button,"gfwadd",translate("Add gfwlist to query specific dns"))
 o.inputtitle=translate("add")
 o.write=function()
 luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
 luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
-o = s:option(Value, "gfwupstream", translate("gfw upstream dns server"), translate("gfwlist domain upstream dns service"))
+o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service"))
 o.default     = "tcp://208.67.220.220#5353"
 o.datatype    = "string"
 ---- chpass
-o = s:option(Value, "hashpass", translate("更改密码"), translate("点击计算后应用设置"))
+o = s:option(Value, "hashpass", translate("Change browser management password"), translate("press load model and culculate and save/apply"))
 o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"
