@@ -250,7 +250,7 @@ start_service() {
 	if [ ! -f "$binpath" ]; then
 		do_redirect 0
 		touch /var/run/update_core
-		sh /usr/share/AdGuardHome/update_core.sh
+		sh /usr/share/AdGuardHome/update_core.sh >/tmp/AdGuardHome_update.log
 		rm /var/run/update_core
 		exit 0
 	elif [ ! -f "$configpath" ]; then

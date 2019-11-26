@@ -20,14 +20,18 @@ function act_status()
 end
 function do_update()
 nixio.fs.writefile("/var/run/lucilogpos","0")
-nixio.fs.writefile("/tmp/AdGuardHome_update.log","")
-luci.sys.exec("(touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh ;rm /var/run/update_core) &")
+luci.sys.exec("(touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh >/tmp/AdGuardHome_update.log;rm /var/run/update_core) &")
 luci.http.prepare_content("application/json")
 luci.http.write('')
 end
 function check_update()
 	luci.http.prepare_content("text/plain; charset=utf-8")
-	fdp=tonumber(nixio.fs.readfile("/var/run/lucilogpos"))
+	logpos=nixio.fs.readfile("/var/run/lucilogpos")
+	if (logpos ~= nil) then
+	fdp=tonumber(logpos)
+	else
+	fdp=0
+	end
 	f=io.open("/tmp/AdGuardHome_update.log", "r+")
 	f:seek("set",fdp)
 	a=f:read(8192)
