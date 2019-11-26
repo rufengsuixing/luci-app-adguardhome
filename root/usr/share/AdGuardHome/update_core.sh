@@ -2,7 +2,7 @@
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 binpath=$(uci get AdGuardHome.AdGuardHome.binpath)
 if [ -z "$binpath" ]; then
-uci get AdGuardHome.AdGuardHome.binpath="/tmp/AdGuardHome/AdGuardHome"
+uci set AdGuardHome.AdGuardHome.binpath="/tmp/AdGuardHome/AdGuardHome"
 binpath="/tmp/AdGuardHome/AdGuardHome"
 fi
 mkdir -p ${binpath%/*}
@@ -26,12 +26,21 @@ clean_log(){
 check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
 	[ -z "${latest_ver}" ] && echo -e "\nFailed to check latest version, please try again later."  && exit 1
+	
 	if [ -f "$configpath" ]; then
-	now_ver="$($binpath -c $configpath --check-config 2>&1| grep -E 'v[0-9.]+' -o)"
-	else
-	if [ -f "$binpath" ]; then
-	now_ver=$(uci get AdGuardHome.AdGuardHome.version)
-	fi
+		now_ver="$($binpath -c $configpath --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
+	elif [ -f "$binpath" ]; then
+		chmod a+x $binpath
+		$binpath -l /tmp/AdGuardHometmp.log &
+		if [ "$?" == "0" ]; then
+			pid=$!
+			sleep 2
+			kill $pid
+			now_ver="$(grep -m 1 -E 'v[0-9.]+' -o /tmp/AdGuardHometmp.log)"
+			rm /tmp/AdGuardHometmp.log
+		else
+			echo "bin file may broken"
+		fi
 	fi
 	if [ "${latest_ver}"x != "${now_ver}"x ]; then
 		clean_log
@@ -42,10 +51,27 @@ check_latest_version(){
 			echo -e "You're already using the latest version." 
 			uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
 			uci commit AdGuardHome
+			if [ "$upx"x == "1"x ]; then 
+				filesize=$(ls -l $binpath | awk '{ print $5 }')
+				if [ $filesize -gt 8000000 ]; then
+					echo -e "start upx may take a long time"
+					doupx
+					mkdir -p "/tmp/AdGuardHome/update/AdGuardHome" >/dev/null 2>&1
+					rm -fr /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/}
+					/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx -9 $binpath -o /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/}
+					rm -rf /tmp/upx-${upx_latest_ver}-${Arch}_linux
+					/etc/init.d/AdGuardHome stop
+					rm $binpath
+					mv -f /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/} $binpath
+					/etc/init.d/AdGuardHome start
+					echo -e "finished"
+				fi
+			fi
 			exit 3
 	fi
 }
 doupx(){
+	Archt="$(opkg info kernel | grep Architecture | awk -F "[ _]" '{print($2)}')"
 	case $Archt in
 	"i386")
 	Arch="i386"
@@ -164,7 +190,7 @@ doupdate_core(){
 	else 
 		echo -e "download success start copy" 
 		if [ "$upx"x == "1"x ]; then
-		echo -e "start upx may take a log time" 
+		echo -e "start upx may take a long time" 
 		doupx
         #maybe need chmod
 		/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx -9  /tmp/AdGuardHome/update/AdGuardHome/AdGuardHome
@@ -178,7 +204,7 @@ doupdate_core(){
 			echo "mv failed maybe not enough space please use upx or change bin to /tmp/AdGuardHome" 
 			exit 1
 		fi
-		/etc/init.d/AdGuardHome restart
+		/etc/init.d/AdGuardHome start
 	fi
 	rm -rf "/tmp/AdGuardHome/update" >/dev/null 2>&1
 	echo -e "Succeeded in updating core." 
