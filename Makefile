@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
 PKG_VERSION:=1.6
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -54,6 +54,7 @@ define Package/luci-app-adguardhome/postinst
 	if [ "$enable"x == "1"x ]; then
 	/etc/init.d/AdGuardHome start
 	fi
+	rm -f /tmp/luci-indexcache
 exit 0
 endef
 
