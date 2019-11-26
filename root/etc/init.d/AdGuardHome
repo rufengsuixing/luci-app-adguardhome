@@ -219,15 +219,37 @@ get_filesystem()
 	}
 	print(result);}'
 }
+
+config_editor()
+{
+	awk -v yaml="$1" -v value="$2" -v file="$3" '
+	BEGIN{split(yaml,part,"\.");s="";i=1;l=length(part);}
+    {
+        if (match($0,s""part[i]))
+        {
+            if (i==l)
+            {
+                split($0,t,":");
+                system("sed -i '\''"FNR"c \\"t[1]": "value"'\'' "file);
+                exit;
+            }
+            s=s"[- ]{2}";
+            i++;
+        }
+    }' $3
+}
 start_service() {
 	# Reading config
 	config_load "${CONFIGURATION}"
 	local enabled
 	local ADDITIONAL_ARGS=""
-		
+	
+	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
+	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
+	
 	config_get hashpass $CONFIGURATION hashpass ""
 	if [ ! -z "$hashpass" ]; then
-		sed -i "1,50{/  password:/c\  password: $hashpass}" $configpath
+		config_editor "users.password" "$hashpass" "$configpath"
 		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
 	fi
 	config_get_bool enabled $CONFIGURATION enabled 0
@@ -237,8 +259,7 @@ start_service() {
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 	mkdir -p $workdir/data
-	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
-	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
+
 	
 	config_get logfile $CONFIGURATION logfile ""
 	if [ ! -z "$logfile" ]; then
