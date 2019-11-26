@@ -90,7 +90,13 @@ o.datatype    = "string"
 o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
 ---- gfwlist 
-o=s:option(Button,"gfwadd",translate("Add gfwlist"))
+local a=luci.sys.call("grep -m 1 -q programadd "..configpath)
+if (a==0) then
+a="Added"
+else
+a="Not added"
+end
+o=s:option(Button,"gfwadd",translate("Add gfwlist"),translate(a))
 o.inputtitle=translate("Add")
 o.write=function()
 luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")

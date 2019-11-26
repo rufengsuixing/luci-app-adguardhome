@@ -76,6 +76,12 @@ msgstr "加入gfw列表"
 msgid "Add"
 msgstr "添加"
 
+msgid "Added"
+msgstr "已添加"
+
+msgid "Not added"
+msgstr "未添加"
+
 msgid "Gfwlist upstream dns server"
 msgstr "gfw列表上游服务器"
 
