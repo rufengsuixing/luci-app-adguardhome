@@ -55,6 +55,7 @@ define Package/luci-app-adguardhome/postinst
 	/etc/init.d/AdGuardHome start
 	fi
 	rm -f /tmp/luci-indexcache
+	rm -f /tmp/luci-modulecache/*
 exit 0
 endef
 
