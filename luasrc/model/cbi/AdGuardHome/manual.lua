@@ -19,16 +19,13 @@ end
 o.validate=function(self, value)
     NXFS.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
 	if (sys.call(binpath.." -c /tmp/AdGuardHometmpconfig.yaml --check-config 2> /tmp/AdGuardHometest.log")==0) then
-		NXFS.writefile("/tmp/debug", "o.validate is done")
 	return value
 	end
-	NXFS.writefile("/tmp/debug", "o.validate is false")
 	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
 	return nil
 end
 o.write = function(self, section, value)
 	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
-	NXFS.writefile("/tmp/debug", "o.write is done")
 end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
@@ -44,7 +41,7 @@ o.cfgvalue = function(self, section)
 	return NXFS.readfile("/tmp/AdGuardHometest.log")
 end
 o=s:option(Button,"","")
-o.inputtitle=translate("Reload config")
+o.inputtitle=translate("Reload Config")
 o.write=function()
 NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
 luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
