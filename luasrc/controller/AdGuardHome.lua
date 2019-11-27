@@ -3,8 +3,9 @@ nixio=require"nixio"
 local uci=require"luci.model.uci".cursor()
 function index()
 	entry({"admin","services","AdGuardHome"},firstchild(),_("AdGuard Home"),30).dependent=true
-	entry({"admin","services","AdGuardHome","general"},cbi("AdGuardHome"),_("Base Setting"),1)
-    entry({"admin","services","AdGuardHome","log"},form("AdGuardHomelog"),_("Log"),2)
+	entry({"admin","services","AdGuardHome","general"},cbi("AdGuardHome/base"),_("Base Setting"),1).leaf = true
+    entry({"admin","services","AdGuardHome","log"},form("AdGuardHome/log"),_("Log"),2).leaf = true
+	entry({"admin","services","AdGuardHome","manual"},cbi("AdGuardHome/manual"),_("Manual Config"),3).leaf = true
     entry({"admin","services","AdGuardHome","status"},call("act_status")).leaf=true
 	entry({"admin", "services", "AdGuardHome", "check"}, call("check_update"))
 	entry({"admin", "services", "AdGuardHome", "doupdate"}, call("do_update"))
@@ -23,6 +24,7 @@ luci.sys.exec("(touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_co
 luci.http.prepare_content("application/json")
 luci.http.write('')
 end
+
 function check_update()
 	luci.http.prepare_content("text/plain; charset=utf-8")
 	logpos=nixio.fs.readfile("/var/run/lucilogpos")

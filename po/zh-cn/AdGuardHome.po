@@ -88,6 +88,21 @@ msgstr "gfw列表上游服务器"
 msgid "Gfwlist domain upstream dns service"
 msgstr "gfw列表域名上游服务器"
 
+msgid "Username"
+msgstr "用户名"
+
+msgid "Change browser management username"
+msgstr "改变网页登录用户名"
+
+msgid "Check Config"
+msgstr "检查配置"
+
+msgid "unknown"
+msgstr "未知"
+
+msgid "Reload Config"
+msgstr "重新载入配置"
+
 msgid "Change browser management password"
 msgstr "改变网页登录密码"
 

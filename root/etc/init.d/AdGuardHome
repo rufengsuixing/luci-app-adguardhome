@@ -252,6 +252,7 @@ start_service() {
 		config_editor "users.password" "$hashpass" "$configpath"
 		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
 	fi
+	
 	config_get_bool enabled $CONFIGURATION enabled 0
 	config_get httpport $CONFIGURATION httpport 3000
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
