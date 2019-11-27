@@ -11,6 +11,7 @@
  - 自定义运行日志路径
  - gfwlist 定义上游dns服务器
  - 修改网页登陆密码
+ - 手动修改配置文件
 #### 已知问题：
  - db数据库不支持放在比较特别的文件系统上比如 overlay data-stk-oo，请修改工作目录，本软件如果检测到overlay会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
  
@@ -29,5 +30,6 @@ Complex openwrt AdGuardHome luci
  - change runtime log path
  - gfwlist query to specific dns server
  - modify browser login passord
+ - modify config manually
 #### known issues:
  - db database not support some filesystem such as overlay and data-stk-oo,please modify work dir,if overlay is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
