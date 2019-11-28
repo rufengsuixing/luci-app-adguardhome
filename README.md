@@ -14,7 +14,7 @@
  - 手动修改配置文件
 #### 已知问题：
  - db数据库不支持放在比较特别的文件系统上比如 overlay data-stk-oo，请修改工作目录，本软件如果检测到overlay会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
- - Pandora 手动设置配置可能无效 https://github.com/rufengsuixing/question-about-luci/issues/2 需要帮助
+ 
 #### 项目已经基本稳定，有bug欢迎主动反馈
 
 
@@ -33,4 +33,3 @@ Complex openwrt AdGuardHome luci
  - modify config manually
 #### known issues:
  - db database not support some filesystem such as overlay and data-stk-oo,please modify work dir,if overlay is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
- - Pandora manual config can not be use https://github.com/rufengsuixing/question-about-luci/issues/2 need help
