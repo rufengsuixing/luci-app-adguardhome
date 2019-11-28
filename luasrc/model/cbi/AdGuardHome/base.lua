@@ -11,9 +11,9 @@ local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
 if (binpath==nil) then
 binpath="/usr/bin/AdGuardHome/AdGuardHome"
 end
-local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath.." 2>nul")
+local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath.." 2>/dev/null")
 if (httpport=="") then
-httpport=uci:get("AdGuardHome","AdGuardHome","httpport")
+httpport=uci:get("AdGuardHome","AdGuardHome","httpport") or "3000"
 end
 mp = Map("AdGuardHome", "AdGuard Home")
 mp.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
@@ -26,13 +26,13 @@ s.addremove=false
 o = s:option(Flag, "enabled", translate("Enable adblock"))
 o.default = 0
 o.rmempty = false
----- httport
+---- httpport
 o =s:option(Value,"httpport",translate("Browser management port"))
 o.placeholder=3000
 o.default=3000
 o.datatype="port"
 o.rmempty=false
-o.description = translate("<input type=\"button\" style=\"width:180px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
+o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
 version=uci:get("AdGuardHome","AdGuardHome","version")
 e=""
@@ -71,8 +71,14 @@ o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 --- upx
-o = s:option(Flag, "upx", translate("use upx to compress bin after download"))
-o.default = 0
+o = s:option(ListValue, "upxflag", translate("use upx to compress bin after download"))
+o:value("", translate("none"))
+o:value("-1", translate("compress faster"))
+o:value("-9", translate("compress better"))
+o:value("--best", translate("compress best(can be slow for big files)"))
+o:value("--brute", translate("try all available compression methods & filters [slow]"))
+o:value("--ultra-brute", translate("try even more compression variants [very slow]"))
+o.default     = ""
 o.description=translate("bin use less space,but may have compatibility issues")
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
