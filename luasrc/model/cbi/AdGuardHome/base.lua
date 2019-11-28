@@ -14,7 +14,6 @@ end
 local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath.." 2>/dev/null")
 if (httpport=="") then
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport") or "3000"
-if 
 end
 mp = Map("AdGuardHome", "AdGuard Home")
 mp.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
@@ -33,7 +32,7 @@ o.placeholder=3000
 o.default=3000
 o.datatype="port"
 o.rmempty=false
-o.description = translate("<input type=\"button\" style=\"width:180px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
+o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
 version=uci:get("AdGuardHome","AdGuardHome","version")
 e=""
