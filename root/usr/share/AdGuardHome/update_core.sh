@@ -12,7 +12,7 @@ uci get AdGuardHome.AdGuardHome.configpath="/etc/AdGuardHome.yaml"
 configpath="/etc/AdGuardHome.yaml"
 fi
 mkdir -p ${configpath%/*}
-upx=$(uci get AdGuardHome.AdGuardHome.upx)
+upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag)
 
 check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
@@ -51,14 +51,14 @@ check_latest_version(){
 			echo -e "You're already using the latest version." 
 			uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
 			uci commit AdGuardHome
-			if [ "$upx"x == "1"x ]; then 
+			if [ ! -z "$upxflag" ]; then
 				filesize=$(ls -l $binpath | awk '{ print $5 }')
 				if [ $filesize -gt 8000000 ]; then
 					echo -e "start upx may take a long time"
 					doupx
 					mkdir -p "/tmp/AdGuardHome/update/AdGuardHome" >/dev/null 2>&1
 					rm -fr /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/}
-					/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx -9 $binpath -o /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/}
+					/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx $upxflag $binpath -o /tmp/AdGuardHome/update/AdGuardHome/${binpath##*/}
 					rm -rf /tmp/upx-${upx_latest_ver}-${Arch}_linux
 					/etc/init.d/AdGuardHome stop
 					rm $binpath
@@ -189,11 +189,11 @@ doupdate_core(){
 		exit 1
 	else 
 		echo -e "download success start copy" 
-		if [ "$upx"x == "1"x ]; then
+		if [ ! -z "$upxflag" ]; then
 		echo -e "start upx may take a long time" 
 		doupx
         #maybe need chmod
-		/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx -9  /tmp/AdGuardHome/update/AdGuardHome/AdGuardHome
+		/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx $upxflag /tmp/AdGuardHome/update/AdGuardHome/AdGuardHome
 		rm -rf /tmp/upx-${upx_latest_ver}-${Arch}_linux
 		fi
 		echo -e "start copy" 
