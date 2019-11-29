@@ -36,5 +36,8 @@ Complex openwrt AdGuardHome luci
 #### known issues:
  - db database not support some filesystem such as overlay and data-stk-oo,please modify work dir,if overlay is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
  - AdGuardhome not support ipset,when we use ipset ,it can`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
- https://github.com/AdguardTeam/AdGuardHome/issues/1191
- 
+ https://github.com/AdguardTeam/AdGuardHome/issues/1191<br>
+#### pic
+example in zh-cn:<br>
+![example1](https://user-images.githubusercontent.com/22387141/69557384-7698b900-0fe1-11ea-96a6-85786fec06ac.png)
+![example2](https://user-images.githubusercontent.com/22387141/69854039-09c43e00-12c3-11ea-8827-7725d295a471.png)
