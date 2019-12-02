@@ -16,7 +16,7 @@ o.rows = 66
 o.wrap = "off"
 o.rmempty = true
 o.cfgvalue = function(self, section)
-	return NXFS.readfile("/tmp/AdGuardHometmpconfig.yaml") or NXFS.readfile(escconf)
+	return NXFS.readfile("/tmp/AdGuardHometmpconfig.yaml") or NXFS.readfile(escconf) or ""
 end
 o.validate=function(self, value)
     NXFS.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
