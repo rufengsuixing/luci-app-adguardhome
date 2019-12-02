@@ -2,6 +2,7 @@ local m, s, o
 local NXFS = require "nixio.fs"
 local uci=require"luci.model.uci".cursor()
 local sys=require"luci.sys"
+require("io")
 m = Map("AdGuardHome")
 
 local escconf = uci:get("AdGuardHome","AdGuardHome","configpath")

@@ -2,7 +2,7 @@ require("luci.sys")
 require("luci.util")
 local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
-
+require("io")
 local configpath=uci:get("AdGuardHome","AdGuardHome","configpath")
 if (configpath==nil) then
 configpath="/etc/AdGuardHome.yaml"
