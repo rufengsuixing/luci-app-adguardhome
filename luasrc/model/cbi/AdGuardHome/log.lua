@@ -6,11 +6,7 @@ f=SimpleForm("logview")
 t=f:field(TextValue,"conf")
 t.rmempty=true
 t.rows=20
-function t.cfgvalue()
-if (logfile==nil) then
-	return "no log available"
-end
-return e.readfile(logfile)
-end
+t.template="AdGuardHome/log"
 t.readonly="readonly"
+nixio.fs.writefile("/var/run/lucilogpos","0")
 return f
