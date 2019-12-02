@@ -9,8 +9,9 @@ local binpath = uci:get("AdGuardHome","AdGuardHome","binpath")
 s = m:section(TypedSection, "AdGuardHome")
 s.anonymous=true
 s.addremove=false
+--- config
 o = s:option(TextValue, "escconf")
-o.rows = 33
+o.rows = 66
 o.wrap = "off"
 o.rmempty = true
 o.cfgvalue = function(self, section)
@@ -30,6 +31,10 @@ end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
 end
+o = s:option(DummyValue, "")
+o.anonymous=true
+o.template = "AdGuardHome/yamleditor"
+--- log
 if (NXFS.access("/tmp/AdGuardHometmpconfig.yaml")) then
 local c=NXFS.readfile("/tmp/AdGuardHometest.log")
 if (c~="") then
