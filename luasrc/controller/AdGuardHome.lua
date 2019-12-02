@@ -43,7 +43,7 @@ function get_log()
 	end
 	f=io.open(logfile, "r+")
 	f:seek("set",fdp)
-	a=f:read(8192)
+	a=f:read(2048000)
 	if (a==nil) then
 	a=""
 	end
@@ -68,7 +68,7 @@ function check_update()
 	end
 	f=io.open("/tmp/AdGuardHome_update.log", "r+")
 	f:seek("set",fdp)
-	a=f:read(8192)
+	a=f:read(2048000)
 	if (a==nil) then
 	a=""
 	end
