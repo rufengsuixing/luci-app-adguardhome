@@ -11,8 +11,9 @@
  - 自定义运行日志路径
  - gfwlist 定义上游dns服务器
  - 修改网页登陆密码
- - 倒序/正序 查看/删除 每3秒更新显示运行日志
+ - 倒序/正序 查看/删除/备份 每3秒更新显示运行日志
  - 手动修改配置文件(支持yaml编辑器)
+ - 使用模板快速配置(没有配置文件时)
 #### 已知问题：
  - db数据库不支持放在比较特别的文件系统上比如 overlay data-stk-oo，请修改工作目录，本软件如果检测到overlay会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
@@ -33,8 +34,9 @@ Complex openwrt AdGuardHome luci
  - change runtime log path
  - gfwlist query to specific dns server
  - modify browser login passord
- - Positive/reverse order see/del runtime log which update every 3 second
+ - Positive/reverse order see/del/backup runtime log which update every 3 second
  - modify config manually(support yaml editor)
+ - use template to fast config(when no config file)
 #### known issues:
  - db database not support some filesystem such as overlay and data-stk-oo,please modify work dir,if overlay is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
  - AdGuardhome not support ipset,when we use ipset ,it can`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
