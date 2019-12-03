@@ -2,7 +2,29 @@ local m, s, o
 local NXFS = require "nixio.fs"
 local uci=require"luci.model.uci".cursor()
 local sys=require"luci.sys"
+require("string")
 require("io")
+require("table")
+function gen_template_config()
+	local d=NXFS.readfile("/tmp/resolv.conf.auto")
+	d=string.gsub(d,"nameserver ","  - ")
+	local f=io.open("/usr/share/AdGuardHome/AdGuardHome_template.yaml", "r+")
+	local tbl = {}
+	local a=""
+	while (1) do
+    	a=f:read("*l")
+		if (a=="#bootstrap_dns") then
+			a=d
+		elseif (a=="#upstream_dns") then
+			a=d
+		elseif (a==nil) then
+			break
+		end
+		table.insert(tbl, a)
+	end
+	f:close()
+	return table.concat(tbl, "\n")
+end
 m = Map("AdGuardHome")
 
 local escconf = uci:get("AdGuardHome","AdGuardHome","configpath")
@@ -16,7 +38,7 @@ o.rows = 66
 o.wrap = "off"
 o.rmempty = true
 o.cfgvalue = function(self, section)
-	return NXFS.readfile("/tmp/AdGuardHometmpconfig.yaml") or NXFS.readfile(escconf) or ""
+	return  NXFS.readfile("/tmp/AdGuardHometmpconfig.yaml") or NXFS.readfile(escconf) or gen_template_config() or ""
 end
 o.validate=function(self, value)
     NXFS.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
