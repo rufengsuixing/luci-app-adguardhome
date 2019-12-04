@@ -1,6 +1,12 @@
 msgid "Free and open source, powerful network-wide ads & trackers blocking DNS server."
 msgstr "免费开源，功能强大的全网络广告和跟踪程序拦截DNS服务器"
 
+msgid "Base Setting"
+msgstr "基础设置"
+
+msgid "Manual Config"
+msgstr "手动设置"
+
 msgid "Enable adblock"
 msgstr "启用广告屏蔽"
 
@@ -148,3 +154,11 @@ msgstr "未运行"
 msgid "Collecting data..."
 msgstr "获取数据中..."
 
+msgid "dellog"
+msgstr "删除日志"
+
+msgid "backup"
+msgstr "备份"
+
+msgid "reverse"
+msgstr "逆序"
