@@ -29,26 +29,29 @@ function do_update()
 	luci.http.write('')
 end
 function get_log()
-	logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
+	local logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
 	if (logfile==nil) then
 	luci.http.write("no log available\n")
 	return
 	elseif (logfile=="syslog") then
-	luci.http.write("please go to system log\n")
-	return
+		if not nixio.fs.access("/var/run/AdGuardHomesyslog") then
+			luci.sys.exec("(/usr/share/AdGuardHome/getsyslog.sh &); sleep 1;")
+		end
+		logfile="/tmp/AdGuardHometmp.log"
+		nixio.fs.writefile("/var/run/AdGuardHomesyslog","1")
 	end
 	luci.http.prepare_content("text/plain; charset=utf-8")
 	logpos=nixio.fs.readfile("/var/run/lucilogpos")
 	if (logpos ~= nil) then
-	fdp=tonumber(logpos)
+		fdp=tonumber(logpos)
 	else
-	fdp=0
+		fdp=0
 	end
 	f=io.open(logfile, "r+")
 	f:seek("set",fdp)
 	a=f:read(2048000)
 	if (a==nil) then
-	a=""
+		a=""
 	end
 	fdp=f:seek()
 	nixio.fs.writefile("/var/run/lucilogpos",tostring(fdp))
