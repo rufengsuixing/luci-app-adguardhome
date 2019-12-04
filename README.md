@@ -18,7 +18,7 @@
  - db数据库不支持放在不支持mmap的文件系统上比如 jffs2 data-stk-oo，请修改工作目录，本软件如果检测到jffs2会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191
- - openwrt 19 出现了开关反了的问题，https://github.com/openwrt/luci/issues/3389 ，因为和以前版本的执行结果冲突暂时不做修复
+ - openwrt 19 出现了开关反了的问题，需要更多的信息
 #### 项目已经基本稳定，有bug欢迎主动反馈
 
 
@@ -41,7 +41,7 @@ Complex openwrt AdGuardHome luci
  - db database not support filesystem which not support mmap such as jffs2 and data-stk-oo,please modify work dir,if jffs2 is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
  - AdGuardhome not support ipset,when we use ipset ,it can`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191<br>
- - openwrt 19 found enable flag is reversed, https://github.com/openwrt/luci/issues/3389 ,not to fix it due to the different run result on old version op.
+ - openwrt 19 found enable flag is reversed, need more information
 #### pic
 example in zh-cn:<br>
 ![example1](https://user-images.githubusercontent.com/22387141/69557384-7698b900-0fe1-11ea-96a6-85786fec06ac.png)
