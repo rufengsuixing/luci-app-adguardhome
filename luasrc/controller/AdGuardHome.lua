@@ -33,6 +33,9 @@ function get_log()
 	if (logfile==nil) then
 	luci.http.write("no log available\n")
 	return
+	elseif (logfile=="syslog") then
+	luci.http.write("please go to system log\n")
+	return
 	end
 	luci.http.prepare_content("text/plain; charset=utf-8")
 	logpos=nixio.fs.readfile("/var/run/lucilogpos")
