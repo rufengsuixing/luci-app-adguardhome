@@ -325,6 +325,7 @@ start_service() {
 		fi
 		echo "AdGuardHome turn on"
 		echo "enabled="$enabled""
+		uci set $CONFIGURATION.$CONFIGURATION.lastbinpath=$binpath
 	fi
 }
 
@@ -334,7 +335,6 @@ stop_service()
 	do_redirect 0
 	config_get lastbinpath $CONFIGURATION lastbinpath $binpath
 	pgrep $lastbinpath | xargs kill
-	uci set $CONFIGURATION.$CONFIGURATION.lastbinpath=$binpath
 	echo "AdGuardHome turn off"
 	echo "enabled="$enabled""
 }
