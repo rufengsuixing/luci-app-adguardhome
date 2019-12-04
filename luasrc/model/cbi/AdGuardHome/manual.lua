@@ -26,7 +26,6 @@ function gen_template_config()
 	return table.concat(tbl, "\n")
 end
 m = Map("AdGuardHome")
-
 local escconf = uci:get("AdGuardHome","AdGuardHome","configpath")
 local binpath = uci:get("AdGuardHome","AdGuardHome","binpath")
 s = m:section(TypedSection, "AdGuardHome")
@@ -50,6 +49,7 @@ o.validate=function(self, value)
 end
 o.write = function(self, section, value)
 	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
+	io.popen("sleep 1 ;/etc/init.d/AdGuardHome reload & ;")
 end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
@@ -75,10 +75,6 @@ NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
 luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
 end
 end
-end
-local apply = luci.http.formvalue("cbi.apply")
- if apply then
-     io.popen("/etc/init.d/AdGuardHome reload &")
 end
 
 return m
