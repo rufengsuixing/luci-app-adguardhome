@@ -333,7 +333,7 @@ stop_service()
 	config_load "${CONFIGURATION}"
 	do_redirect 0
 	config_get lastbinpath $CONFIGURATION lastbinpath $binpath
-	killall -q $lastbinpath
+	pgrep $lastbinpath | xargs kill
 	uci set $CONFIGURATION.$CONFIGURATION.lastbinpath=$binpath
 	echo "AdGuardHome turn off"
 	echo "enabled="$enabled""
