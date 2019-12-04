@@ -198,28 +198,42 @@ do_redirect()
 get_filesystem()
 {
 # print out path filesystem
-	echo $1 | awk '
-	BEGIN{
-	while (("mount"| getline ret) > 0)
-	{
-	split(ret,d);
-	fs[d[3]]=d[5];
-	}
-	}{
-	split($0,d,"/");
-	if ("/" in fs)
-	{ 
-	result=fs["/"];
-	}
-	for (i=2;i<=length(d);i++)
-	{
-	   p[i]=p[i-1]"/"d[i];
-	   if (p[i] in fs)
-		{ 
-		result=fs[p[i]];
-		}
-	}
-	print(result);}'
+    echo $1 | awk '
+    BEGIN{
+    while (("mount"| getline ret) > 0)
+    {
+    split(ret,d);
+    fs[d[3]]=d[5];
+    m=index(d[1],":")
+    if (m==0)
+    {
+        pt[d[3]]=d[1]
+    }else{
+        pt[d[3]]=substr(d[1],m+1)
+    }}}{
+    split($0,d,"/");
+    if ("/" in fs)
+    { 
+    result1=fs["/"];
+    }
+    if ("/" in pt)
+    { 
+    result2=pt["/"];
+    }
+    for (i=2;i<=length(d);i++)
+    {
+       p[i]=p[i-1]"/"d[i];
+       if (p[i] in fs)
+        { 
+        result1=fs[p[i]];
+        result2=pt[p[i]];
+        }
+    }
+    if (result2 in fs){
+        result=fs[result2]}
+    else{
+        result=result1}
+    print(result);}'
 }
 
 config_editor()
@@ -285,8 +299,9 @@ start_service() {
 	
 	# for overlay data-stk-oo not suppport
 	local cwdfs=$(get_filesystem $workdir)
-	if [ "${cwdfs:0:7}" == "overlay" ]; then
-		echo "fs error ln db to tmp $workdir ${cwdfs:0:7}"
+	echo "workdir is a $cwdfs filesystem"
+	if [ "$cwdfs" == "jffs2" ]; then
+		echo "fs error ln db to tmp $workdir $cwdfs"
 		logger "AdGuardHome" "warning db redirect to tmp"
 		touch $workdir/data/stats.db
 		if [ ! -L $workdir/data/stats.db ]; then
