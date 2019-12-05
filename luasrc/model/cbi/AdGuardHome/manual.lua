@@ -6,8 +6,14 @@ require("string")
 require("io")
 require("table")
 function gen_template_config()
-	local d=NXFS.readfile("/tmp/resolv.conf.auto")
-	d=string.gsub(d,"nameserver ","  - ")
+	local b
+	local d=""
+	for cnt in io.lines("/tmp/resolv.conf.auto") do
+		b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
+		if (b~=nil) then
+			d=d.."  - "..b.."\n"
+		end
+	end
 	local f=io.open("/usr/share/AdGuardHome/AdGuardHome_template.yaml", "r+")
 	local tbl = {}
 	local a=""
