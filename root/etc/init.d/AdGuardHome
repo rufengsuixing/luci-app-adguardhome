@@ -317,12 +317,16 @@ start_service() {
 	procd_set_param stderr 1 
 	# pass config to script on start
 	procd_set_param command $binpath $ADDITIONAL_ARGS
-	procd_close_instance
 	if [ -f "$configpath" ]; then
 		do_redirect 1
 	else
 		do_redirect 0
+		config_get "redirect" "AdGuardHome" "redirect" "none"
+		if [ "$redirect" != "none" ]; then
+			procd_set_param file "$configpath"
+		fi
 	fi
+	procd_close_instance
 	echo "AdGuardHome turn on"
 	echo "enabled=$enabled"
 	fi
