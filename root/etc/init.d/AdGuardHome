@@ -6,7 +6,8 @@ START=95
 STOP=01
 
 CONFIGURATION=AdGuardHome
-
+EXTRA_COMMANDS="do_redirect"
+EXTRA_HELP="        do_redirect 0 or 1"
 set_forward_dnsmasq()
 {
 	local PORT="$1"
@@ -140,11 +141,13 @@ reload_service()
 
 do_redirect() 
 {
+	config_load "${CONFIGURATION}"
 	local section="$CONFIGURATION"
 	args=""
 	ipv6_server=0
 	tcp_server=0
 	enabled=$1
+	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
 	if [ -z "$AdGuardHome_PORT" ]; then
 		AdGuardHome_PORT="0"
@@ -317,16 +320,20 @@ start_service() {
 	procd_set_param stderr 1 
 	# pass config to script on start
 	procd_set_param command $binpath $ADDITIONAL_ARGS
+	procd_set_param file "$configpath"
+	procd_set_param file "/etc/config/AdGuardHome"
+	procd_close_instance
 	if [ -f "$configpath" ]; then
 		do_redirect 1
 	else
 		do_redirect 0
 		config_get "redirect" "AdGuardHome" "redirect" "none"
 		if [ "$redirect" != "none" ]; then
-			procd_set_param file "$configpath"
+			procd_open_instance "waitconfig"
+			procd_set_param command "/usr/share/AdGuardHome/watchconfig.sh"
+			procd_close_instance
 		fi
 	fi
-	procd_close_instance
 	echo "AdGuardHome turn on"
 	echo "enabled=$enabled"
 	fi
@@ -335,7 +342,6 @@ start_service() {
 stop_service()
 {
 	config_load "${CONFIGURATION}"
-	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 	do_redirect 0
 	procd_send_signal $CONFIGURATION
