@@ -47,11 +47,13 @@ o.cfgvalue = function(self, section)
 end
 o.validate=function(self, value)
     NXFS.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
-	if (sys.call(binpath.." -c /tmp/AdGuardHometmpconfig.yaml --check-config 2> /tmp/AdGuardHometest.log")==0) then
-	return value
+	if NXFS.access(binpath) then
+		if (sys.call(binpath.." -c /tmp/AdGuardHometmpconfig.yaml --check-config 2> /tmp/AdGuardHometest.log")==0) then
+			return value
+		end
+	else
+		return value
 	end
-	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
-	return nil
 end
 o.write = function(self, section, value)
 	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
@@ -63,6 +65,9 @@ end
 o = s:option(DummyValue, "")
 o.anonymous=true
 o.template = "AdGuardHome/yamleditor"
+if not NXFS.access(binpath) then
+	o.description=translate("WARNING!!! no bin found apply config will not be test")
+end
 --- log
 if (NXFS.access("/tmp/AdGuardHometmpconfig.yaml")) then
 local c=NXFS.readfile("/tmp/AdGuardHometest.log")
@@ -74,13 +79,13 @@ o.rmempty = true
 o.cfgvalue = function(self, section)
 	return NXFS.readfile("/tmp/AdGuardHometest.log")
 end
+--- reload config
 o=s:option(Button,"","")
 o.inputtitle=translate("Reload Config")
 o.write=function()
-NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
-luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
+	NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
 end
 end
 end
-
 return m
