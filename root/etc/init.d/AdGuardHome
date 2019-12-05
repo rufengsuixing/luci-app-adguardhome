@@ -268,6 +268,8 @@ start_service() {
 	if [ "$enabled" == "1" ]; then
 	local ADDITIONAL_ARGS=""
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
+	# hack to save config file when upgrade system
+	echo -e "$configpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 	mkdir -p ${binpath%/*}
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
