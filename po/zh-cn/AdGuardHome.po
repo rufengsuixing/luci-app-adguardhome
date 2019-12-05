@@ -166,5 +166,5 @@ msgstr "下载日志"
 msgid "reverse"
 msgstr "逆序"
 
-msgis "Fast config"
+msgid "Fast config"
 msgstr "快速配置"
