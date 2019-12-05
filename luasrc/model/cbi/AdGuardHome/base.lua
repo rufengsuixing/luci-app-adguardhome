@@ -23,7 +23,7 @@ s = mp:section(TypedSection, "AdGuardHome")
 s.anonymous=true
 s.addremove=false
 ---- enable
-o = s:option(Flag, "enabled", translate("Enable adblock"))
+o = s:option(Flag, "enabled", translate("Enable"))
 o.default = 0
 o.rmempty = false
 ---- httpport

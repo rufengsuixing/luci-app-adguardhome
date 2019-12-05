@@ -7,8 +7,8 @@ msgstr "基础设置"
 msgid "Manual Config"
 msgstr "手动设置"
 
-msgid "Enable adblock"
-msgstr "启用广告屏蔽"
+msgid "Enable"
+msgstr "启用"
 
 msgid "Browser management port"
 msgstr "网页管理端口"
@@ -154,11 +154,17 @@ msgstr "未运行"
 msgid "Collecting data..."
 msgstr "获取数据中..."
 
+msgid "Log"
+msgstr "日志"
+
 msgid "dellog"
 msgstr "删除日志"
 
-msgid "backup"
-msgstr "备份"
+msgid "download log"
+msgstr "下载日志"
 
 msgid "reverse"
 msgstr "逆序"
+
+msgis "Fast config"
+msgstr "快速配置"
