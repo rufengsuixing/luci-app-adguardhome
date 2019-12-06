@@ -344,7 +344,7 @@ reload_service()
 	echo "AdGuardHome reloading"
 	config_get_bool enabled $CONFIGURATION enabled 0
 	procd_send_signal $CONFIGURATION
-	start_service
+	start
 	echo "enabled=$enabled"
 }
 stop_service()
