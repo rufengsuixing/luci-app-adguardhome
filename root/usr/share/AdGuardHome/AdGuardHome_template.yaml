@@ -69,14 +69,26 @@ filters:
   url: https://www.malwaredomainlist.com/hostslist/hosts.txt
   name: MalwareDomainList.com Hosts List
   id: 4
-- enabled: true
-  url: https://raw.githubusercontent.com/vokins/yhosts/master/hosts.txt
-  name: yhost
-  id: 1575018006
 - enabled: false
   url: https://raw.githubusercontent.com/vokins/yhosts/master/data/tvbox.txt
   name: tvbox
   id: 1575018007
+- enabled: true
+  url: https://hosts.nfz.moe/full/hosts
+  name: neoHosts full
+  id: 1575618240
+- enabled: false
+  url: https://hosts.nfz.moe/basic/hosts
+  name: neoHosts basic
+  id: 1575618241
+- enabled: false
+  url: http://sbc.io/hosts/hosts
+  name: StevenBlack host basic
+  id: 1575618242
+- enabled: false
+  url: http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
+  name: StevenBlack host+fakenews + gambling + porn + social
+  id: 1575618243
 user_rules: []
 dhcp:
   enabled: false
