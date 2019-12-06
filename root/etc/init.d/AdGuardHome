@@ -248,6 +248,7 @@ config_editor()
         }
     }' $3
 }
+
 start_service() {
 	# Reading config
 	config_load "${CONFIGURATION}"
@@ -335,14 +336,20 @@ start_service() {
 		fi
 	fi
 	echo "AdGuardHome turn on"
-	echo "enabled=$enabled"
 	fi
 }
-
+reload_service()
+{
+	config_load "${CONFIGURATION}"
+	echo "AdGuardHome reloading"
+	config_get_bool enabled $CONFIGURATION enabled 0
+	procd_send_signal $CONFIGURATION
+	start_service
+	echo "enabled=$enabled"
+}
 stop_service()
 {
 	config_load "${CONFIGURATION}"
-	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 	do_redirect 0
 	procd_send_signal $CONFIGURATION
 	echo "AdGuardHome turn off"
