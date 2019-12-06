@@ -57,7 +57,7 @@ o.validate=function(self, value)
 end
 o.write = function(self, section, value)
 	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
-	io.popen("sleep 1 ;/etc/init.d/AdGuardHome reload & ;")
+	io.popen("sleep 1 ;/etc/init.d/AdGuardHome reload &")
 end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
