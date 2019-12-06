@@ -264,7 +264,7 @@ start_service() {
 	local ADDITIONAL_ARGS=""
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
-	# hack to save config file when upgrade system
+	
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	mkdir -p ${binpath%/*}
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
@@ -275,7 +275,12 @@ start_service() {
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 	mkdir -p $workdir/data
-
+	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
+	# hack to save config file when upgrade system
+	config_get keepdb $CONFIGURATION keepdb 0
+	if [ "$keepdb" -eq 1 ]; then
+		echo -e "$workdir/data/sessions.db\n$workdir/data/stats.db\n$workdir/data/querylog.json">>/lib/upgrade/keep.d/luci-app-adguardhome
+	fi
 	config_get logfile $CONFIGURATION logfile ""
 	if [ ! -z "$logfile" ]; then
 		ADDITIONAL_ARGS="$ADDITIONAL_ARGS -l $logfile"

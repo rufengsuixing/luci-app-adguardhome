@@ -168,3 +168,6 @@ msgstr "逆序"
 
 msgid "Fast config"
 msgstr "快速配置"
+
+msgid "Keep database when system upgrade"
+msgstr "系统升级时保留数据"

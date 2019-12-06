@@ -117,6 +117,9 @@ o = s:option(Value, "hashpass", translate("Change browser management password"),
 o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"
+---- database protect
+o = s:option(Flag, "keepdb", translate("Keep database when system upgrade"))
+o.default = 0
 
 function mp.on_commit(map)
 	io.popen("/etc/init.d/AdGuardHome reload &")
