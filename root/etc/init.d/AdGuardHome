@@ -106,7 +106,7 @@ clear_iptable()
 
 service_triggers() {
 	procd_add_reload_trigger firewall
-	procd_add_reload_trigger "CONFIGURATION"
+	procd_add_reload_trigger "$CONFIGURATION"
 }
 
 get_tz()
@@ -131,12 +131,6 @@ get_tz()
 	fi
 	
 	SET_TZ=$tz
-}
-
-reload_service()
-{
-	stop
-	start
 }
 
 do_redirect() 
