@@ -118,9 +118,8 @@ o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"
 
-local apply = luci.http.formvalue("cbi.apply")
- if apply then
-     io.popen("sleep 1 ;/etc/init.d/AdGuardHome reload &")
+function mp.on_commit(map)
+	io.popen("/etc/init.d/AdGuardHome reload &")
 end
 
 return mp

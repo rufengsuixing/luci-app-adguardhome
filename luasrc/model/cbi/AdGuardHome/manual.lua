@@ -54,10 +54,11 @@ o.validate=function(self, value)
 	else
 		return value
 	end
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
+	return nil
 end
 o.write = function(self, section, value)
 	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
-	io.popen("sleep 1 ;/etc/init.d/AdGuardHome reload &")
 end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
@@ -84,8 +85,10 @@ o=s:option(Button,"","")
 o.inputtitle=translate("Reload Config")
 o.write=function()
 	NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
-	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome","manual"))
 end
 end
+end
+function m.on_commit(map)
+	io.popen("/etc/init.d/AdGuardHome reload &")
 end
 return m
