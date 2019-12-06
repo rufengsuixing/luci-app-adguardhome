@@ -44,6 +44,6 @@ Complex openwrt AdGuardHome luci
  - openwrt 19 found enable flag is reversed, need more information
 #### pic
 example in zh-cn:<br>
-![example1](https://user-images.githubusercontent.com/22387141/69557384-7698b900-0fe1-11ea-96a6-85786fec06ac.png)
-![example2](https://user-images.githubusercontent.com/22387141/69949917-59a63d80-152d-11ea-9a90-3602f533200c.png)
-![example3](https://user-images.githubusercontent.com/22387141/69854039-09c43e00-12c3-11ea-8827-7725d295a471.png)
+![Screenshot_2019-12-06 newifi-d1-home - 基础设置 - LuCI](https://user-images.githubusercontent.com/22387141/70305470-74372a00-183f-11ea-80fd-6fd96262c789.png)
+![Screenshot_2019-12-06 newifi-d1-home - 日志 - LuCI](https://user-images.githubusercontent.com/22387141/70305550-a8aae600-183f-11ea-92c7-eb1e085143f5.png)
+![Screenshot_2019-12-06 newifi-d1-home - 手动设置 - LuCI](https://user-images.githubusercontent.com/22387141/70305555-ab0d4000-183f-11ea-87c2-22315891b4c4.png)
