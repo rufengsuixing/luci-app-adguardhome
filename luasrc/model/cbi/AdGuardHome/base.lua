@@ -109,7 +109,7 @@ luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
 luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
 o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service"))
-o.default     = "tcp://208.67.220.220#5353"
+o.default     = "tcp://208.67.220.220:5353"
 o.datatype    = "string"
 ---- chpass
 
