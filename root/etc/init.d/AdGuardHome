@@ -132,25 +132,43 @@ get_tz()
 	
 	SET_TZ=$tz
 }
-exchange_port()
+
+rm_port53()
 {
+	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
 	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port)
 	if [ -z "$dnsmasq_port" ]; then
 	dnsmasq_port="53"
 	fi
-	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
 	if [ "$dnsmasq_port" == "$AdGuardHome_PORT" ]; then
 		if [ "$dnsmasq_port" == "53" ]; then
-			AdGuardHome_PORT="1745"
-		else
-			AdGuardHome_PORT="53"
+			dnsmasq_port="1745"
 		fi
 	fi
 	config_editor "dns.port" "$dnsmasq_port" "$configpath"
+	uci set dhcp.@dnsmasq[0].port="53"
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+}
+
+use_port53()
+{
+	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
+	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port)
+	if [ -z "$dnsmasq_port" ]; then
+		dnsmasq_port="53"
+	fi
+	if [ "$dnsmasq_port" == "$AdGuardHome_PORT" ]; then
+		if [ "$dnsmasq_port" == "53" ]; then
+			AdGuardHome_PORT="1745"
+		fi
+	fi
+	config_editor "dns.port" "53" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="$AdGuardHome_PORT"
 	uci commit dhcp
 	/etc/init.d/dnsmasq reload
 }
+
 do_redirect() 
 {
 	config_load "${CONFIGURATION}"
@@ -179,7 +197,7 @@ do_redirect()
 			elif [ "$old_redirect" == "dnsmasq-upstream" ]; then
 				stop_forward_dnsmasq "$old_port"
 			elif [ "$old_redirect" == "exchange" ]; then
-				exchange_port
+				rm_port53
 			fi
 		fi
 	elif [ "$old_enabled" = "1" -a "$enabled" = "1" ]; then
@@ -204,7 +222,7 @@ do_redirect()
 	elif [ "$redirect" = "dnsmasq-upstream" ]; then
 		set_forward_dnsmasq "$AdGuardHome_PORT"
 	elif [ "$redirect" == "exchange" -a "$(uci get dhcp.@dnsmasq[0].port)" == "53" ]; then
-		exchange_port
+		use_port53
 	fi
 }
 get_filesystem()
