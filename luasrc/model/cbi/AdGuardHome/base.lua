@@ -125,5 +125,5 @@ o.default = 0
 function mp.on_commit(map)
 	io.popen("/etc/init.d/AdGuardHome reload &")
 end
-
+nixio.fs.writefile("/var/run/lucilogpos","0")
 return mp
