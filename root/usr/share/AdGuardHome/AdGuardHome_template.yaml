@@ -1,5 +1,5 @@
-#提交就可以直接用的配置模板文件,使用重定向dnsmasq上游
-#a template config can be use with a apply，use redirect with dnsmasq upstream
+#提交就可以直接用的配置模板文件
+#a template config can be use with a apply
 bind_host: 0.0.0.0
 bind_port: 3000
 users:
@@ -8,7 +8,7 @@ users:
 language: ""
 rlimit_nofile: 0
 dns:
-  bind_host: 127.0.0.1
+  bind_host: 0.0.0.0
   port: 5553
   statistics_interval: 1
   protection_enabled: true
