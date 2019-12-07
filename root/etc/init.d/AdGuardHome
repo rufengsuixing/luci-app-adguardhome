@@ -162,7 +162,7 @@ do_redirect()
 	config_get "old_port" "$section" "old_port" "0"
 	config_get "old_enabled" "$section" "old_enabled" "0"
 	if [ "$old_redirect" == "exchange" -a "$AdGuardHome_PORT" == "53" ]; then
-		$AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port)
+		AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port)
 	fi
 	
 	if [ "$old_redirect" != "$redirect" ] || [ "$old_port" != "$AdGuardHome_PORT" ] || [ "$old_enabled" = "1" -a "$enabled" = "0" ]; then
@@ -352,6 +352,7 @@ start_service() {
 		fi
 	fi
 	echo "AdGuardHome turn on"
+	(sleep 10 && [ -z "$(pgrep $binpath)" ] && do_redirect 0 )&
 	fi
 }
 reload_service()
