@@ -139,6 +139,13 @@ exchange_port()
 	dnsmasq_port="53"
 	fi
 	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
+	if [ "$dnsmasq_port" == "$AdGuardHome_PORT" ]; then
+		if [ "$dnsmasq_port" == "53" ]; then
+			AdGuardHome_PORT="1745"
+		else
+			AdGuardHome_PORT="53"
+		fi
+	fi
 	config_editor "dns.port" "$dnsmasq_port" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="$AdGuardHome_PORT"
 	uci commit dhcp
