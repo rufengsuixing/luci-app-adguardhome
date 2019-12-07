@@ -64,6 +64,7 @@ o.placeholder = "none"
 o:value("none", translate("none"))
 o:value("dnsmasq-upstream", translate("Run as dnsmasq upstream server"))
 o:value("redirect", translate("Redirect 53 port to AdGuardHome"))
+o:value("exchange", translate("Use port 53 replace dnsmasq"))
 o.default     = "none"
 
 ---- bin path

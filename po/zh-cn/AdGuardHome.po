@@ -171,3 +171,6 @@ msgstr "快速配置"
 
 msgid "Keep database when system upgrade"
 msgstr "系统升级时保留数据"
+
+msgid "Use port 53 replace dnsmasq"
+msgstr "使用53端口替换dnsmasq"
