@@ -19,6 +19,7 @@
  - db数据库不支持放在不支持mmap的文件系统上比如 jffs2 data-stk-oo，请修改工作目录，本软件如果检测到jffs2会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191
+ - 反馈出现大量127.0.0.1查询localhost的请求，问题出现原因是ddns插件，如果不用ddns插件，请删空ddns插件中的所有规则，插件中的每一个规则会在一秒钟产生一个这样的请求（只出现在mips上）
 #### 项目已经基本稳定，有bug欢迎主动反馈
 
 
