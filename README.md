@@ -7,7 +7,7 @@
  - dns重定向
    - 作为dnsmasq的上游服务器
    - 重定向53端口到 AdGuardHome（ipv6需要开启ipv6 nat redirect 否则如果客户端使用ipv6重定向无效）
-   - 使用53端口替换 dnsmasq
+   - 使用53端口替换 dnsmasq(需要设置监听AGH,dnsip为0.0.0.0, AGH和dnsmasq的端口将被交换)
  - 自定义执行文件路径（支持tmp，每次重启后自动下载bin）
  - 自定义配置文件路径
  - 自定义工作路径
@@ -35,6 +35,9 @@ Complex openwrt AdGuardHome luci
  - download/update core in luci
  - compress core with upx
  - redirect dns
+   - as the upstream of dnsmasq
+   - redirect port 53 to AdGuardHome（ipv6 need to install ipv6 nat redirect or  if client use ipv6 redirect is invalid）
+   - replace dnsmasq with port 53 (need to set AGH,dnsip=0.0.0.0,the port of dnsmasq and AGH will be exchange)
  - change bin path
  - change config path
  - change work dir(support tmp,auto redownload after reboot)
@@ -47,8 +50,13 @@ Complex openwrt AdGuardHome luci
  - Keep bin file and config when system upgrade (database and querylog can be choose) 
 #### known issues:
  - db database not support filesystem which not support mmap such as jffs2 and data-stk-oo,please modify work dir,if jffs2 is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
- - AdGuardhome not support ipset,when we use ipset ,it can`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
+ - AdGuardhome not support ipset,when we use ipset ,it can\`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191<br>
+ - find so many localhost query from 127.0.0.1,the ddns plugin is the reason,if you don\`t use ddns,please del all the rules in it,every rules in it will make a such query every one second (just on mips) 
+#### usage
+ - download release，install it with opkg
+ - or when make op,clone the code to the package path and set it as y or m
+
 #### pic
 example in zh-cn:<br>
 ![Screenshot_2019-12-06 newifi-d1-home - 基础设置 - LuCI](https://user-images.githubusercontent.com/22387141/70305470-74372a00-183f-11ea-80fd-6fd96262c789.png)
