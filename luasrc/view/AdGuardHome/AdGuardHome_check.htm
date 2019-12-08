@@ -35,7 +35,7 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 				var	btn = document.getElementById('apply_update_button');
 				btn.disabled = false;
 				btn.value    = '<%:Updated%>';
-				document.getElementById('updateversion').innerText="<%=uci:get("AdGuardHome","AdGuardHome","version")%>"
+				document.getElementById('updateversion').innerText='<%=uci:get("AdGuardHome","AdGuardHome","version")%>'
 				}
 				}
 				return	
