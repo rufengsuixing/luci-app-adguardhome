@@ -71,6 +71,13 @@ o.default     = "none"
 o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin path if no bin will auto download"))
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
+o.validate=function(self, value)
+if fs.stat(value,"type")=="dir" then
+	mp.message ="error!bin path is a dir"
+	return nil
+end 
+return value
+end
 --- upx
 o = s:option(ListValue, "upxflag", translate("use upx to compress bin after download"))
 o:value("", translate("none"))
@@ -85,14 +92,35 @@ o.description=translate("bin use less space,but may have compatibility issues")
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
+o.validate=function(self, value)
+if fs.stat(value,"type")=="dir" then
+	mp.message ="error!config path is a dir"
+	return nil
+end 
+return value
+end
 ---- work dir
 o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome work dir include rules,audit log and database"))
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
+o.validate=function(self, value)
+if fs.stat(value,"type")=="reg" then
+	mp.message ="error!work dir is a file"
+	return nil
+end 
+return value
+end
 ---- log file
 o = s:option(Value, "logfile", translate("Runtime log file"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
 o.default     = ""
 o.datatype    = "string"
+o.validate=function(self, value)
+if fs.stat(value,"type")=="dir" then
+	mp.message ="error!log file is a dir"
+	return nil
+end 
+return value
+end
 ---- debug
 o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
