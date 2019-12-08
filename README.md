@@ -5,9 +5,9 @@
  - luci下载/更新核心版本
  - upx 压缩核心（xz依赖，脚本自动下载）
  - dns重定向
-   - 作为dnsmasq的上游服务器
-   - 重定向53端口到 AdGuardHome（ipv6需要开启ipv6 nat redirect 否则如果客户端使用ipv6重定向无效）
-   - 使用53端口替换 dnsmasq(需要设置监听AGH,dnsip为0.0.0.0, AGH和dnsmasq的端口将被交换)
+   - 作为dnsmasq的上游服务器(在AGH中无法统计客户端信息，也无法针对客户端调整设置，ssr-plus正常)
+   - 重定向53端口到 AdGuardHome（ipv6需要开启ipv6 nat redirect 否则如果客户端使用ipv6过滤无效，不以dnsmasq为上游ssr-plus失效）
+   - 使用53端口替换 dnsmasq(需要设置AGH,dnsip为0.0.0.0, AGH和dnsmasq的端口将被交换，不以dnsmasq为上游ssr-plus失效)
  - 自定义执行文件路径（支持tmp，每次重启后自动下载bin）
  - 自定义配置文件路径
  - 自定义工作路径
