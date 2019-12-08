@@ -3,7 +3,7 @@
 
  - 可以管理网页端口
  - luci下载/更新核心版本
- - upx 压缩核心
+ - upx 压缩核心（xz依赖，脚本自动下载）
  - dns重定向
  - 自定义执行文件路径（支持tmp，每次重启后自动下载bin）
  - 自定义配置文件路径
@@ -20,6 +20,9 @@
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191
  - 反馈出现大量127.0.0.1查询localhost的请求，问题出现原因是ddns插件，如果不用ddns插件，请删空ddns插件中的所有规则，插件中的每一个规则会在一秒钟产生一个这样的请求（只出现在mips上）
+#### 使用方法
+ - 下载release，使用opkg安装即可
+ - 或者编译op时clone本项目加入软件包并勾选
 #### 项目已经基本稳定，有bug欢迎主动反馈
 
 
