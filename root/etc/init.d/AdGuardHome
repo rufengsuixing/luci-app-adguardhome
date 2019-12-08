@@ -136,7 +136,7 @@ get_tz()
 rm_port53()
 {
 	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
-	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port)
+	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)
 	if [ -z "$dnsmasq_port" ]; then
 	dnsmasq_port="53"
 	fi
@@ -156,7 +156,7 @@ rm_port53()
 use_port53()
 {
 	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
-	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port)
+	dnsmasq_port=$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)
 	if [ -z "$dnsmasq_port" ]; then
 		dnsmasq_port="53"
 	fi
@@ -191,7 +191,7 @@ do_redirect()
 	config_get "old_port" "$section" "old_port" "0"
 	config_get "old_enabled" "$section" "old_enabled" "0"
 	if [ "$old_enabled" = "1" -a "$old_redirect" == "exchange" ]; then
-		AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port)
+		AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)
 	fi
 	
 	if [ "$old_redirect" != "$redirect" ] || [ "$old_port" != "$AdGuardHome_PORT" ] || [ "$old_enabled" = "1" -a "$enabled" = "0" ]; then
@@ -225,7 +225,7 @@ do_redirect()
 		set_iptable $ipv6_server $tcp_server
 	elif [ "$redirect" = "dnsmasq-upstream" ]; then
 		set_forward_dnsmasq "$AdGuardHome_PORT"
-	elif [ "$redirect" == "exchange" -a "$(uci get dhcp.@dnsmasq[0].port)" == "53" ]; then
+	elif [ "$redirect" == "exchange" -a "$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)" == "53" ]; then
 		use_port53
 	fi
 }
