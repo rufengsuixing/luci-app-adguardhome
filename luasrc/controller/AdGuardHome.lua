@@ -19,6 +19,12 @@ function act_status()
 	local e={}
 	binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
 	e.running=luci.sys.call("pgrep "..binpath.." >/dev/null")==0
+	st=nixio.fs.readfile("/var/run/AdGredir")
+	if (st=="0") then
+		e.redirect=false
+	else
+		e.redirect=true
+	end
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end

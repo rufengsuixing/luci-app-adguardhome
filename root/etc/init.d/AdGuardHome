@@ -181,6 +181,11 @@ do_redirect()
 	ipv6_server=1
 	tcp_server=0
 	enabled=$1
+	if [ "$enabled" == "1" ]; then
+		echo -n "1">/var/run/AdGredir
+	else
+		echo -n "0">/var/run/AdGredir
+	fi
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	AdGuardHome_PORT=$(awk '/  port:/{printf($2)}' $configpath)
 	if [ -z "$AdGuardHome_PORT" ]; then
