@@ -18,11 +18,12 @@
  - 手动修改配置文件(支持yaml编辑器)
  - 使用模板快速配置(没有配置文件时)
  - 系统升级保留程序和配置（查询日志和数据库可选保留)
+ - 开机启动时等待网络准备延迟启动
 #### 已知问题：
  - db数据库不支持放在不支持mmap的文件系统上比如 jffs2 data-stk-oo，请修改工作目录，本软件如果检测到jffs2会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191
- - 反馈出现大量127.0.0.1查询localhost的请求，问题出现原因是ddns插件，如果不用ddns插件，请删空ddns插件中的所有规则，插件中的每一个规则会在一秒钟产生一个这样的请求（只出现在mips上）
+ - 反馈出现大量127.0.0.1查询localhost的请求，问题出现原因是ddns插件，如果不用ddns插件，请删除或者注释掉\etc\hotplug.d\iface\95-ddns的内容
 #### 使用方法
  - 下载release，使用opkg安装即可
  - 或者编译op时clone本项目加入软件包并勾选
@@ -61,7 +62,7 @@ Complex openwrt AdGuardHome luci
  - db database not support filesystem which not support mmap such as jffs2 and data-stk-oo,please modify work dir,if jffs2 is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
  - AdGuardhome not support ipset,when we use ipset ,it can\`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191<br>
- - find so many localhost query from 127.0.0.1,the ddns plugin is the reason,if you don\`t use ddns,please del all the rules in it,every rules in it will make a such query every one second (just on mips) 
+ - find so many localhost query from 127.0.0.1,the ddns plugin is the reason,if you don\`t use ddns, please remove or comment \etc\hotplug.d\iface\95-ddns
 #### usage
  - download release，install it with opkg
  - or when make op,clone the code to the package path and set it as y or m
