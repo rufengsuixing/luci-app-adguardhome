@@ -160,6 +160,13 @@ o.description=translate("Will be restore when workdir/data is empty")
 o = s:option(Value, "backupwdpath", translate("Backup workdir path"))
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
+o.validate=function(self, value)
+if fs.stat(value,"type")=="reg" then
+	mp.message ="error!backup dir is a file"
+	return nil
+end 
+return value
+end
 function mp.on_commit(map)
 	io.popen("/etc/init.d/AdGuardHome reload &")
 end
