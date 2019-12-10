@@ -26,7 +26,7 @@ do
 	fi
 	sleep 5
 	count=$((count+1))
-	if [ $count > 18 ]; then
+	if [ $count -gt 18 ]; then
 		/etc/init.d/AdGuardHome reload
 		break
 	fi
