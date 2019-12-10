@@ -328,6 +328,11 @@ start_service() {
 	
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
+	config_get backupwd $CONFIGURATION backupwd "0"
+	if [ "$backupwd" == "1" ] && [ ! -d "$workdir/data" ]; then
+		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
+		cp -r -f $backupwdpath/data $workdir/
+	fi
 	mkdir -p $workdir/data
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	# hack to save config file when upgrade system
@@ -402,6 +407,8 @@ reload_service()
 {
 	config_load "${CONFIGURATION}"
 	echo "AdGuardHome reloading"
+	pgrep /usr/share/AdGuardHome/watchconfig.sh | xargs kill 2>/dev/null
+	pgrep /usr/share/AdGuardHome/waitnet.sh | xargs kill 2>/dev/null
 	config_get_bool enabled $CONFIGURATION enabled 0
 	procd_send_signal $CONFIGURATION
 	if [ "$enabled" == "0" ]; then
@@ -417,6 +424,12 @@ stop_service()
 	procd_send_signal $CONFIGURATION
 	pgrep /usr/share/AdGuardHome/watchconfig.sh | xargs kill 2>/dev/null
 	pgrep /usr/share/AdGuardHome/waitnet.sh | xargs kill 2>/dev/null
+	config_get backupwd $CONFIGURATION backupwd "0"
+	if [ "$backupwd" == "1" ]; then
+		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
+		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
+		cp -r -f $workdir/data $backupwdpath/
+	fi
 	echo "AdGuardHome turn off"
 	echo "enabled=$enabled"
 }

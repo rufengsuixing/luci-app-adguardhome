@@ -152,7 +152,14 @@ o.default = 0
 ---- wait net on boot
 o = s:option(Flag, "waitonboot", translate("Boot delay until network ok"))
 o.default = 1
-
+---- backup workdir on shutdown
+o = s:option(Flag, "backupwd", translate("Backup workdir when shutdown"))
+o.default = 0
+o.description=translate("Will be restore when workdir/data is empty")
+----backup workdir path
+o = s:option(Value, "backupwdpath", translate("Backup workdir path"))
+o.default     = "/usr/bin/AdGuardHome"
+o.datatype    = "string"
 function mp.on_commit(map)
 	io.popen("/etc/init.d/AdGuardHome reload &")
 end
