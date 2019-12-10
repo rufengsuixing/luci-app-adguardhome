@@ -364,13 +364,13 @@ start_service() {
 		logger "AdGuardHome" "warning db redirect to tmp"
 		touch $workdir/data/stats.db
 		if [ ! -L $workdir/data/stats.db ]; then
-		mv -f $workdir/data/stats.db /tmp/stats.db
-		ln -s /tmp/stats.db $workdir/data/stats.db
+		mv -f $workdir/data/stats.db /tmp/stats.db 2>/dev/null
+		ln -s /tmp/stats.db $workdir/data/stats.db 2>/dev/null
 		fi
 		touch $workdir/data/sessions.db
 		if [ ! -L $workdir/data/sessions.db ]; then
-		mv -f $workdir/data/sessions.db /tmp/sessions.db
-		ln -s /tmp/sessions.db $workdir/data/sessions.db
+		mv -f $workdir/data/sessions.db /tmp/sessions.db 2>/dev/null
+		ln -s /tmp/sessions.db $workdir/data/sessions.db 2>/dev/null
 		fi
 	fi
 	procd_open_instance
@@ -398,7 +398,7 @@ start_service() {
 		fi
 	fi
 	echo "AdGuardHome turn on"
-	(sleep 10 && [ -z "$(pgrep $binpath)" ] && do_redirect 0 )&
+	(sleep 10 && [ -z "$(pgrep $binpath)" ] && logger "AdGuardHome" "no process in 10s cancel redirect" && do_redirect 0 )&
 	fi
 }
 reload_service()
