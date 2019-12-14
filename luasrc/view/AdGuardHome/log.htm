@@ -1,15 +1,22 @@
 <%+cbi/valueheader%>
 <%uci=require"luci.model.uci".cursor()%>
 <%nixio=require"nixio"%>
-
+<%logfile=uci:get("AdGuardHome","AdGuardHome","logfile")%>
+<%if (logfile=="syslog" or logfile==nil ) then%>
+<%timereplace=false%>
+<%else%>
+<%timereplace=true%>
+<%end%>
 <input type="checkbox" name="NAME" value="reverse" onclick=" return reverselog()" style="vertical-align:middle;height: auto;" checked><%:reverse%></input>
+<%if timereplace==true then%>
 <input type="checkbox" name="NAME" value="localtime" onclick=" return chlogtime()" style="vertical-align:middle;height: auto;" checked><%:localtime%></input><br>
+<%end%>
 <textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:inline" data-update="change" name="vbid.logview.1.conf" rows="32" cols="60" readonly="readonly" > </textarea>
 <input class="cbi-button cbi-button-apply" name="apply_update_button" id="apply_update_button" value="<%:dellog%>" onclick=" return apply_del_log() "/>
 <input class="cbi-button cbi-button-apply" name="backup" value="<%:download log%>" style=" display:inline;" onclick=" return download_log()" />
 <script type="text/javascript">//<![CDATA[
 var islogreverse = true;
-var isutc2local = true;
+var isutc2local = <%=tostring(timereplace)%>;
 function createAndDownloadFile(fileName, content) {
     var aTag = document.createElement('a');
     var blob = new Blob([content]);
