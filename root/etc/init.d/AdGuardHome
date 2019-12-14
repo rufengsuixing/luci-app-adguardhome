@@ -430,6 +430,7 @@ reload_service()
 			uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
 		fi
 	else
+		procd_send_signal $CONFIGURATION
 		start
 	fi
 	echo "enabled=$enabled"
