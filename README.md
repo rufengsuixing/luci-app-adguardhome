@@ -14,11 +14,11 @@
  - 自定义运行日志路径
  - gfwlist 定义上游dns服务器
  - 修改网页登陆密码
- - 倒序/正序 查看/删除/备份 每3秒更新显示运行日志
+ - 倒序/正序 查看/删除/备份 每3秒更新显示运行日志 + 本地浏览器时区转换
  - 手动修改配置文件(支持yaml编辑器)
  - 使用模板快速配置(没有配置文件时)
  - 系统升级保留程序和配置（查询日志和数据库可选保留)
- - 开机启动时等待网络准备延迟启动
+ - 开机启动时等待网络准备延迟启动(3分钟超时)
  - 关机时备份工作目录
 #### 已知问题：
  - db数据库不支持放在不支持mmap的文件系统上比如 jffs2 data-stk-oo，请修改工作目录，本软件如果检测到jffs2会自动ln(软连接)到/tmp，将会导致重启丢失dns数据库
@@ -59,6 +59,8 @@ Complex openwrt AdGuardHome luci
  - modify config manually(support yaml editor)
  - use template to fast config(when no config file)
  - Keep bin file and config when system upgrade (database and querylog can be choose) 
+ - when boot wait for network access （3min timeout）
+ - backup workdir when shutdown
 #### known issues:
  - db database not support filesystem which not support mmap such as jffs2 and data-stk-oo,please modify work dir,if jffs2 is found,will auto ln (soft link)the dbs to /tmp ,will lost dns database after reboot
  - AdGuardhome not support ipset,when we use ipset ,it can\`t be the repacement of dnsmasq but the upstream of dnsmasq ,if you want it,vote for it.<br>
