@@ -187,7 +187,12 @@ doupdate_core(){
 	echo -e "start download ${latest_ver}/AdGuardHome_linux_${Arch}.tar.gz" 
 	wget-ssl --no-check-certificate -t 2 -T 20 -O /tmp/AdGuardHomeupdate/AdGuardHome_linux_${Arch}.tar.gz "https://github.com/AdguardTeam/AdGuardHome/releases/download/${latest_ver}/AdGuardHome_linux_${Arch}.tar.gz" 2>&1
 	if [ "$?" != "0" ]; then
-		echo "download failed"
+		echo "github download failed try download from static.adguard.com"
+		wget-ssl --no-check-certificate -t 2 -T 20 -O /tmp/AdGuardHomeupdate/AdGuardHome_linux_${Arch}.tar.gz "https://static.adguard.com/adguardhome/release/AdGuardHome_linux_${Arch}.tar.gz" 2>&1
+		if [ "$?" != "0" ]; then
+			echo "download failed"
+			exit 1
+		fi
 	fi
 	tar -zxf "/tmp/AdGuardHomeupdate/AdGuardHome_linux_${Arch}.tar.gz" -C "/tmp/AdGuardHomeupdate/"
 	if [ ! -e "/tmp/AdGuardHomeupdate/AdGuardHome" ]; then
