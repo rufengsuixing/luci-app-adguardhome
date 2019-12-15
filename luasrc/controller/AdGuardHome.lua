@@ -16,7 +16,7 @@ entry({"admin", "services", "AdGuardHome"},
 	entry({"admin", "services", "AdGuardHome", "reloadconfig"}, call("reload_config"))
 end 
 function reload_config()
-	NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
+	nixio.fs.remove("/tmp/AdGuardHometmpconfig.yaml")
 	luci.http.prepare_content("application/json")
 	luci.http.write('')
 end
