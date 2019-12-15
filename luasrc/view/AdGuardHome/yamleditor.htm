@@ -21,6 +21,14 @@ foldGutter: true
 }
 );
 //]]>
+function reload_config(){
+	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[reloadconfig]])%>', null,
+	function(x, data) {
+	location.reload();
+	});
 </script> 
+<%if NXFS.access("/tmp/AdGuardHometmpconfig.yaml") then%>
+<input type="button" id="apply_update_button" value="<%:Reload Config%>" onclick=" return reload_config() "/>
+<%end%>
 <%+cbi/valuefooter%>
 	

@@ -63,13 +63,14 @@ end
 o.remove = function(self, section, value)
 	NXFS.writefile(escconf, "")
 end
+--- js and reload button
 o = s:option(DummyValue, "")
 o.anonymous=true
 o.template = "AdGuardHome/yamleditor"
 if not NXFS.access(binpath) then
 	o.description=translate("WARNING!!! no bin found apply config will not be test")
 end
---- log
+--- log 
 if (NXFS.access("/tmp/AdGuardHometmpconfig.yaml")) then
 local c=NXFS.readfile("/tmp/AdGuardHometest.log")
 if (c~="") then
@@ -77,14 +78,9 @@ o = s:option(TextValue, "")
 o.readonly=true
 o.rows = 5
 o.rmempty = true
+o.name=""
 o.cfgvalue = function(self, section)
 	return NXFS.readfile("/tmp/AdGuardHometest.log")
-end
---- reload config
-o=s:option(Button,"","")
-o.inputtitle=translate("Reload Config")
-o.write=function()
-	NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
 end
 end
 end

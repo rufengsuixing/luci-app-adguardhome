@@ -13,8 +13,13 @@ entry({"admin", "services", "AdGuardHome"},
 	entry({"admin", "services", "AdGuardHome", "doupdate"}, call("do_update"))
 	entry({"admin", "services", "AdGuardHome", "getlog"}, call("get_log"))
 	entry({"admin", "services", "AdGuardHome", "dodellog"}, call("do_dellog"))
+	entry({"admin", "services", "AdGuardHome", "reloadconfig"}, call("reload_config"))
 end 
-
+function reload_config()
+	NXFS.remove("/tmp/AdGuardHometmpconfig.yaml")
+	luci.http.prepare_content("application/json")
+	luci.http.write('')
+end
 function act_status()
 	local e={}
 	binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
