@@ -187,3 +187,8 @@ msgstr "在工作目录/data为空的时候恢复"
 msgid "Backup workdir path"
 msgstr "工作目录备份路径"
 
+msgid "Auto update core with crontab"
+msgstr "计划任务自动更新核心"
+
+msgid "localtime"
+msgstr "本地时间"

@@ -167,5 +167,7 @@ if fs.stat(value,"type")=="reg" then
 end 
 return value
 end
+o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
+o.default = 0
 nixio.fs.writefile("/var/run/lucilogpos","0")
 return mp

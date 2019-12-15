@@ -6,6 +6,7 @@ START=95
 STOP=01
 
 CONFIGURATION=AdGuardHome
+CRON_FILE=/etc/crontabs/root
 EXTRA_COMMANDS="do_redirect"
 EXTRA_HELP="        do_redirect 0 or 1"
 set_forward_dnsmasq()
@@ -412,6 +413,7 @@ start_service() {
 			echo "no config start watching"
 		fi
 	fi
+	do_crontab
 	echo "AdGuardHome turn on"
 	(sleep 10 && [ -z "$(pgrep $binpath)" ] && logger "AdGuardHome" "no process in 10s cancel redirect" && do_redirect 0 )&
 	fi
@@ -424,6 +426,7 @@ reload_service()
 	if [ "$enabled" == "0" ]; then
 		procd_kill $CONFIGURATION
 		do_redirect 0
+		do_crontab
 		config_get hashpass $CONFIGURATION hashpass ""
 		if [ -n "$hashpass" ]; then
 			config_editor "users.password" "$hashpass" "$configpath"
@@ -439,6 +442,7 @@ stop_service()
 {
 	config_load "${CONFIGURATION}"
 	do_redirect 0
+	do_crontab
 	config_get backupwd $CONFIGURATION backupwd "0"
 	if [ "$backupwd" == "1" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
@@ -452,5 +456,24 @@ boot() {
 	rc_procd boot_service "$@"
 	if eval "type service_started" 2>/dev/null >/dev/null; then
 		service_started
+	fi
+}
+do_crontab(){
+	config_get autoupdate $CONFIGURATION autoupdate "0"
+	grep "/usr/share/AdGuardHome/update_core.sh"  $CRON_FILE
+	if [ "$?" == "0" ]; then
+		if [ $autoupdate -eq 1 ]; then
+			return
+		else
+			sed -i '/\/usr\/share\/AdGuardHome\/update_core.sh/d' $CRON_FILE
+			/etc/init.d/cron restart
+		fi
+	else
+		if [ $autoupdate -eq 1 ]; then
+			echo '30 3 * * * /usr/share/AdGuardHome/update_core.sh 2>&1' >> $CRON_FILE
+			/etc/init.d/cron restart
+		else
+			return
+		fi
 	fi
 }
