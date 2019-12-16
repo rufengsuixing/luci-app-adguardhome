@@ -448,15 +448,13 @@ if [ "$btarget"x == "$wtarget"x ]; then
 	rm -f $backupwdpath/data/$btarget
 	return 0
 fi
-if [ -n "$btarget" ]; then
-	rm -f $backupwdpath/data/$btarget
+if [ "$btarget" \> "$wtarget" ]; then
+	rm -f $backupwdpath/data/$btarget 
 	return 0
-fi
-if [ -n "$wtarget" ]; then
+else
 	rm -f $workdir/data/$wtarget
 	return 0
 fi
-return 1
 }
 stop_service()
 {
