@@ -467,8 +467,10 @@ stop_service()
 		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 		while :
 		do
-			cp -r -f $workdir/data $backupwdpath/data
-			if [ "$?" == "39" ]; then
+			cpret=$(cp -r -f $workdir/data $backupwdpath/data 2>&1)
+			echo "$cpret"
+			echo "$cpret" | grep "no space left on device"
+			if [ "$?" == "0" ]; then
 				echo "磁盘已满,删除log重试中"
 				del_querylog && continue
 				rm -f -r $backupwdpath/data/filters
