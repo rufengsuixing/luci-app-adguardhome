@@ -1,6 +1,6 @@
 module("luci.controller.AdGuardHome",package.seeall)
-local fs=require"fs"
-local http=require"http"
+local fs=require"nixio.fs"
+local http=require"luci.http"
 local uci=require"luci.model.uci".cursor()
 function index()
 entry({"admin", "services", "AdGuardHome"},alias("admin", "services", "AdGuardHome", "base"),_("AdGuard Home"), 10).dependent = true

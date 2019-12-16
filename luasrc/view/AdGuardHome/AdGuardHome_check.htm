@@ -1,5 +1,5 @@
 <%+cbi/valueheader%>
-<%fs=require"nixio.fs"%>
+<%local fs=require"nixio.fs"%>
 <input type="button" class="cbi-button cbi-button-apply" id="apply_update_button" value="<%:Update core version%>" onclick=" return apply_update() "/>
 <% if self.showfastconfig then %>
 <input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
@@ -22,17 +22,14 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 	function(x, data) {
 		var lv = document.getElementById('cbid.logview.1.conf');
 		if (x.responseText && lv) {
-			if (x.responseText=="\u0000")
-			{
+			if (x.responseText=="\u0000"){
 				for(j = 0,len=this.XHR._q.length; j < len; j++) {
-				if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>')
-				{
-				this.XHR._q.splice(j,1);
-				var	btn = document.getElementById('apply_update_button');
-				btn.disabled = false;
-				btn.value    = '<%:Updated%>';
-				document.getElementById('updateversion').innerText='<%=uci:get("AdGuardHome","AdGuardHome","version")%>'
-				}
+					if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>'){
+					this.XHR._q.splice(j,1);
+					var	btn = document.getElementById('apply_update_button');
+					btn.disabled = false;
+					btn.value    = '<%:Updated%>';
+					}
 				}
 				return	
 			}

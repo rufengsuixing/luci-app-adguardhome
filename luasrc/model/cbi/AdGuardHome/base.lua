@@ -52,7 +52,7 @@ end
 o=s:option(Button,"restart",translate("Update"))
 o.inputtitle=translate("Update core version")
 o.template = "AdGuardHome/AdGuardHome_check"
-if fs.access(configpath)
+if fs.access(configpath) then
 o.showfastconfig=false
 else
 o.showfastconfig=true
