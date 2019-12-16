@@ -1,7 +1,6 @@
-local e=require"nixio.fs"
+local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
-logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
-
+local f,t
 f=SimpleForm("logview")
 f.reset = false
 f.submit = false
@@ -10,5 +9,11 @@ t.rmempty=true
 t.rows=20
 t.template="AdGuardHome/log"
 t.readonly="readonly"
-nixio.fs.writefile("/var/run/lucilogpos","0")
+local logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
+if (logfile=="syslog" or logfile==nil ) then
+t.timereplace=false
+else
+t.timereplace=true
+end
+fs.writefile("/var/run/lucilogpos","0")
 return f

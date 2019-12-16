@@ -1,14 +1,10 @@
 <%+cbi/valueheader%>
-<%uci=require"luci.model.uci".cursor()%>
-<%nixio=require"nixio"%>
-
+<%fs=require"nixio.fs"%>
 <input type="button" class="cbi-button cbi-button-apply" id="apply_update_button" value="<%:Update core version%>" onclick=" return apply_update() "/>
-<% if not nixio.fs.access(uci:get("AdGuardHome","AdGuardHome","configpath"))then %>
+<% if self.showfastconfig then %>
 <input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
 <%end%>
-
-
-		<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
+<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
 <script type="text/javascript">//<![CDATA[
 function apply_update(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,function(x, data){}
@@ -44,12 +40,12 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 		}
 	}
 );}
-<% if nixio.fs.access("/var/run/update_core") then %>
+<% if fs.access("/var/run/update_core") then %>
 var	btn = document.getElementById('apply_update_button');
 	btn.disabled = true;
 	btn.value    = '<%:Check...%>';
 poll_check();
-<%elseif nixio.fs.access("/var/run/update_core_error") then %>
+<%elseif fs.access("/var/run/update_core_error") then %>
 poll_check();
 <%else%>
 var	btn = document.getElementById('apply_update_button');
@@ -57,6 +53,4 @@ var	btn = document.getElementById('apply_update_button');
 <%end%>
 //]]>
 </script>
-		
-
 <%+cbi/valuefooter%>

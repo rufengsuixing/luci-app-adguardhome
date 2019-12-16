@@ -192,3 +192,9 @@ msgstr "计划任务自动更新核心"
 
 msgid "localtime"
 msgstr "本地时间"
+
+msgid "Redirected"
+msgstr "已重定向"
+
+msgid "Not redirect"
+msgstr "未重定向"

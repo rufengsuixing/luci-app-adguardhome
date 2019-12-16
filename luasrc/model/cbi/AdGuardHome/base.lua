@@ -1,8 +1,9 @@
 require("luci.sys")
 require("luci.util")
+require("io")
+local m,s,o
 local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
-require("io")
 local configpath=uci:get("AdGuardHome","AdGuardHome","configpath")
 if (configpath==nil) then
 configpath="/etc/AdGuardHome.yaml"
@@ -15,11 +16,11 @@ local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath
 if (httpport=="") then
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport") or "3000"
 end
-mp = Map("AdGuardHome", "AdGuard Home")
-mp.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
-mp:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
+m = Map("AdGuardHome", "AdGuard Home")
+m.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
+m:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
 
-s = mp:section(TypedSection, "AdGuardHome")
+s = m:section(TypedSection, "AdGuardHome")
 s.anonymous=true
 s.addremove=false
 ---- enable
@@ -34,8 +35,8 @@ o.datatype="port"
 o.rmempty=false
 o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
-version=uci:get("AdGuardHome","AdGuardHome","version")
-e=""
+local version=uci:get("AdGuardHome","AdGuardHome","version")
+local e=""
 if not fs.access(configpath) then
 	e=e.." no config"
 end
@@ -51,8 +52,12 @@ end
 o=s:option(Button,"restart",translate("Update"))
 o.inputtitle=translate("Update core version")
 o.template = "AdGuardHome/AdGuardHome_check"
+if fs.access(configpath)
+o.showfastconfig=false
+else
+o.showfastconfig=true
+end
 o.description=string.format(translate("core version got last time:").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
-
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
 if (port=="") then
@@ -66,14 +71,13 @@ o:value("dnsmasq-upstream", translate("Run as dnsmasq upstream server"))
 o:value("redirect", translate("Redirect 53 port to AdGuardHome"))
 o:value("exchange", translate("Use port 53 replace dnsmasq"))
 o.default     = "none"
-
 ---- bin path
 o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin path if no bin will auto download"))
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
-	mp.message ="error!bin path is a dir"
+	m.message ="error!bin path is a dir"
 	return nil
 end 
 return value
@@ -94,7 +98,7 @@ o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
-	mp.message ="error!config path is a dir"
+	m.message ="error!config path is a dir"
 	return nil
 end 
 return value
@@ -105,7 +109,7 @@ o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="reg" then
-	mp.message ="error!work dir is a file"
+	m.message ="error!work dir is a file"
 	return nil
 end 
 return value
@@ -116,7 +120,7 @@ o.default     = ""
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
-	mp.message ="error!log file is a dir"
+	m.message ="error!log file is a dir"
 	return nil
 end 
 return value
@@ -141,7 +145,6 @@ o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), tra
 o.default     = "tcp://208.67.220.220:5353"
 o.datatype    = "string"
 ---- chpass
-
 o = s:option(Value, "hashpass", translate("Change browser management password"), translate("Press load culculate model and culculate finally save/apply"))
 o.default     = ""
 o.datatype    = "string"
@@ -162,12 +165,12 @@ o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="reg" then
-	mp.message ="error!backup dir is a file"
+	m.message ="error!backup dir is a file"
 	return nil
 end 
 return value
 end
 o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
 o.default = 0
-nixio.fs.writefile("/var/run/lucilogpos","0")
-return mp
+fs.writefile("/var/run/lucilogpos","0")
+return m

@@ -1,5 +1,5 @@
 local m, s, o
-local NXFS = require "nixio.fs"
+local fs = require "nixio.fs"
 local uci=require"luci.model.uci".cursor()
 local sys=require"luci.sys"
 require("string")
@@ -32,7 +32,7 @@ function gen_template_config()
 	return table.concat(tbl, "\n")
 end
 m = Map("AdGuardHome")
-local escconf = uci:get("AdGuardHome","AdGuardHome","configpath")
+local configpath = uci:get("AdGuardHome","AdGuardHome","configpath")
 local binpath = uci:get("AdGuardHome","AdGuardHome","binpath")
 s = m:section(TypedSection, "AdGuardHome")
 s.anonymous=true
@@ -43,11 +43,11 @@ o.rows = 66
 o.wrap = "off"
 o.rmempty = true
 o.cfgvalue = function(self, section)
-	return  NXFS.readfile("/tmp/AdGuardHometmpconfig.yaml") or NXFS.readfile(escconf) or gen_template_config() or ""
+	return  fs.readfile("/tmp/AdGuardHometmpconfig.yaml") or fs.readfile(configpath) or gen_template_config() or ""
 end
 o.validate=function(self, value)
-    NXFS.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
-	if NXFS.access(binpath) then
+    fs.writefile("/tmp/AdGuardHometmpconfig.yaml", value:gsub("\r\n", "\n"))
+	if fs.access(binpath) then
 		if (sys.call(binpath.." -c /tmp/AdGuardHometmpconfig.yaml --check-config 2> /tmp/AdGuardHometest.log")==0) then
 			return value
 		end
@@ -58,21 +58,21 @@ o.validate=function(self, value)
 	return nil
 end
 o.write = function(self, section, value)
-	NXFS.move("/tmp/AdGuardHometmpconfig.yaml",escconf)
+	fs.move("/tmp/AdGuardHometmpconfig.yaml",configpath)
 end
 o.remove = function(self, section, value)
-	NXFS.writefile(escconf, "")
+	fs.writefile(configpath, "")
 end
 --- js and reload button
 o = s:option(DummyValue, "")
 o.anonymous=true
 o.template = "AdGuardHome/yamleditor"
-if not NXFS.access(binpath) then
+if not fs.access(binpath) then
 	o.description=translate("WARNING!!! no bin found apply config will not be test")
 end
 --- log 
-if (NXFS.access("/tmp/AdGuardHometmpconfig.yaml")) then
-local c=NXFS.readfile("/tmp/AdGuardHometest.log")
+if (fs.access("/tmp/AdGuardHometmpconfig.yaml")) then
+local c=fs.readfile("/tmp/AdGuardHometest.log")
 if (c~="") then
 o = s:option(TextValue, "")
 o.readonly=true
@@ -80,7 +80,7 @@ o.rows = 5
 o.rmempty = true
 o.name=""
 o.cfgvalue = function(self, section)
-	return NXFS.readfile("/tmp/AdGuardHometest.log")
+	return fs.readfile("/tmp/AdGuardHometest.log")
 end
 end
 end
