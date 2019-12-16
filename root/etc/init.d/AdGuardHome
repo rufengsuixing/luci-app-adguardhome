@@ -343,7 +343,7 @@ start_service() {
 	config_get backupwd $CONFIGURATION backupwd "0"
 	if [ "$backupwd" == "1" ] && [ ! -d "$workdir/data" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
-		cp -r -f $backupwdpath/data $workdir/
+		cp -r -f $backupwdpath/data $workdir/data
 	fi
 	mkdir -p $workdir/data
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
@@ -438,6 +438,26 @@ reload_service()
 	fi
 	echo "enabled=$enabled"
 }
+
+del_querylog(){
+local btarget=$(ls $backupwdpath/data | grep -F "querylog.json" | sort -r | head -n 1)
+local wtarget=$(ls $workdir/data | grep -F "querylog.json" | sort -r | head -n 1)
+if [ "$btarget"x == "$wtarget"x ]; then
+	[ -z "$btarget" ] && return 1
+	rm -f $workdir/data/$wtarget
+	rm -f $backupwdpath/data/$btarget
+	return 0
+fi
+if [ -n "$btarget" ]; then
+	rm -f $backupwdpath/data/$btarget
+	return 0
+fi
+if [ -n "$wtarget" ]; then
+	rm -f $workdir/data/$wtarget
+	return 0
+fi
+return 1
+}
 stop_service()
 {
 	config_load "${CONFIGURATION}"
@@ -447,7 +467,18 @@ stop_service()
 	if [ "$backupwd" == "1" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
 		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
-		cp -r -f $workdir/data $backupwdpath/
+		while :
+		do
+			cp -r -f $workdir/data $backupwdpath/data
+			if [ "$?" == "39" ]; then
+				echo "磁盘已满,删除log重试中"
+				del_querylog && continue
+				rm -f -r $backupwdpath/data/filters
+				rm -f -r $workdir/data/filters && continue
+				echo "backup failed"
+			fi
+			break
+		done
 	fi
 	echo "AdGuardHome turn off"
 	echo "enabled=$enabled"
