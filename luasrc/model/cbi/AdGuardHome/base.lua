@@ -58,6 +58,9 @@ o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
+	fs.rmdir(value)
+end
+if fs.stat(value,"type")=="dir" then
 	if (m.message) then
 	m.message =m.message.."\nerror!bin path is a dir"
 	else
@@ -116,6 +119,9 @@ o = s:option(Value, "logfile", translate("Runtime log file"), translate("AdGuard
 o.default     = ""
 o.datatype    = "string"
 o.validate=function(self, value)
+if fs.stat(value,"type")=="dir" then
+	fs.rmdir(value)
+end
 if fs.stat(value,"type")=="dir" then
 	if m.message then
 	m.message =m.message.."\nerror!log file is a dir"
