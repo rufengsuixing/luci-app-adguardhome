@@ -343,7 +343,7 @@ start_service() {
 	config_get backupwd $CONFIGURATION backupwd "0"
 	if [ "$backupwd" == "1" ] && [ ! -d "$workdir/data" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
-		cp -r -f $backupwdpath/data $workdir/data
+		cp -r -f $backupwdpath/data $workdir
 	fi
 	mkdir -p $workdir/data
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
@@ -467,7 +467,7 @@ stop_service()
 		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 		while :
 		do
-			cpret=$(cp -r -f $workdir/data $backupwdpath/data 2>&1)
+			cpret=$(cp -r -f $workdir/data $backupwdpath 2>&1)
 			echo "$cpret"
 			echo "$cpret" | grep "no space left on device"
 			if [ "$?" == "0" ]; then
