@@ -198,3 +198,6 @@ msgstr "已重定向"
 
 msgid "Not redirect"
 msgstr "未重定向"
+
+msgid "Auto tail querylog with crontab"
+msgstr "计划任务截短查询日志"
