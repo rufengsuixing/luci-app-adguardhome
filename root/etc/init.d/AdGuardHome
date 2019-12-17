@@ -490,21 +490,48 @@ boot() {
 	fi
 }
 do_crontab(){
+crontab_updatecore
+crontab_cutquerylog
+}
+crontab_updatecore(){
 	config_get autoupdate $CONFIGURATION autoupdate "0"
 	local line=$(grep "/usr/share/AdGuardHome/update_core.sh" $CRON_FILE)
 	if [ -n "$line" -a ${line:0:1} != "#" ]; then
 		if [ $autoupdate -eq 1 ]; then
 			return
 		else
-			sed -i '/\/usr\/share\/AdGuardHome\/update_core.sh/d' $CRON_FILE
-			echo \#$line >> $CRON_FILE
+			sed -i '\,/usr/share/AdGuardHome/update_core.sh,'d $CRON_FILE
+			echo "#$line" >> $CRON_FILE
 			/etc/init.d/cron restart
 		fi
 	else
 		if [ $autoupdate -eq 1 ]; then
 			[ -z "$line" ] && line="#30 3 * * * /usr/share/AdGuardHome/update_core.sh 2>&1"
-			sed -i '/\/usr\/share\/AdGuardHome\/update_core.sh/d' $CRON_FILE
-			echo ${line:1} >> $CRON_FILE
+			sed -i '\,/usr/share/AdGuardHome/update_core.sh,'d $CRON_FILE
+			echo "${line:1}" >> $CRON_FILE
+			/etc/init.d/cron restart
+		else
+			return
+		fi
+	fi
+}
+crontab_cutquerylog(){
+	config_get cutquerylog $CONFIGURATION cutquerylog "0"
+	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
+	local line=$(grep "tail -n [0-9]* $workdir/data/querylog.json > $workdir/data/querylog.json" $CRON_FILE)
+	if [ -n "$line" -a ${line:0:1} != "#" ]; then
+		if [ $cutquerylog -eq 1 ]; then
+			return
+		else
+			sed -i "\,tail -n [0-9]* .*/data/querylog.json > .*/data/querylog.json,d" $CRON_FILE
+			echo "#$line" >> $CRON_FILE
+			/etc/init.d/cron restart
+		fi
+	else
+		if [ $cutquerylog -eq 1 ]; then
+			[ -z "$line" ] && line="#0 * * * * tail -n 2000 $workdir/data/querylog.json > $workdir/data/querylog.json"
+			sed -i "\,tail -n [0-9]* .*/data/querylog.json > .*/data/querylog.json,d" $CRON_FILE
+			echo "${line:1}" >> $CRON_FILE
 			/etc/init.d/cron restart
 		else
 			return

@@ -181,5 +181,7 @@ end
 end
 o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
 o.default = 0
+o = s:option(Flag, "cutquerylog", translate("Auto tail querylog with crontab"))
+o.default = 0
 fs.writefile("/var/run/lucilogpos","0")
 return m
