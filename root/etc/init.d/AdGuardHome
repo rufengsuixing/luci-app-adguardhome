@@ -465,6 +465,7 @@ stop_service()
 	config_get backupwd $CONFIGURATION backupwd "0"
 	if [ "$backupwd" == "1" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
+		mkdir -p $backupwdpath
 		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 		while :
 		do
