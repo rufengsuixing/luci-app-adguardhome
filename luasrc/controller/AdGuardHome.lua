@@ -23,12 +23,7 @@ function act_status()
 	local e={}
 	local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
 	e.running=luci.sys.call("pgrep "..binpath.." >/dev/null")==0
-	local st=fs.readfile("/var/run/AdGredir")
-	if (st=="0") then
-		e.redirect=false
-	else
-		e.redirect=true
-	end
+	e.redirect=(fs.readfile("/var/run/AdGredir")=="1")
 	http.prepare_content("application/json")
 	http.write_json(e)
 end
@@ -41,8 +36,8 @@ end
 function get_log()
 	local logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
 	if (logfile==nil) then
-	http.write("no log available\n")
-	return
+		http.write("no log available\n")
+		return
 	elseif (logfile=="syslog") then
 		if not fs.access("/var/run/AdGuardHomesyslog") then
 			luci.sys.exec("(/usr/share/AdGuardHome/getsyslog.sh &); sleep 1;")
@@ -54,19 +49,10 @@ function get_log()
 		return
 	end
 	http.prepare_content("text/plain; charset=utf-8")
-	local logpos=fs.readfile("/var/run/lucilogpos")
-	local fdp
-	if (logpos ~= nil) then
-		fdp=tonumber(logpos)
-	else
-		fdp=0
-	end
+	local fdp=tonumber(fs.readfile("/var/run/lucilogpos")) or 0
 	local f=io.open(logfile, "r+")
 	f:seek("set",fdp)
-	local a=f:read(2048000)
-	if (a==nil) then
-		a=""
-	end
+	local a=f:read(2048000) or ""
 	fdp=f:seek()
 	fs.writefile("/var/run/lucilogpos",tostring(fdp))
 	f:close()
@@ -80,18 +66,10 @@ function do_dellog()
 end
 function check_update()
 	http.prepare_content("text/plain; charset=utf-8")
-	local logpos=fs.readfile("/var/run/lucilogpos")
-	if (logpos ~= nil) then
-	local fdp=tonumber(logpos)
-	else
-	fdp=0
-	end
+	local fdp=tonumber(fs.readfile("/var/run/lucilogpos")) or 0
 	local f=io.open("/tmp/AdGuardHome_update.log", "r+")
 	f:seek("set",fdp)
-	local a=f:read(2048000)
-	if (a==nil) then
-	a=""
-	end
+	local a=f:read(2048000) or ""
 	fdp=f:seek()
 	fs.writefile("/var/run/lucilogpos",tostring(fdp))
 	f:close()

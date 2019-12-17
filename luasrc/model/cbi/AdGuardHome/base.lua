@@ -4,18 +4,9 @@ require("io")
 local m,s,o
 local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
-local configpath=uci:get("AdGuardHome","AdGuardHome","configpath")
-if (configpath==nil) then
-configpath="/etc/AdGuardHome.yaml"
-end
-local binpath=uci:get("AdGuardHome","AdGuardHome","binpath")
-if (binpath==nil) then
-binpath="/usr/bin/AdGuardHome/AdGuardHome"
-end
-local httpport=luci.sys.exec("awk '/bind_port:/{printf($2);exit;}' "..configpath.." 2>/dev/null")
-if (httpport=="") then
+local configpath=uci:get("AdGuardHome","AdGuardHome","configpath") or "/etc/AdGuardHome.yaml"
+local binpath=uci:get("AdGuardHome","AdGuardHome","binpath") or "/usr/bin/AdGuardHome/AdGuardHome"
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport") or "3000"
-end
 m = Map("AdGuardHome", "AdGuard Home")
 m.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
 m:section(SimpleSection).template  = "AdGuardHome/AdGuardHome_status"
@@ -35,7 +26,7 @@ o.datatype="port"
 o.rmempty=false
 o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
-local version=uci:get("AdGuardHome","AdGuardHome","version")
+local version=uci:get("AdGuardHome","AdGuardHome","version") or "unknown"
 local e=""
 if not fs.access(configpath) then
 	e=e.." no config"
@@ -43,26 +34,16 @@ end
 if not fs.access(binpath) then
 	e=e.." no bin"
 else
-	if (version ~= nil) then
-		e=version..e
-	else
-		e="unknown"..e
-	end
+	e=version..e
 end
 o=s:option(Button,"restart",translate("Update"))
 o.inputtitle=translate("Update core version")
 o.template = "AdGuardHome/AdGuardHome_check"
-if fs.access(configpath) then
-o.showfastconfig=false
-else
-o.showfastconfig=true
-end
+o.showfastconfig=(not fs.access(configpath))
 o.description=string.format(translate("core version got last time:").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
-if (port=="") then
-port="?"
-end
+if (port=="") then port="?" end
 ---- Redirect
 o = s:option(ListValue, "redirect", port..translate("Redirect"), translate("AdGuardHome redirect mode"))
 o.placeholder = "none"

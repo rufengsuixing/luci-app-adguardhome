@@ -9,11 +9,7 @@ t.rmempty=true
 t.rows=20
 t.template="AdGuardHome/log"
 t.readonly="readonly"
-local logfile=uci:get("AdGuardHome","AdGuardHome","logfile")
-if (logfile=="syslog" or logfile==nil ) then
-t.timereplace=false
-else
-t.timereplace=true
-end
+local logfile=uci:get("AdGuardHome","AdGuardHome","logfile") or ""
+t.timereplace=(logfile~="syslog" and logfile~="" )
 fs.writefile("/var/run/lucilogpos","0")
 return f
