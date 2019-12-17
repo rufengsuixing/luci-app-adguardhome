@@ -20,7 +20,7 @@ function createAndDownloadFile(fileName, content) {
 function download_log(){
 	var lv = document.getElementById('cbid.logview.1.conf');
 	var dt = new Date();
-	var timestamp = (dt.getMonth()+1)+"-"+dt.getDay()+"-"+dt.getHours()+"_"+dt.getMinutes();
+	var timestamp = (dt.getMonth()+1)+"-"+dt.getDate()+"-"+dt.getHours()+"_"+dt.getMinutes();
 	createAndDownloadFile("AdGuardHome"+timestamp+".log",lv.innerHTML)
 	return
 }
