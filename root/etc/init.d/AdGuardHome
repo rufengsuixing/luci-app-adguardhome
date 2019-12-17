@@ -491,17 +491,20 @@ boot() {
 }
 do_crontab(){
 	config_get autoupdate $CONFIGURATION autoupdate "0"
-	grep "/usr/share/AdGuardHome/update_core.sh"  $CRON_FILE
-	if [ "$?" == "0" ]; then
+	local line=$(grep "/usr/share/AdGuardHome/update_core.sh" $CRON_FILE)
+	if [ -n "$line" -a ${line:0:1} != "#" ]; then
 		if [ $autoupdate -eq 1 ]; then
 			return
 		else
 			sed -i '/\/usr\/share\/AdGuardHome\/update_core.sh/d' $CRON_FILE
+			echo \#$line >> $CRON_FILE
 			/etc/init.d/cron restart
 		fi
 	else
 		if [ $autoupdate -eq 1 ]; then
-			echo '30 3 * * * /usr/share/AdGuardHome/update_core.sh 2>&1' >> $CRON_FILE
+			[ -z "$line" ] && line="#30 3 * * * /usr/share/AdGuardHome/update_core.sh 2>&1"
+			sed -i '/\/usr\/share\/AdGuardHome\/update_core.sh/d' $CRON_FILE
+			echo ${line:1} >> $CRON_FILE
 			/etc/init.d/cron restart
 		else
 			return
