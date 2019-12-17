@@ -77,7 +77,11 @@ o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
+	if (m.message) then
+	m.message =m.message.."\nerror!bin path is a dir"
+	else
 	m.message ="error!bin path is a dir"
+	end
 	return nil
 end 
 return value
@@ -98,7 +102,11 @@ o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
+	if m.message then
+	m.message =m.message.."\nerror!config path is a dir"
+	else
 	m.message ="error!config path is a dir"
+	end
 	return nil
 end 
 return value
@@ -109,10 +117,18 @@ o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="reg" then
+	if m.message then
+	m.message =m.message.."\nerror!work dir is a file"
+	else
 	m.message ="error!work dir is a file"
+	end
 	return nil
 end 
-return value
+if string.sub(value, -1)=="/" then
+	return string.sub(value, 1, -2)
+else
+	return value
+end
 end
 ---- log file
 o = s:option(Value, "logfile", translate("Runtime log file"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
@@ -120,7 +136,11 @@ o.default     = ""
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
+	if m.message then
+	m.message =m.message.."\nerror!log file is a dir"
+	else
 	m.message ="error!log file is a dir"
+	end
 	return nil
 end 
 return value
@@ -165,10 +185,18 @@ o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.validate=function(self, value)
 if fs.stat(value,"type")=="reg" then
+	if m.message then
+	m.message =m.message.."\nerror!backup dir is a file"
+	else
 	m.message ="error!backup dir is a file"
+	end
 	return nil
 end 
-return value
+if string.sub(value,-1)=="/" then
+	return string.sub(value, 1, -2)
+else
+	return value
+end
 end
 o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
 o.default = 0
