@@ -1,6 +1,7 @@
 #!/bin/sh
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 configpath=$(uci get AdGuardHome.AdGuardHome.configpath)
+[ "$1" == "del" ] && sed -i '/programaddstart/,/programaddend/d' $configpath && exit 0
 gfwupstream=$(uci get AdGuardHome.AdGuardHome.gfwupstream)
 if [ -z $gfwupstream ]; then
 gfwupstream="tcp://208.67.220.220:5353"

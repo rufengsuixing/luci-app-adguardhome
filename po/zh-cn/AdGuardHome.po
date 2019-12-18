@@ -204,3 +204,9 @@ msgstr "计划任务截短查询日志"
 
 msgid "Download links for update"
 msgstr "升级用的下载链接"
+
+msgid "Del gfwlist"
+msgstr "删除gfw列表"
+
+msgid "Del"
+msgstr "删除"

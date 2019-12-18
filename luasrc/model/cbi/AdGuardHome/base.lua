@@ -124,9 +124,8 @@ end
 end
 ---- log file
 o = s:option(Value, "logfile", translate("Runtime log file"), translate("AdGuardHome runtime Log file if 'syslog': write to system log;if empty no log"))
-o.default     = ""
 o.datatype    = "string"
-o.optional = true
+o.rmempty = true
 o.validate=function(self, value)
 if fs.stat(value,"type")=="dir" then
 	fs.rmdir(value)
@@ -152,14 +151,21 @@ a="Added"
 else
 a="Not added"
 end
+o=s:option(Button,"gfwdel",translate("Del gfwlist"),translate(a))
+o.optional = true
+o.inputtitle=translate("Del")
+o.write=function()
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh del 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
 o=s:option(Button,"gfwadd",translate("Add gfwlist"),translate(a))
 o.optional = true
 o.inputtitle=translate("Add")
 o.write=function()
-luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
-luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
-o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service"))
+o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service")..translate(a))
 o.default     = "tcp://208.67.220.220:5353"
 o.datatype    = "string"
 o.optional = true
