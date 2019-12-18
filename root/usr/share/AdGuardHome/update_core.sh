@@ -197,7 +197,7 @@ doupdate_core(){
 			local success="1"
 			break
 		fi
-	done < "/usr/share/AdGuardHome/links.txt"
+	done < $(grep -v "^#" /usr/share/AdGuardHome/links.txt)
 	[ -z "$success" ] && echo "no download success" && exit 1
 	if [ "${link##*.}" == "gz" ]; then
 		tar -zxf "/tmp/AdGuardHomeupdate/${link##*/}" -C "/tmp/AdGuardHomeupdate/"
