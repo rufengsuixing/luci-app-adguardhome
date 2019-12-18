@@ -498,7 +498,7 @@ crontab_cutquerylog
 crontab_updatecore(){
 	config_get autoupdate $CONFIGURATION autoupdate "0"
 	local line=$(grep "/usr/share/AdGuardHome/update_core.sh" $CRON_FILE)
-	if [ -n "$line" -a ${line:0:1} != "#" ]; then
+	if [ -n "$line" -a "${line:0:1}" != "#" ]; then
 		if [ $autoupdate -eq 1 ]; then
 			return
 		else
