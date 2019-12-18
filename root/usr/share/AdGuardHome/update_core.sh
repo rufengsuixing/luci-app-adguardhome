@@ -25,8 +25,10 @@ clean_log(){
 
 check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
-	[ -z "${latest_ver}" ] && echo -e "\nFailed to check latest version, please try again later."  && exit 1
-	
+	if [ -z "${latest_ver}" ]; then
+		wget -V | grep +https >/dev/null || (opkg update && opkg remove wget-nossl --force-depends && opkg install wget && check_latest_version && exit 0) 
+		echo -e "\nFailed to check latest version, please try again later."  && exit 1
+	fi
 	if [ -f "$configpath" ]; then
 		now_ver="$($binpath -c $configpath --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
 	elif [ -f "$binpath" ]; then
