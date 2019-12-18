@@ -28,7 +28,8 @@ about: 建立一个bug反馈帮助我完善luci-app-adguardhome
 
 ### 实际的执行结果
 <!-- 详细描述它实际执行结果 -->
-
+### 日志(重要)
+<!-- 和问题相关的日志（核心下载日志/tmp/AdGuardHome_update.log或者运行日志，或者INIT_TRACE=1 /etc/init.d/AdGuardhome reload 2>/tmp/debug 后的/tmp/debug文件） -->
 ### 截图
 <!-- 如果合适的话，用截图来描述 -->
 
