@@ -80,11 +80,15 @@ o:value("--brute", translate("try all available compression methods & filters [s
 o:value("--ultra-brute", translate("try even more compression variants [very slow]"))
 o.default     = ""
 o.description=translate("bin use less space,but may have compatibility issues")
+o.rmempty = false
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
 o.validate=function(self, value)
+if fs.stat(value,"type")=="dir" then
+	fs.rmdir(value)
+end
 if fs.stat(value,"type")=="dir" then
 	if m.message then
 	m.message =m.message.."\nerror!config path is a dir"
@@ -185,9 +189,22 @@ else
 	return value
 end
 end
+----autoupdate
 o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
 o.default = 0
+----cutquerylog
 o = s:option(Flag, "cutquerylog", translate("Auto tail querylog with crontab"))
 o.default = 0
+----downloadpath
+o = s:option(TextValue, "downloadlinks",translate("Update download links"))
+o.rows = 4
+o.wrap = "on"
+o.size=111
+o.cfgvalue = function(self, section)
+	return fs.readfile("/usr/share/AdGuardHome/links.txt")
+end
+o.write = function(self, section, value)
+	fs.writefile("/usr/share/AdGuardHome/links.txt", value:gsub("\r\n", "\n"))
+end
 fs.writefile("/var/run/lucilogpos","0")
 return m
