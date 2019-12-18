@@ -45,7 +45,7 @@ function get_log()
 		logfile="/tmp/AdGuardHometmp.log"
 		fs.writefile("/var/run/AdGuardHomesyslog","1")
 	elseif not fs.access(logfile) then
-		http.write("log file not created\n")
+		http.write("")
 		return
 	end
 	http.prepare_content("text/plain; charset=utf-8")
