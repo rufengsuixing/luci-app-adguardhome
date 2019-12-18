@@ -97,7 +97,12 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[getlog]])%>', nu
 		}
 	}
 );}
+<%if self.pollcheck then%>
 poll_check();
+<%else%>
+var lv = document.getElementById('cbid.logview.1.conf');
+lv.innerHTML="<%:Please add log path in config to enable log%>"
+<%end%>
 //]]>
 </script>	
 <%+cbi/valuefooter%>
