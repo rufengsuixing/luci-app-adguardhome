@@ -82,7 +82,7 @@ o:value("--brute", translate("try all available compression methods & filters [s
 o:value("--ultra-brute", translate("try even more compression variants [very slow]"))
 o.default     = ""
 o.description=translate("bin use less space,but may have compatibility issues")
-o.optional = true
+o.rmempty = true
 ---- config path
 o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHome config path"))
 o.default     = "/etc/AdGuardHome.yaml"

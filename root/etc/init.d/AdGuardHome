@@ -196,7 +196,7 @@ do_redirect()
 	config_get "old_redirect" "$section" "old_redirect" "none"
 	config_get "old_port" "$section" "old_port" "0"
 	config_get "old_enabled" "$section" "old_enabled" "0"
-	uci get dhcp.@dnsmasq[0].port || uci set dhcp.@dnsmasq[0].port="53"
+	uci get dhcp.@dnsmasq[0].port 2>&1 >/dev/null || uci set dhcp.@dnsmasq[0].port="53" 2>&1 >/dev/null
 	if [ "$old_enabled" = "1" -a "$old_redirect" == "exchange" ]; then
 		AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)
 	fi
@@ -521,7 +521,7 @@ crontab_cutquerylog(){
 	config_get cutquerylog $CONFIGURATION cutquerylog "0"
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	local line=$(grep "tail -n [0-9]* $workdir/data/querylog.json > $workdir/data/querylog.json" $CRON_FILE)
-	if [ -n "$line" -a ${line:0:1} != "#" ]; then
+	if [ -n "$line" -a "${line:0:1}" != "#" ]; then
 		if [ $cutquerylog -eq 1 ]; then
 			return
 		else
