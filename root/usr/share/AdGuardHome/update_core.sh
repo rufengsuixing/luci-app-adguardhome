@@ -166,6 +166,7 @@ doupdate_core(){
 	;;
 	esac
 	echo -e "start download" 
+	grep -v "^#" /usr/share/AdGuardHome/links.txt >/tmp/run/AdHlinks.txt
 	while read link
 	do
 		eval link="$link"
@@ -176,8 +177,9 @@ doupdate_core(){
 		else
 			local success="1"
 			break
-		fi
-	done < <(grep -v "^#" /usr/share/AdGuardHome/links.txt)
+		fi 
+	done < "/tmp/run/AdHlinks.txt"
+	rm /tmp/run/AdHlinks.txt
 	[ -z "$success" ] && echo "no download success" && exit 1
 	if [ "${link##*.}" == "gz" ]; then
 		tar -zxf "/tmp/AdGuardHomeupdate/${link##*/}" -C "/tmp/AdGuardHomeupdate/"
