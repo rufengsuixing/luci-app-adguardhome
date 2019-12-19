@@ -70,7 +70,9 @@ o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin
 o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
 o.datatype    = "string"
 o.optional = false
+o.rmempty=false
 o.validate=function(self, value)
+if value=="" then return nil end
 if fs.stat(value,"type")=="dir" then
 	fs.rmdir(value)
 end
@@ -100,7 +102,9 @@ o = s:option(Value, "configpath", translate("Config Path"), translate("AdGuardHo
 o.default     = "/etc/AdGuardHome.yaml"
 o.datatype    = "string"
 o.optional = false
+o.rmempty=false
 o.validate=function(self, value)
+if value==nil then return nil end
 if fs.stat(value,"type")=="dir" then
 	fs.rmdir(value)
 end
@@ -119,7 +123,9 @@ o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome wor
 o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.optional = false
+o.rmempty=false
 o.validate=function(self, value)
+if value=="" then return nil end
 if fs.stat(value,"type")=="reg" then
 	if m.message then
 	m.message =m.message.."\nerror!work dir is a file"
