@@ -25,8 +25,8 @@ msgstr "已更新"
 msgid "Check..."
 msgstr "检查中..."
 
-msgid "core version got last time:"
-msgstr "上次检测到的主程序版本: "
+msgid "core version:"
+msgstr "核心版本:"
 
 msgid "Redirect"
 msgstr "重定向"

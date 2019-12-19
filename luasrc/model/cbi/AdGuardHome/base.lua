@@ -52,7 +52,7 @@ o=s:option(Button,"restart",translate("Update"))
 o.inputtitle=translate("Update core version")
 o.template = "AdGuardHome/AdGuardHome_check"
 o.showfastconfig=(not fs.access(configpath))
-o.description=string.format(translate("core version got last time:").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
+o.description=string.format(translate("core version:").."<strong><font id=\"updateversion\" color=\"green\">%s </font></strong>",e)
 ---- port warning not safe
 local port=luci.sys.exec("awk '/  port:/{printf($2);exit;}' "..configpath.." 2>nul")
 if (port=="") then port="?" end
