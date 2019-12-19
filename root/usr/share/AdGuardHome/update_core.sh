@@ -168,7 +168,7 @@ doupdate_core(){
 	echo -e "start download" 
 	while read link
 	do
-		eval link=$link
+		eval link="$link"
 		wget-ssl --no-check-certificate -t 2 -T 20 -O /tmp/AdGuardHomeupdate/${link##*/} "$link" 2>&1
 		if [ "$?" != "0" ]; then
 			echo "download failed try another download"
@@ -177,7 +177,7 @@ doupdate_core(){
 			local success="1"
 			break
 		fi
-	done < $(grep -v "^#" /usr/share/AdGuardHome/links.txt)
+	done < <(grep -v "^#" /usr/share/AdGuardHome/links.txt)
 	[ -z "$success" ] && echo "no download success" && exit 1
 	if [ "${link##*.}" == "gz" ]; then
 		tar -zxf "/tmp/AdGuardHomeupdate/${link##*/}" -C "/tmp/AdGuardHomeupdate/"
