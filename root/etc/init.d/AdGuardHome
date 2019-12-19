@@ -56,6 +56,14 @@ set_iptable()
 {
 	local ipv6_server=$1
 	local tcp_server=$2
+	uci -q batch <<-EOF 2>&1 >/dev/null
+  delete firewall.AdGuardHome
+	set firewall.AdGuardHome=include
+	set firewall.AdGuardHome.type=script
+	set firewall.AdGuardHome.path=/usr/share/AdGuardHome/firewall.start
+	set firewall.AdGuardHome.reload=1
+	commit firewall
+EOF
 
 	IPS="`ifconfig | grep "inet addr" | grep -v ":127" | grep "Bcast" | awk '{print $2}' | awk -F : '{print $2}'`"
 	for IP in $IPS
@@ -83,6 +91,10 @@ set_iptable()
 
 clear_iptable()
 {
+	uci -q batch <<-EOF 2>&1 >/dev/null
+  delete firewall.AdGuardHome
+	commit firewall
+EOF
 	local OLD_PORT="$1"
 	local ipv6_server=$2
 	IPS="`ifconfig | grep "inet addr" | grep -v ":127" | grep "Bcast" | awk '{print $2}' | awk -F : '{print $2}'`"
