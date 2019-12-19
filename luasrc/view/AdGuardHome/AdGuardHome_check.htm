@@ -5,10 +5,14 @@
 <% if self.showfastconfig then %>
 <input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
 <%end%>
-<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
+<div id="logview" style="display:none">
+<input type="checkbox" id="reversetag" value="reverse" onclick=" return reverselog()" style="vertical-align:middle;height: auto;" checked><%:reverse%></input>
+<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:block;" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
+</div>
 <script type="text/javascript">//<![CDATA[
 var updatebtn = document.getElementById('apply_update_button');
 var forceupdatebtn = document.getElementById('apply_forceupdate_button');
+var islogreverse = true;
 function apply_forceupdate(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){}
 		);
@@ -16,6 +20,16 @@ function apply_forceupdate(){
 	forceupdatebtn.disabled = true;
 	forceupdatebtn.value    = '<%:Check...%>';
 	poll_check();
+	return
+}
+function reverselog(){
+	var lv = document.getElementById('cbid.logview.1.conf');
+	lv.innerHTML=lv.innerHTML.split('\n').reverse().join('\n')
+	if (islogreverse){
+	islogreverse=false;
+	}else{
+	islogreverse=true;
+	}
 	return
 }
 function apply_update(){
@@ -27,8 +41,8 @@ function apply_update(){
 	return
 }
 function poll_check(){
-var lv = document.getElementById('cbid.logview.1.conf');
-	lv.style.display="inline"
+var tag = document.getElementById('logview');
+	tag.style.display="block"
 XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', null,
 	function(x, data) {
 		var lv = document.getElementById('cbid.logview.1.conf');
@@ -47,7 +61,11 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 				}
 				return	
 			}
-			lv.innerHTML += x.responseText; 
+			if (islogreverse){
+				lv.innerHTML = x.responseText.split('\n').reverse().join('\n')+lv.innerHTML;
+			}else{
+				lv.innerHTML += x.responseText;
+			}
 		}
 	}
 );}
