@@ -36,7 +36,7 @@ if not fs.access(binpath) then
 else
 	local version
 	local testtime=fs.stat(binpath,"mtime")
-	if testtime~=binmtime then
+	if testtime~=tonumber(binmtime) then
 		local tmp=luci.sys.exec("touch /var/run/AdGfakeconfig;"..binpath.." -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o ;rm /var/run/AdGfakeconfig")
 		version=string.sub(tmp, 1, -2)
 		uci:set("AdGuardHome","AdGuardHome","version",version)
