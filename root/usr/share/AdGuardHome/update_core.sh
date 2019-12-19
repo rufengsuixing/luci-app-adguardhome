@@ -6,7 +6,7 @@ uci set AdGuardHome.AdGuardHome.binpath="/tmp/AdGuardHome/AdGuardHome"
 binpath="/tmp/AdGuardHome/AdGuardHome"
 fi
 mkdir -p ${binpath%/*}
-upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag 2>&1 >/dev/null)
+upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag 2>/dev/null)
 
 check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
@@ -194,7 +194,7 @@ doupdate_core(){
 	fi
 	chmod 755 $downloadbin
 	echo -e "download success start copy" 
-	if [ ! -z "$upxflag" ]; then
+	if [ -n "$upxflag" ]; then
 		echo -e "start upx may take a long time" 
 		doupx
 		/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx $upxflag $downloadbin
