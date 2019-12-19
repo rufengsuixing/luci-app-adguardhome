@@ -84,4 +84,10 @@ o.cfgvalue = function(self, section)
 end
 end
 end
+function m.on_commit(map)
+	if (fs.access("/var/run/AdGucitest")) then
+		io.popen("/etc/init.d/AdGuardHome reload &")
+	end
+	fs.writefile("/var/run/AdGucitest","")
+end
 return m

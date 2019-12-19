@@ -247,4 +247,10 @@ o.write = function(self, section, value)
 	fs.writefile("/usr/share/AdGuardHome/links.txt", value:gsub("\r\n", "\n"))
 end
 fs.writefile("/var/run/lucilogpos","0")
+function m.on_commit(map)
+	if (fs.access("/var/run/AdGucitest")) then
+		io.popen("/etc/init.d/AdGuardHome reload &")
+	end
+	fs.writefile("/var/run/AdGucitest","")
+end
 return m

@@ -420,7 +420,8 @@ start_service() {
 	fi
 }
 reload_service()
-{
+{	
+	rm /var/run/AdGucitest 2>&1 >/dev/null
 	config_load "${CONFIGURATION}"
 	echo "AdGuardHome reloading"
 	config_get_bool enabled $CONFIGURATION enabled 0
