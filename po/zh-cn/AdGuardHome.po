@@ -211,8 +211,8 @@ msgstr "删除gfw列表"
 msgid "Del"
 msgstr "删除"
 
-magid "Please add log path in config to enable log"
+msgid "Please add log path in config to enable log"
 msgstr "请在设置里填写日志路径以启用日志"
 
-magid "Force update"
+msgid "Force update"
 msgstr "强制更新"
