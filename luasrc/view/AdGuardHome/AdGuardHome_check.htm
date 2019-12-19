@@ -6,13 +6,13 @@
 <input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
 <%end%>
 <div id="logview" style="display:none">
-<input type="checkbox" id="reversetag" value="reverse" onclick=" return reverselog()" style="vertical-align:middle;height: auto;" checked><%:reverse%></input>
+<input type="checkbox" id="reversetag" value="reverse" onclick=" return reverselog()" style="vertical-align:middle;height: auto;"><%:reverse%></input>
 <textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:block;" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
 </div>
 <script type="text/javascript">//<![CDATA[
 var updatebtn = document.getElementById('apply_update_button');
 var forceupdatebtn = document.getElementById('apply_forceupdate_button');
-var islogreverse = true;
+var islogreverse = false;
 function apply_forceupdate(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){}
 		);
@@ -37,6 +37,7 @@ function apply_update(){
 		);
 	updatebtn.disabled = true;
 	updatebtn.value    = '<%:Check...%>';
+	forceupdatebtn.disabled = true;
 	poll_check();
 	return
 }
