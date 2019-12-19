@@ -7,23 +7,22 @@
 <%end%>
 <textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
 <script type="text/javascript">//<![CDATA[
+var updatebtn = document.getElementById('apply_update_button');
+var forceupdatebtn = document.getElementById('apply_forceupdate_button');
 function apply_forceupdate(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){}
 		);
-	var	btn = document.getElementById('apply_update_button');
-	btn.disabled = true;
-	var	btn2 = document.getElementById('apply_forceupdate_button');
-	btn2.disabled = true;
-	btn2.value    = '<%:Check...%>';
+	updatebtn.disabled = true;
+	forceupdatebtn.disabled = true;
+	forceupdatebtn.value    = '<%:Check...%>';
 	poll_check();
 	return
 }
 function apply_update(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,function(x, data){}
 		);
-	var	btn = document.getElementById('apply_update_button');
-	btn.disabled = true;
-	btn.value    = '<%:Check...%>';
+	updatebtn.disabled = true;
+	updatebtn.value    = '<%:Check...%>';
 	poll_check();
 	return
 }
@@ -38,12 +37,11 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 				for(j = 0,len=this.XHR._q.length; j < len; j++) {
 					if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>'){
 						this.XHR._q.splice(j,1);
-						var	btn = document.getElementById('apply_update_button');
-						btn.disabled = false;
-						btn.value    = '<%:Updated%>';
-						var btn2 = document.getElementById('apply_forceupdate_button');
-						btn2.value="<%:Force update%>"
-						btn2.style.display="inline"
+						updatebtn.disabled = false;
+						forceupdatebtn.disabled = false;
+						updatebtn.value    = '<%:Updated%>';
+						forceupdatebtn.value="<%:Force update%>"
+						forceupdatebtn.style.display="inline"
 						break;
 					}
 				}
@@ -54,15 +52,15 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 	}
 );}
 <% if fs.access("/var/run/update_core") then %>
-var	btn = document.getElementById('apply_update_button');
-	btn.disabled = true;
-	btn.value    = '<%:Check...%>';
+	updatebtn.disabled = true;
+	forceupdatebtn.disabled = true;
+	updatebtn.value    = '<%:Check...%>';
 poll_check();
 <%elseif fs.access("/var/run/update_core_error") then %>
 poll_check();
 <%else%>
 var	btn = document.getElementById('apply_update_button');
-	btn.value    = '<%:Update core version%>';
+	updatebtn.value    = '<%:Update core version%>';
 <%end%>
 //]]>
 </script>
