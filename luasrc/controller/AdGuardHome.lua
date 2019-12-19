@@ -29,7 +29,13 @@ function act_status()
 end
 function do_update()
 	fs.writefile("/var/run/lucilogpos","0")
-	luci.sys.exec("(rm /var/run/update_core_error ; touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh >/tmp/AdGuardHome_update.log 2>&1 || touch /var/run/update_core_error ;rm /var/run/update_core) &")
+	local arg
+	if luci.http.formvalue("force") == "1" then
+		arg="force"
+	else
+		arg=""
+	end
+	luci.sys.exec("(rm /var/run/update_core_error ; touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 || touch /var/run/update_core_error ;rm /var/run/update_core) &")
 	http.prepare_content("application/json")
 	http.write('')
 end

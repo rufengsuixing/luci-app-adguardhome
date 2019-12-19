@@ -1,11 +1,23 @@
 <%+cbi/valueheader%>
 <%local fs=require"nixio.fs"%>
 <input type="button" class="cbi-button cbi-button-apply" id="apply_update_button" value="<%:Update core version%>" onclick=" return apply_update() "/>
+<input type="button" class="cbi-button cbi-button-apply" id="apply_forceupdate_button" value="<%:Force update%>" onclick=" return apply_forceupdate()" style="display:none"/>
 <% if self.showfastconfig then %>
 <input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
 <%end%>
 <textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:none" data-update="change" rows="5" cols="60" readonly="readonly" > </textarea>
 <script type="text/javascript">//<![CDATA[
+function apply_forceupdate(){
+	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){}
+		);
+	var	btn = document.getElementById('apply_update_button');
+	btn.disabled = true;
+	var	btn2 = document.getElementById('apply_forceupdate_button');
+	btn2.disabled = true;
+	btn2.value    = '<%:Check...%>';
+	poll_check();
+	return
+}
 function apply_update(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,function(x, data){}
 		);
@@ -25,10 +37,14 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 			if (x.responseText=="\u0000"){
 				for(j = 0,len=this.XHR._q.length; j < len; j++) {
 					if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>'){
-					this.XHR._q.splice(j,1);
-					var	btn = document.getElementById('apply_update_button');
-					btn.disabled = false;
-					btn.value    = '<%:Updated%>';
+						this.XHR._q.splice(j,1);
+						var	btn = document.getElementById('apply_update_button');
+						btn.disabled = false;
+						btn.value    = '<%:Updated%>';
+						var btn2 = document.getElementById('apply_forceupdate_button');
+						btn2.value="<%:Force update%>"
+						btn2.style.display="inline"
+						break;
 					}
 				}
 				return	

@@ -26,7 +26,7 @@ check_latest_version(){
 	touch /var/run/AdGfakeconfig 
 	now_ver="$($binpath -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
 	rm /var/run/AdGfakeconfig
-	if [ "${latest_ver}"x != "${now_ver}"x ]; then
+	if [ "${latest_ver}"x != "${now_ver}"x ] || [ "$1" == "force" ]; then
 		clean_log
 		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." 
 		doupdate_core
@@ -214,6 +214,6 @@ doupdate_core(){
 
 main(){
 	check_if_already_running
-	check_latest_version
+	check_latest_version $1
 }
-	main
+	main $1
