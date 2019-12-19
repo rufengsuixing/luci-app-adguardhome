@@ -26,7 +26,7 @@ o.datatype="port"
 o.optional = false
 o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
 ---- update warning not safe
-local version=uci:get("AdGuardHome","AdGuardHome","version") or "unknown"
+local binmtime=uci:get("AdGuardHome","AdGuardHome","binmtime") or "0"
 local e=""
 if not fs.access(configpath) then
 	e=e.." no config"
@@ -34,6 +34,18 @@ end
 if not fs.access(binpath) then
 	e=e.." no bin"
 else
+	local version
+	local testtime=fs.stat(binpath,"mtime")
+	if testtime~=binmtime then
+		local tmp=luci.sys.exec("touch /var/run/AdGfakeconfig;"..binpath.." -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o ;rm /var/run/AdGfakeconfig")
+		version=string.sub(tmp, 1, -2)
+		uci:set("AdGuardHome","AdGuardHome","version",version)
+		uci:set("AdGuardHome","AdGuardHome","binmtime",testtime)
+		uci:save("AdGuardHome")
+		uci:commit("AdGuardHome")
+	else
+		version=uci:get("AdGuardHome","AdGuardHome","version")
+	end
 	e=version..e
 end
 o=s:option(Button,"restart",translate("Update"))

@@ -6,13 +6,7 @@ uci set AdGuardHome.AdGuardHome.binpath="/tmp/AdGuardHome/AdGuardHome"
 binpath="/tmp/AdGuardHome/AdGuardHome"
 fi
 mkdir -p ${binpath%/*}
-configpath=$(uci get AdGuardHome.AdGuardHome.configpath)
-if [ -z "$configpath" ]; then
-uci set AdGuardHome.AdGuardHome.configpath="/etc/AdGuardHome.yaml"
-configpath="/etc/AdGuardHome.yaml"
-fi
-mkdir -p ${configpath%/*}
-upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag)
+upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag 2>&1 >/dev/null)
 
 check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
@@ -29,21 +23,9 @@ check_latest_version(){
 		wget -V | grep +https >/dev/null || (opkg update && opkg remove wget-nossl --force-depends && opkg install wget && check_latest_version && exit 0) 
 		echo -e "\nFailed to check latest version, please try again later."  && exit 1
 	fi
-	if [ -f "$configpath" ]; then
-		now_ver="$($binpath -c $configpath --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
-	elif [ -f "$binpath" ]; then
-		chmod a+x $binpath
-		$binpath -l /tmp/AdGuardHometmp.log &
-		if [ "$?" == "0" ]; then
-			pid=$!
-			sleep 2
-			kill $pid
-			now_ver="$(grep -m 1 -E 'v[0-9.]+' -o /tmp/AdGuardHometmp.log)"
-			rm /tmp/AdGuardHometmp.log
-		else
-			echo "bin file may broken"
-		fi
-	fi
+	touch /var/run/AdGfakeconfig 
+	now_ver="$($binpath -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
+	rm /var/run/AdGfakeconfig
 	if [ "${latest_ver}"x != "${now_ver}"x ]; then
 		clean_log
 		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." 
@@ -51,8 +33,6 @@ check_latest_version(){
 	else
 			echo -e "\nLocal version: ${now_ver}, cloud version: ${latest_ver}." 
 			echo -e "You're already using the latest version." 
-			uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
-			uci commit AdGuardHome
 			if [ ! -z "$upxflag" ]; then
 				filesize=$(ls -l $binpath | awk '{ print $5 }')
 				if [ $filesize -gt 8000000 ]; then
@@ -229,8 +209,6 @@ doupdate_core(){
 	/etc/init.d/AdGuardHome start
 	rm -rf "/tmp/AdGuardHomeupdate" >/dev/null 2>&1
 	echo -e "Succeeded in updating core." 
-	uci set AdGuardHome.AdGuardHome.version="${latest_ver}"
-	uci commit AdGuardHome
 	echo -e "Local version: ${latest_ver}, cloud version: ${latest_ver}.\n" 
 }
 
