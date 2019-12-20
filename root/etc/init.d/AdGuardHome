@@ -354,11 +354,11 @@ start_service() {
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 	config_get backupwd $CONFIGURATION backupwd "0"
+	mkdir -p $workdir/data
 	if [ "$backupwd" == "1" ] && [ ! -d "$workdir/data" ]; then
 		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
 		cp -u -r -f $backupwdpath/data $workdir
 	fi
-	mkdir -p $workdir/data
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	# hack to save config file when upgrade system
 	config_get keepdb $CONFIGURATION keepdb 0
