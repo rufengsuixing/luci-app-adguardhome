@@ -248,9 +248,25 @@ o.write = function(self, section, value)
 end
 fs.writefile("/var/run/lucilogpos","0")
 function m.on_commit(map)
-	if (fs.access("/var/run/AdGucitest")) then
+	local ucitracktest=uci:get("AdGuardHome","AdGuardHome","ucitracktest")
+	if ucitracktest=="1" then
+		return
+	elseif ucitracktest=="0" then
 		io.popen("/etc/init.d/AdGuardHome reload &")
+	else
+		if (fs.access("/var/run/AdGucitest")) then
+			uci:set("AdGuardHome","AdGuardHome","ucitracktest","0")
+			io.popen("/etc/init.d/AdGuardHome reload &")
+		else
+			fs.writefile("/var/run/AdGucitest","")
+			if (ucitracktest=="2") then
+				uci:set("AdGuardHome","AdGuardHome","ucitracktest","1")
+			else
+				uci:set("AdGuardHome","AdGuardHome","ucitracktest","2")
+			end
+		end
+		uci:save("AdGuardHome")
+		uci:commit("AdGuardHome")
 	end
-	fs.writefile("/var/run/AdGucitest","")
 end
 return m

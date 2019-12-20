@@ -5,6 +5,7 @@ uci -q batch <<-EOF 2>&1 >/dev/null
 	add ucitrack AdGuardHome
 	set ucitrack.@AdGuardHome[-1].init=AdGuardHome
 	commit ucitrack
+	delete AdGuardHome.AdGuardHome.ucitracktest
 EOF
 
 rm -f /tmp/luci-indexcache

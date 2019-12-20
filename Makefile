@@ -50,9 +50,9 @@ endef
 define Package/luci-app-adguardhome/postinst
 #!/bin/sh
 	/etc/init.d/AdGuardHome enable >/dev/null 2>&1
-	enable=$(uci get AdGuardHome.AdGuardHome.enabled)
+	enable=$(uci get AdGuardHome.AdGuardHome.enabled 2>/dev/null)
 	if [ "$enable"x == "1"x ]; then
-	/etc/init.d/AdGuardHome start
+		/etc/init.d/AdGuardHome reload
 	fi
 	rm -f /tmp/luci-indexcache
 	rm -f /tmp/luci-modulecache/*
