@@ -216,3 +216,6 @@ msgstr "请在设置里填写日志路径以启用日志"
 
 msgid "Force update"
 msgstr "强制更新"
+
+msgid "Backup workdir files when shutdown"
+msgstr "在关机时备份工作目录文件"
