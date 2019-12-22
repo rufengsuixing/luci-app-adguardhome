@@ -7,8 +7,9 @@ STOP=01
 
 CONFIGURATION=AdGuardHome
 CRON_FILE=/etc/crontabs/root
-EXTRA_COMMANDS="do_redirect"
-EXTRA_HELP="        do_redirect 0 or 1"
+EXTRA_COMMANDS="do_redirect testbackup"
+EXTRA_HELP="        do_redirect 0 or 1\
+        testbackup backup or restore"
 set_forward_dnsmasq()
 {
 	local PORT="$1"
@@ -328,6 +329,47 @@ boot_service() {
 		fi
 	fi
 }
+testbackup(){
+	config_load "${CONFIGURATION}"
+	if [ "$1" == "backup" ]; then
+		backup
+	elif [ "$1" == "restore" ]; then
+		restore
+	fi
+}
+restore()
+{
+	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
+	config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
+	cp -u -r -f $backupwdpath/data $workdir
+}
+backup() {
+	config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
+	mkdir -p $backupwdpath/data
+	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
+	config_get backupfile $CONFIGURATION backupfile ""
+	for one in $backupfile;
+	do
+		while :
+		do
+			if [ -d "$backupwdpath/data/$one" ]; then
+				cpret=$(cp -u -r -f $workdir/data/$one $backupwdpath/data 2>&1)
+			else
+				cpret=$(cp -u -r -f $workdir/data/$one $backupwdpath/data/$one 2>&1)
+			fi
+			echo "$cpret"
+			echo "$cpret" | grep "no space left on device"
+			if [ "$?" == "0" ]; then
+				echo "磁盘已满,删除log重试中"
+				del_querylog && continue
+				rm -f -r $backupwdpath/data/filters
+				rm -f -r $workdir/data/filters && continue
+				echo "backup failed"
+			fi
+			break
+		done
+	done
+}
 start_service() {
 	# Reading config
 	config_load "${CONFIGURATION}"
@@ -353,11 +395,10 @@ start_service() {
 	
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
-	config_get backupwd $CONFIGURATION backupwd "0"
+	config_get backupfile $CONFIGURATION backupfile ""
 	mkdir -p $workdir/data
-	if [ "$backupwd" == "1" ] && [ ! -d "$workdir/data" ]; then
-		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
-		cp -u -r -f $backupwdpath/data $workdir
+	if [ -n "$backupfile" ] && [ ! -d "$workdir/data" ]; then
+		restore
 	fi
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	# hack to save config file when upgrade system
@@ -475,25 +516,9 @@ stop_service()
 	config_load "${CONFIGURATION}"
 	do_redirect 0
 	do_crontab
-	config_get backupwd $CONFIGURATION backupwd "0"
-	if [ "$backupwd" == "1" ]; then
-		config_get backupwdpath $CONFIGURATION backupwdpath "/usr/bin/AdGuardHome"
-		mkdir -p $backupwdpath
-		config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
-		while :
-		do
-			cpret=$(cp -u -r -f $workdir/data $backupwdpath 2>&1)
-			echo "$cpret"
-			echo "$cpret" | grep "no space left on device"
-			if [ "$?" == "0" ]; then
-				echo "磁盘已满,删除log重试中"
-				del_querylog && continue
-				rm -f -r $backupwdpath/data/filters
-				rm -f -r $workdir/data/filters && continue
-				echo "backup failed"
-			fi
-			break
-		done
+	config_get backupfile $CONFIGURATION backupfile "0"
+	if [ -n "$backupfile" ]; then
+		backup
 	fi
 	echo "AdGuardHome turn off"
 	echo "enabled=$enabled"

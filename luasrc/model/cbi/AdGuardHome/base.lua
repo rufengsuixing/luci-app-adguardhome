@@ -1,7 +1,7 @@
 require("luci.sys")
 require("luci.util")
 require("io")
-local m,s,o
+local m,s,o,o1
 local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
 local configpath=uci:get("AdGuardHome","AdGuardHome","configpath") or "/etc/AdGuardHome.yaml"
@@ -202,16 +202,34 @@ o = s:option(Flag, "waitonboot", translate("Boot delay until network ok"))
 o.default = 1
 o.optional = true
 ---- backup workdir on shutdown
-o = s:option(Flag, "backupwd", translate("Backup workdir when shutdown"))
-o.default = 0
-o.optional = true
+local workdir=uci:get("AdGuardHome","AdGuardHome","workdir") or "/usr/bin/AdGuardHome"
+o = s:option(MultiValue, "backupfile", translate("Backup workdir files when shutdown"))
+o1 = s:option(Value, "backupwdpath", translate("Backup workdir path"))
+local name
+o:value("filters","filters")
+o:value("stats.db","stats.db")
+o:value("querylog.json","querylog.json")
+o1:depends ("backupfile", "filters")
+o1:depends ("backupfile", "stats.db")
+o1:depends ("backupfile", "querylog.json")
+for name in fs.glob(workdir.."/data/*")
+do
+	name=fs.basename (name)
+	if name~="filters" and name~="stats.db" and name~="querylog.json" then
+		o:value(name,name)
+		o1:depends ("backupfile", name)
+	end
+end
+o.widget = "checkbox"
+o.default = nil
+o.optional=false
 o.description=translate("Will be restore when workdir/data is empty")
 ----backup workdir path
-o = s:option(Value, "backupwdpath", translate("Backup workdir path"))
-o.default     = "/usr/bin/AdGuardHome"
-o.datatype    = "string"
-o.optional = true
-o.validate=function(self, value)
+
+o1.default     = "/usr/bin/AdGuardHome"
+o1.datatype    = "string"
+o1.optional = false
+o1.validate=function(self, value)
 if fs.stat(value,"type")=="reg" then
 	if m.message then
 	m.message =m.message.."\nerror!backup dir is a file"
