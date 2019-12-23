@@ -76,6 +76,7 @@ Complex openwrt AdGuardHome luci
 
 #### pic
 example in zh-cn:<br>
-![Screenshot_2019-12-06 newifi-d1-home - 基础设置 - LuCI](https://user-images.githubusercontent.com/22387141/70305470-74372a00-183f-11ea-80fd-6fd96262c789.png)
-![Screenshot_2019-12-06 newifi-d1-home - 日志 - LuCI](https://user-images.githubusercontent.com/22387141/70305550-a8aae600-183f-11ea-92c7-eb1e085143f5.png)
-![Screenshot_2019-12-06 newifi-d1-home - 手动设置 - LuCI](https://user-images.githubusercontent.com/22387141/70305555-ab0d4000-183f-11ea-87c2-22315891b4c4.png)
+![Screenshot_2019-12-23 newifi-d1 - 基础设置 - LuCI](https://user-images.githubusercontent.com/22387141/71361626-81d60900-25ce-11ea-91d5-ac4e35d5c41e.png)
+![图片](https://user-images.githubusercontent.com/22387141/71361650-90242500-25ce-11ea-9727-9306a3da1357.png)
+![Screenshot_2019-12-23 newifi-d1 - 日志 - LuCI(1)](https://user-images.githubusercontent.com/22387141/71361700-b944b580-25ce-11ea-8562-f68c28952b2b.png)
+![Screenshot_2019-12-23 newifi-d1 - 手动设置 - LuCI](https://user-images.githubusercontent.com/22387141/71361704-bb0e7900-25ce-11ea-8042-6dd396607030.png)
