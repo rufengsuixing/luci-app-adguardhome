@@ -550,11 +550,11 @@ do_crontab(){
 		crontab_editor
 	fi
 	
-	findstr="/usr/bin/AdGuardHome/addhost.sh"
-	default="#0 * * * * /usr/bin/AdGuardHome/addhost.sh"
+	findstr="/usr/share/AdGuardHome/addhost.sh"
+	default="#0 * * * * /usr/share/AdGuardHome/addhost.sh"
 	[ "${crontab//autohost/}" == "$crontab" ] && enable=0 || enable=1
 	crontab_editor
-	[ "$enable" == "0" ] && /usr/bin/AdGuardHome/addhost.sh del
+	[ "$enable" == "0" ] && /usr/share/AdGuardHome/addhost.sh del
 }
 crontab_editor(){
 	local line="$(grep "$findstr" $CRON_FILE)"
