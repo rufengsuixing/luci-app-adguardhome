@@ -244,14 +244,16 @@ else
 	return value
 end
 end
-----autoupdate
-o = s:option(Flag, "autoupdate", translate("Auto update core with crontab"))
-o.default = 0
-o.optional = true
-----cutquerylog
-o = s:option(Flag, "cutquerylog", translate("Auto tail querylog with crontab"))
-o.default = 0
-o.optional = true
+
+----Crontab
+o = s:option(MultiValue, "crontab", translate("Crontab task"))
+o:value("autoupdate","Auto update core")
+o:value("cutquerylog","Auto tail querylog")
+o:value("cutruntimelog","Auto tail runtime log")
+o.widget = "checkbox"
+o.default = nil
+o.optional=true
+
 ----downloadpath
 o = s:option(TextValue, "downloadlinks",translate("Download links for update"))
 o.optional = false
