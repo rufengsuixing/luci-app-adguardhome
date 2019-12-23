@@ -8,8 +8,9 @@ while ((getline < "/tmp/dhcp.leases") > 0)
 while (("ip -6 neighbor show | grep -v fe80" | getline) > 0)
 {
     if (a[$5]) {print $1" "a[$5] >"/tmp/tmphost"; }
-}}'
-echo "#programaddend" >>/tmp/tmphost
+}
+print "#programaddend" >"/tmp/tmphost";
+}'
 grep programaddstart /etc/hosts
 if [ "$?" == "0" ]; then
 	sed -i '/programaddstart/,/programaddend/c\#programaddstart' /etc/hosts
