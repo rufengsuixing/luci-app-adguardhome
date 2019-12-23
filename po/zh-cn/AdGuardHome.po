@@ -219,3 +219,6 @@ msgstr "强制更新"
 
 msgid "Backup workdir files when shutdown"
 msgstr "在关机时备份工作目录文件"
+
+msgid "Use template"
+msgstr "使用模板"
