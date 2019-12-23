@@ -20,3 +20,4 @@ else
 	cat /tmp/tmphost >> /etc/hosts
 fi
 rm /tmp/tmphost
+/etc/init.d/AdGuardHome reload
