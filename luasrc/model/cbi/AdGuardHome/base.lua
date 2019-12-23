@@ -250,6 +250,7 @@ o = s:option(MultiValue, "crontab", translate("Crontab task"),translate("Please 
 o:value("autoupdate",translate("Auto update core"))
 o:value("cutquerylog",translate("Auto tail querylog"))
 o:value("cutruntimelog",translate("Auto tail runtime log"))
+o:value("autohost",translate("Auto update ipv6 hosts and restart adh"))
 o.widget = "checkbox"
 o.default = nil
 o.optional=true

@@ -238,3 +238,5 @@ msgstr "计划任务"
 msgid "Please change time and args in crontab"
 msgstr "请在计划任务中修改时间和参数"
 
+msgid "Auto update ipv6 hosts and restart adh"
+msgstr "自动更新ipv6主机并重启adh"
