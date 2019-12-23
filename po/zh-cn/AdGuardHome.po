@@ -240,3 +240,6 @@ msgstr "请在计划任务中修改时间和参数"
 
 msgid "Auto update ipv6 hosts and restart adh"
 msgstr "自动更新ipv6主机并重启adh"
+
+msgid "Auto update gfwlist and restart adh"
+msgstr "自动更新gfw列表并重启adh"

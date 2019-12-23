@@ -555,6 +555,11 @@ do_crontab(){
 	[ "${crontab//autohost/}" == "$crontab" ] && enable=0 || enable=1
 	crontab_editor
 	[ "$enable" == "0" ] && /usr/share/AdGuardHome/addhost.sh del
+	
+	findstr="/usr/share/AdGuardHome/gfw2adg.sh"
+	default="#30 3 * * * /usr/share/AdGuardHome/gfw2adg.sh"
+	[ "${crontab//autogfw/}" == "$crontab" ] && enable=0 || enable=1
+	crontab_editor
 }
 crontab_editor(){
 	local line="$(grep "$findstr" $CRON_FILE)"
