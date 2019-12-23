@@ -89,6 +89,10 @@ filters:
   url: http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
   name: StevenBlack host+fakenews + gambling + porn + social
   id: 1575618243
+- enabled: false
+  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD/anti-ad-easylist.txt
+  name: anti-AD(Adblock+neohosts+yhosts+cjxlist+adhlist)
+  id: 1577113202
 user_rules: []
 dhcp:
   enabled: false
