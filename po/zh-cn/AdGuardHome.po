@@ -222,3 +222,19 @@ msgstr "在关机时备份工作目录文件"
 
 msgid "Use template"
 msgstr "使用模板"
+
+msgid "Auto update core"
+msgstr "自动升级核心"
+
+msgid "Auto tail querylog"
+msgstr "自动截短查询日志"
+
+msgid "Auto tail runtime log"
+msgstr "自动截短运行日志"
+
+msgid "Crontab task"
+msgstr "计划任务"
+
+msgid "Please change time and args in crontab"
+msgstr "请在计划任务中修改时间和参数"
+

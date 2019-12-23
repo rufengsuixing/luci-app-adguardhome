@@ -246,10 +246,10 @@ end
 end
 
 ----Crontab
-o = s:option(MultiValue, "crontab", translate("Crontab task"))
-o:value("autoupdate","Auto update core")
-o:value("cutquerylog","Auto tail querylog")
-o:value("cutruntimelog","Auto tail runtime log")
+o = s:option(MultiValue, "crontab", translate("Crontab task"),translate("Please change time and args in crontab"))
+o:value("autoupdate",translate("Auto update core"))
+o:value("cutquerylog",translate("Auto tail querylog"))
+o:value("cutruntimelog",translate("Auto tail runtime log"))
 o.widget = "checkbox"
 o.default = nil
 o.optional=true
