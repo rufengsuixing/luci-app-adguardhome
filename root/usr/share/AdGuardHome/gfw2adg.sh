@@ -7,6 +7,7 @@ local lastmd5=$(uci get AdGuardHome.AdGuardHome.gfwlistmd5)
 if [ "$nowmd5" != "$lastmd5" ]; then
 	/etc/init.d/AdGuardHome reload
 	uci get AdGuardHome.AdGuardHome.gfwlistmd5="$nowmd5"
+	[ "$2" == "noreload" ] && return
 	uci commit AdGuardHome
 fi
 }
