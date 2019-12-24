@@ -538,7 +538,7 @@ do_crontab(){
 	config_get logfile $CONFIGURATION logfile ""
 	findstr="tail -n [0-9]* $logfile > $logfile"
 	default="#30 3 * * * tail -n 2000 $logfile > $logfile"
-	[ "$logfile" != "syslog" -a "$logfile" != "" ] || [ "$enabled" == "0" ] || [ "${crontab//cutruntimelog/}" == "$crontab" ] && cronenable=0 || cronenable=1
+	[ "$logfile" == "syslog" ] || [ "$logfile" == "" ] || [ "$enabled" == "0" ] || [ "${crontab//cutruntimelog/}" == "$crontab" ] && cronenable=0 || cronenable=1
 	crontab_editor
 
 	findstr="/usr/share/AdGuardHome/addhost.sh"
