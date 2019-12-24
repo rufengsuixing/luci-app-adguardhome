@@ -413,8 +413,6 @@ start_service() {
 		ln -s /tmp/sessions.db $workdir/data/sessions.db 2>/dev/null
 		fi
 	fi
-	#reload
-	procd_send_signal $CONFIGURATION
 	local ADDITIONAL_ARGS=""
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
