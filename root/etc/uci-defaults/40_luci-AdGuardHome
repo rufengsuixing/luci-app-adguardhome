@@ -1,6 +1,6 @@
 #!/bin/sh
 
-uci -q batch <<-EOF 2>&1 >/dev/null
+uci -q batch <<-EOF >/dev/null 2>&1
 	delete ucitrack.@AdGuardHome[-1]
 	add ucitrack AdGuardHome
 	set ucitrack.@AdGuardHome[-1].init=AdGuardHome

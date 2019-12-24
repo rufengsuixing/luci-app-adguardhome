@@ -7,9 +7,10 @@ STOP=01
 
 CONFIGURATION=AdGuardHome
 CRON_FILE=/etc/crontabs/root
-EXTRA_COMMANDS="do_redirect testbackup"
+EXTRA_COMMANDS="do_redirect testbackup test_crontab"
 EXTRA_HELP="        do_redirect 0 or 1\
-        testbackup backup or restore"
+        testbackup backup or restore\
+		test_crontab"
 set_forward_dnsmasq()
 {
 	local PORT="$1"
@@ -57,7 +58,7 @@ set_iptable()
 {
 	local ipv6_server=$1
 	local tcp_server=$2
-	uci -q batch <<-EOF 2>&1 >/dev/null
+	uci -q batch <<-EOF >/dev/null 2>&1
   delete firewall.AdGuardHome
 	set firewall.AdGuardHome=include
 	set firewall.AdGuardHome.type=script
@@ -92,7 +93,7 @@ EOF
 
 clear_iptable()
 {
-	uci -q batch <<-EOF 2>&1 >/dev/null
+	uci -q batch <<-EOF >/dev/null 2>&1
   delete firewall.AdGuardHome
 	commit firewall
 EOF
@@ -209,7 +210,7 @@ do_redirect()
 	config_get "old_redirect" "$section" "old_redirect" "none"
 	config_get "old_port" "$section" "old_port" "0"
 	config_get "old_enabled" "$section" "old_enabled" "0"
-	uci get dhcp.@dnsmasq[0].port 2>&1 >/dev/null || uci set dhcp.@dnsmasq[0].port="53" 2>&1 >/dev/null
+	uci get dhcp.@dnsmasq[0].port >/dev/null 2>&1 || uci set dhcp.@dnsmasq[0].port="53" >/dev/null 2>&1
 	if [ "$old_enabled" = "1" -a "$old_redirect" == "exchange" ]; then
 		AdGuardHome_PORT=$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)
 	fi
@@ -236,8 +237,7 @@ do_redirect()
 	uci add_list AdGuardHome.@AdGuardHome[0].old_port="$AdGuardHome_PORT" 2>/dev/null
 	uci add_list AdGuardHome.@AdGuardHome[0].old_enabled="$enabled" 2>/dev/null
 	uci commit AdGuardHome
-
-	[ "$enabled" -gt 0 ] || return 1
+	[ "$enabled" == "0" ] && return 1
 	if [ "$AdGuardHome_PORT" == "0" ]; then
 		return 1
 	fi
@@ -390,7 +390,6 @@ start_service() {
 	fi
 	#what need to do before reload
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
-	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 
 	config_get backupfile $CONFIGURATION backupfile ""
 	mkdir -p $workdir/data
@@ -423,7 +422,7 @@ start_service() {
 	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	mkdir -p ${binpath%/*}
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
-
+	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 	config_get httpport $CONFIGURATION httpport 3000
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
 
@@ -460,7 +459,6 @@ start_service() {
 	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
 	procd_set_param limits core="unlimited"
 	procd_set_param stderr 1
-	# pass config to script on start
 	procd_set_param command $binpath $ADDITIONAL_ARGS
 	procd_set_param file "$configpath"
 	procd_set_param file "/etc/config/AdGuardHome"
@@ -482,7 +480,7 @@ start_service() {
 }
 reload_service()
 {
-	rm /var/run/AdGucitest 2>&1 >/dev/null
+	rm /var/run/AdGucitest >/dev/null 2>&1
 	echo "AdGuardHome reloading"
 	start
 }
@@ -521,6 +519,10 @@ boot() {
 	if eval "type service_started" 2>/dev/null >/dev/null; then
 		service_started
 	fi
+}
+test_crontab(){
+config_load "${CONFIGURATION}"
+do_crontab
 }
 do_crontab(){
 	config_get crontab $CONFIGURATION crontab ""
