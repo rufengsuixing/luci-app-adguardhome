@@ -260,7 +260,7 @@ o.optional=true
 o = s:option(TextValue, "downloadlinks",translate("Download links for update"))
 o.optional = false
 o.rows = 4
-o.wrap = "on"
+o.wrap = "soft"
 o.size=111
 o.cfgvalue = function(self, section)
 	return fs.readfile("/usr/share/AdGuardHome/links.txt")
