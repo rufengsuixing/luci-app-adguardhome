@@ -1,5 +1,15 @@
 #!/bin/sh
-[ "$1" == "del" ] && sed -i '/programaddstart/,/programaddend/d' /etc/hosts && exit 0
+checkmd5(){
+local nowmd5=$(md5sum /etc/hosts)
+nowmd5=${nowmd5%% *}
+local lastmd5=$(uci get AdGuardHome.AdGuardHome.hostsmd5)
+if [ "$nowmd5" != "$lastmd5" ]; then
+	/etc/init.d/AdGuardHome reload
+	uci get AdGuardHome.AdGuardHome.hostsmd5="$nowmd5"
+	uci commit AdGuardHome
+fi
+}
+[ "$1" == "del" ] && sed -i '/programaddstart/,/programaddend/d' /etc/hosts && checkmd5 && exit 0
 /usr/bin/awk 'BEGIN{
 while ((getline < "/tmp/dhcp.leases") > 0)
 {
@@ -20,4 +30,4 @@ else
 	cat /tmp/tmphost >> /etc/hosts
 fi
 rm /tmp/tmphost
-/etc/init.d/AdGuardHome reload
+checkmd5
