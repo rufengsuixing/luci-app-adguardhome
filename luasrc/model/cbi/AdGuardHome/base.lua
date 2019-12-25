@@ -29,10 +29,10 @@ o.description = translate("<input type=\"button\" style=\"width:210px;border-col
 local binmtime=uci:get("AdGuardHome","AdGuardHome","binmtime") or "0"
 local e=""
 if not fs.access(configpath) then
-	e=e.." no config"
+	e=e.." "..translate("no config")
 end
 if not fs.access(binpath) then
-	e=e.." no bin"
+	e=e.." "..translate("no core")
 else
 	local version
 	local testtime=fs.stat(binpath,"mtime")

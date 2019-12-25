@@ -1,11 +1,30 @@
-msgid "Free and open source, powerful network-wide ads & trackers blocking DNS server."
-msgstr "免费开源，功能强大的全网络广告和跟踪程序拦截DNS服务器"
-
+#/cgi-bin/luci/admin/services/AdGuardHome
 msgid "Base Setting"
 msgstr "基础设置"
 
+msgid "Log"
+msgstr "日志"
+
 msgid "Manual Config"
 msgstr "手动设置"
+
+msgid "Free and open source, powerful network-wide ads & trackers blocking DNS server."
+msgstr "免费开源，功能强大的全网络广告和跟踪程序拦截DNS服务器"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "Redirected"
+msgstr "已重定向"
+
+msgid "Not redirect"
+msgstr "未重定向"
+
+msgid "Collecting data..."
+msgstr "获取数据中..."
 
 msgid "Enable"
 msgstr "启用"
@@ -15,25 +34,34 @@ msgstr "网页管理端口"
 
 msgid "Update"
 msgstr "更新"
-
+#button change
 msgid "Update core version"
 msgstr "更新核心版本"
-
-msgid "Updated"
-msgstr "已更新"
 
 msgid "Check..."
 msgstr "检查中..."
 
+msgid "Updated"
+msgstr "已更新"
+
+#button hide
+msgid "Force update"
+msgstr "强制更新"
+
+msgid "Fast config"
+msgstr "快速配置"
+#
 msgid "core version:"
 msgstr "核心版本:"
-
+#description change
+msgid "no config"
+msgstr "没有配置文件"
+msgid "no core"
+msgstr "没有核心"
+#
 msgid "Redirect"
 msgstr "重定向"
-
-msgid "AdGuardHome redirect mode"
-msgstr "AdGuardHome重定向模式"
-
+#inlist
 msgid "none"
 msgstr "无"
 
@@ -42,7 +70,13 @@ msgstr "作为dnsmasq的上游服务器"
 
 msgid "Redirect 53 port to AdGuardHome"
 msgstr "重定向53端口到AdGuardHome"
- 
+
+msgid "Use port 53 replace dnsmasq"
+msgstr "使用53端口替换dnsmasq"
+#
+msgid "AdGuardHome redirect mode"
+msgstr "AdGuardHome重定向模式"
+
 msgid "Bin Path"
 msgstr "执行文件路径"
 
@@ -51,7 +85,7 @@ msgstr "AdGuardHome 执行文件路径 如果没有执行文件将自动下载"
 
 msgid "use upx to compress bin after download"
 msgstr "下载后使用upx压缩执行文件"
-
+#inlist
 msgid "compress faster"
 msgstr "快速压缩"
 
@@ -69,7 +103,7 @@ msgstr "尝试更多变体压缩手段[很慢]"
 
 msgid "bin use less space,but may have compatibility issues"
 msgstr "减小执行文件空间占用，但是可能压缩后有兼容性问题"
-
+#
 msgid "Config Path"
 msgstr "配置文件路径"
 
@@ -90,7 +124,7 @@ msgstr "AdGuardHome 运行日志 如果填syslog将写入系统日志；如果�
 
 msgid "Verbose log"
 msgstr "详细日志"
-
+#hide div
 msgid "Add gfwlist"
 msgstr "加入gfw列表"
 
@@ -102,39 +136,30 @@ msgstr "已添加"
 
 msgid "Not added"
 msgstr "未添加"
+#hide div
+msgid "Del gfwlist"
+msgstr "删除gfw列表"
 
+msgid "Del"
+msgstr "删除"
+#hide div
 msgid "Gfwlist upstream dns server"
 msgstr "gfw列表上游服务器"
 
 msgid "Gfwlist domain upstream dns service"
 msgstr "gfw列表域名上游服务器"
-
-msgid "Username"
-msgstr "用户名"
-
-msgid "Change browser management username"
-msgstr "改变网页登录用户名"
-
-msgid "Check Config"
-msgstr "检查配置"
-
-msgid "unknown"
-msgstr "未知"
-
-msgid "Reload Config"
-msgstr "重新载入配置"
-
+#hide div
 msgid "Change browser management password"
 msgstr "改变网页登录密码"
 
-msgid "Press load culculate model and culculate finally save/apply"
-msgstr "按载入计算模块 然后计算 最后保存/提交"
+msgid "Culculate"
+msgstr "计算"
+##button change
+msgid "Load culculate model"
+msgstr "载入计算模块"
 
 msgid "loading..."
 msgstr "载入中"
-
-msgid "Culculate"
-msgstr "计算"
 
 msgid "Please save/apply"
 msgstr "请提交"
@@ -142,44 +167,17 @@ msgstr "请提交"
 msgid "is empty"
 msgstr "为空"
 
-msgid "Load culculate model"
-msgstr "载入计算模块"
-
-msgid "RUNNING"
-msgstr "运行中"
-
-msgid "NOT RUNNING"
-msgstr "未运行"
-
-msgid "Collecting data..."
-msgstr "获取数据中..."
-
-msgid "Log"
-msgstr "日志"
-
-msgid "dellog"
-msgstr "删除日志"
-
-msgid "download log"
-msgstr "下载日志"
-
-msgid "reverse"
-msgstr "逆序"
-
-msgid "Fast config"
-msgstr "快速配置"
-
+msgid "Press load culculate model and culculate finally save/apply"
+msgstr "按载入计算模块 然后计算 最后保存/提交"
+#
 msgid "Keep database when system upgrade"
 msgstr "系统升级时保留数据"
-
-msgid "Use port 53 replace dnsmasq"
-msgstr "使用53端口替换dnsmasq"
 
 msgid "Boot delay until network ok"
 msgstr "开机时直到网络准备好再启动"
 
-msgid "Backup workdir when shutdown"
-msgstr "关机时备份工作目录"
+msgid "Backup workdir files when shutdown"
+msgstr "在关机时备份工作目录文件"
 
 msgid "Will be restore when workdir/data is empty"
 msgstr "在工作目录/data为空的时候恢复"
@@ -187,41 +185,8 @@ msgstr "在工作目录/data为空的时候恢复"
 msgid "Backup workdir path"
 msgstr "工作目录备份路径"
 
-msgid "Auto update core with crontab"
-msgstr "计划任务自动更新核心"
-
-msgid "localtime"
-msgstr "本地时间"
-
-msgid "Redirected"
-msgstr "已重定向"
-
-msgid "Not redirect"
-msgstr "未重定向"
-
-msgid "Auto tail querylog with crontab"
-msgstr "计划任务截短查询日志"
-
-msgid "Download links for update"
-msgstr "升级用的下载链接"
-
-msgid "Del gfwlist"
-msgstr "删除gfw列表"
-
-msgid "Del"
-msgstr "删除"
-
-msgid "Please add log path in config to enable log"
-msgstr "请在设置里填写日志路径以启用日志"
-
-msgid "Force update"
-msgstr "强制更新"
-
-msgid "Backup workdir files when shutdown"
-msgstr "在关机时备份工作目录文件"
-
-msgid "Use template"
-msgstr "使用模板"
+msgid "Crontab task"
+msgstr "计划任务"
 
 msgid "Auto update core"
 msgstr "自动升级核心"
@@ -232,14 +197,50 @@ msgstr "自动截短查询日志"
 msgid "Auto tail runtime log"
 msgstr "自动截短运行日志"
 
-msgid "Crontab task"
-msgstr "计划任务"
-
-msgid "Please change time and args in crontab"
-msgstr "请在计划任务中修改时间和参数"
-
 msgid "Auto update ipv6 hosts and restart adh"
 msgstr "自动更新ipv6主机并重启adh"
 
 msgid "Auto update gfwlist and restart adh"
 msgstr "自动更新gfw列表并重启adh"
+
+msgid "Please change time and args in crontab"
+msgstr "请在计划任务中修改时间和参数"
+
+msgid "Download links for update"
+msgstr "升级用的下载链接"
+
+#/cgi-bin/luci/admin/services/AdGuardHome/log/
+msgid "reverse"
+msgstr "逆序"
+
+msgid "localtime"
+msgstr "本地时间"
+
+msgid "Please add log path in config to enable log"
+msgstr "请在设置里填写日志路径以启用日志"
+
+msgid "dellog"
+msgstr "删除日志"
+
+msgid "download log"
+msgstr "下载日志"
+
+#/cgi-bin/luci//admin/services/AdGuardHome/manual/
+msgid "Use template"
+msgstr "使用模板"
+#hide button
+msgid "Reload Config"
+msgstr "重新载入配置"
+
+#unused
+msgid "Change browser management username"
+msgstr "改变网页登录用户名"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Check Config"
+msgstr "检查配置"
+
+msgid "unknown"
+msgstr "未知"
