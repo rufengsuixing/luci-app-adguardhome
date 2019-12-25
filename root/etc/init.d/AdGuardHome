@@ -525,6 +525,7 @@ do_crontab
 do_crontab(){
 	config_get crontab $CONFIGURATION crontab ""
 	local findstr default cronenable
+	local cronreload=0
 	findstr="/usr/share/AdGuardHome/update_core.sh"
 	default="#30 3 * * * /usr/share/AdGuardHome/update_core.sh 2>&1"
 	[ "$enabled" == "0" ] || [ "${crontab//autoupdate/}" == "$crontab" ] && cronenable=0 || cronenable=1
@@ -551,6 +552,7 @@ do_crontab(){
 	default="#30 3 * * * /usr/share/AdGuardHome/gfw2adg.sh"
 	[ "$enabled" == "0" ] || [ "${crontab//autogfw/}" == "$crontab" ] && cronenable=0 || cronenable=1
 	crontab_editor
+	[ "$cronreload" -gt 0 ] && /etc/init.d/cron restart
 }
 crontab_editor(){
 	local line="$(grep "$findstr" $CRON_FILE)"
@@ -560,14 +562,14 @@ crontab_editor(){
 		else
 			sed -i "\,$findstr,d" $CRON_FILE
 			echo "#$line" >> $CRON_FILE
-			/etc/init.d/cron restart
+			cronreload=$((cronreload+1))
 		fi
 	else
 		if [ $cronenable -eq 1 ]; then
 			[ -z "$line" ] && line="$default"
 			sed -i "\,$findstr,d" $CRON_FILE
 			echo "${line:1}" >> $CRON_FILE
-			/etc/init.d/cron restart
+			cronreload=$((cronreload+1))
 		else
 			return
 		fi
