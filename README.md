@@ -34,6 +34,7 @@
  - AdGuardHome 不支持ipset 设置，在使用ipset的情况下，无法替代dnsmasq只能作为dnsmasq上游存在，如果你想要这个功能就去投票吧<br>
  https://github.com/AdguardTeam/AdGuardHome/issues/1191
  - 反馈出现大量127.0.0.1查询了localhost的请求，问题出现原因是ddns插件，如果不用ddns插件，请删除或者注释掉\etc\hotplug.d\iface\95-ddns的内容，如果还有其他来自本机的异常查询情况，高级玩家可以使用kmod来查找原因https://github.com/rufengsuixing/kmod-plog-port
+ - 部分设备ucitrack无效，本项目的解决方案为每次安装/更新luci之后点击两次提交让界面检测到ucitrack无效，之后就会切换提交方式，就不需要多次提交了
 #### 使用方法
  - 下载release，使用opkg安装即可
  - 或者编译op时clone本项目加入软件包并勾选
