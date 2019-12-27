@@ -13,10 +13,6 @@ check_if_already_running(){
 	[ "${running_tasks}" -gt "2" ] && echo -e "\nA task is already running."  && exit 2
 }
 
-clean_log(){
-	echo "" > /tmp/AdGuardHome_update.log
-}
-
 check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
 	if [ -z "${latest_ver}" ]; then
@@ -27,7 +23,6 @@ check_latest_version(){
 	now_ver="$($binpath -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
 	rm /var/run/AdGfakeconfig
 	if [ "${latest_ver}"x != "${now_ver}"x ] || [ "$1" == "force" ]; then
-		clean_log
 		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." 
 		doupdate_core
 	else

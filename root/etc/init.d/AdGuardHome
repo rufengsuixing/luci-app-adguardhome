@@ -456,6 +456,7 @@ start_service() {
 	fi
 	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
 	procd_set_param limits core="unlimited"
+	procd_set_param limits nofile="unlimited"
 	procd_set_param stderr 1
 	procd_set_param command $binpath $ADDITIONAL_ARGS
 	procd_set_param file "$configpath"
