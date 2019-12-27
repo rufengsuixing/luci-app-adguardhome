@@ -540,7 +540,7 @@ do_crontab(){
 	default="0 * * * * tail -n 2000 $workdir/data/querylog.json > $workdir/data/querylog.json"
 	[ "$enabled" == "0" ] || [ "${crontab//cutquerylog/}" == "$crontab" ] && cronenable=0 || cronenable=1
 	crontab_editor
-	[ -n "$workdir" ] && [ "$lastworkdir" != "$workdir" ] && uci set AdGuardHome.AdGuardHome.lastworkdir="$workdir" && commit=1
+	[ "$lastworkdir" != "$workdir" ] && uci set AdGuardHome.AdGuardHome.lastworkdir="$workdir" && commit=1
 	
 	config_get logfile $CONFIGURATION logfile ""
 	config_get lastlogfile $CONFIGURATION lastlogfile ""
