@@ -10,14 +10,14 @@ upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag 2>/dev/null)
 
 check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
-	[ "${running_tasks}" -gt "2" ] && echo -e "\nA task is already running."  && exit 2
+	[ "${running_tasks}" -gt "2" ] && echo -e "\nA task is already running."  && EXIT 2
 }
 
 check_latest_version(){
 	latest_ver="$(wget -O- https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
 	if [ -z "${latest_ver}" ]; then
-		wget -V | grep +https >/dev/null || (opkg update && opkg remove wget-nossl --force-depends && opkg install wget && check_latest_version && exit 0) 
-		echo -e "\nFailed to check latest version, please try again later."  && exit 1
+		wget -V | grep +https >/dev/null || (opkg update && opkg remove wget-nossl --force-depends && opkg install wget && check_latest_version && EXIT 0) 
+		echo -e "\nFailed to check latest version, please try again later."  && EXIT 1
 	fi
 	touch /var/run/AdGfakeconfig 
 	now_ver="$($binpath -c /var/run/AdGfakeconfig --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
@@ -44,7 +44,7 @@ check_latest_version(){
 					echo -e "finished"
 				fi
 			fi
-			exit 0
+			EXIT 0
 	fi
 }
 doupx(){
@@ -93,18 +93,18 @@ doupx(){
 	;;
 	*)
 	echo -e "error not support $Archt if you can use offical release please issue a bug" 
-	exit 1
+	EXIT 1
 	;;
 	esac
 	upx_latest_ver="$(wget -O- https://api.github.com/repos/upx/upx/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E '[0-9.]+' -o 2>/dev/null)"
 	wget-ssl --no-check-certificate -t 1 -T 10 -O  /tmp/upx-${upx_latest_ver}-${Arch}_linux.tar.xz "https://github.com/upx/upx/releases/download/v${upx_latest_ver}/upx-${upx_latest_ver}-${Arch}_linux.tar.xz" 2>&1
 	#tar xvJf
-	which xz || (opkg update && opkg install xz) || (echo "xz download fail" && exit 1)
+	which xz || (opkg update && opkg install xz) || (echo "xz download fail" && EXIT 1)
 	mkdir -p /tmp/upx-${upx_latest_ver}-${Arch}_linux
 	xz -d -c /tmp/upx-${upx_latest_ver}-${Arch}_linux.tar.xz| tar -x -C "/tmp" >/dev/null 2>&1
 	if [ ! -e "/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx" ]; then
 		echo -e "Failed to download upx." 
-		exit 1
+		EXIT 1
 	fi
 	rm /tmp/upx-${upx_latest_ver}-${Arch}_linux.tar.xz
 }
@@ -148,16 +148,16 @@ doupdate_core(){
 	"powerpc")
 	Arch="ppc"
 	echo -e "error not support $Archt" 
-	exit 1
+	EXIT 1
 	;;
 	"powerpc64")
 	Arch="ppc64"
 	echo -e "error not support $Archt" 
-	exit 1
+	EXIT 1
 	;;
 	*)
 	echo -e "error not support $Archt if you can use offical release please issue a bug" 
-	exit 1
+	EXIT 1
 	;;
 	esac
 	echo -e "start download" 
@@ -175,13 +175,13 @@ doupdate_core(){
 		fi 
 	done < "/tmp/run/AdHlinks.txt"
 	rm /tmp/run/AdHlinks.txt
-	[ -z "$success" ] && echo "no download success" && exit 1
+	[ -z "$success" ] && echo "no download success" && EXIT 1
 	if [ "${link##*.}" == "gz" ]; then
 		tar -zxf "/tmp/AdGuardHomeupdate/${link##*/}" -C "/tmp/AdGuardHomeupdate/"
 		if [ ! -e "/tmp/AdGuardHomeupdate/AdGuardHome" ]; then
 			echo -e "Failed to download core." 
 			rm -rf "/tmp/AdGuardHomeupdate" >/dev/null 2>&1
-			exit 1
+			EXIT 1
 		fi
 		downloadbin="/tmp/AdGuardHomeupdate/AdGuardHome/AdGuardHome"
 	else
@@ -201,16 +201,24 @@ doupdate_core(){
 	mv -f "$downloadbin" "$binpath"
 	if [ "$?" == "1" ]; then
 		echo "mv failed maybe not enough space please use upx or change bin to /tmp/AdGuardHome" 
-		exit 1
+		EXIT 1
 	fi
 	/etc/init.d/AdGuardHome start
 	rm -rf "/tmp/AdGuardHomeupdate" >/dev/null 2>&1
 	echo -e "Succeeded in updating core." 
 	echo -e "Local version: ${latest_ver}, cloud version: ${latest_ver}.\n" 
 }
-
+EXIT(){
+	rm /var/run/update_core
+	[ "$1" != "0"] && touch /var/run/update_core_error
+	exit $1
+}
 main(){
+	
 	check_if_already_running
 	check_latest_version $1
 }
+	trap "EXIT 1" SIGTERM SIGINT
+	touch /var/run/update_core
+	rm /var/run/update_core_error
 	main $1

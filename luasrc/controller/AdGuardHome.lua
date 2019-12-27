@@ -67,10 +67,10 @@ function do_update()
 	end
 	if fs.access("/var/run/update_core") then
 		if arg=="force" then
-			luci.sys.exec("kill $(pgrep /usr/share/AdGuardHome/update_core.sh) ; (rm /var/run/update_core_error ; touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 || touch /var/run/update_core_error ;rm /var/run/update_core) &")
+			luci.sys.exec("kill $(pgrep /usr/share/AdGuardHome/update_core.sh) ; sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 &")
 		end
 	else
-		luci.sys.exec("(rm /var/run/update_core_error ; touch /var/run/update_core ; sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 || touch /var/run/update_core_error ;rm /var/run/update_core) &")
+		luci.sys.exec("sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 &")
 	end
 end
 function get_log()

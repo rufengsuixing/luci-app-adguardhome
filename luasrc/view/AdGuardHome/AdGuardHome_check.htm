@@ -17,8 +17,6 @@ function apply_forceupdate(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){}
 		);
 	updatebtn.disabled = true;
-	forceupdatebtn.disabled = true;
-	forceupdatebtn.value    = '<%:Check...%>';
 	poll_check();
 	return
 }
@@ -37,7 +35,7 @@ function apply_update(){
 		);
 	updatebtn.disabled = true;
 	updatebtn.value    = '<%:Check...%>';
-	forceupdatebtn.disabled = true;
+	forceupdatebtn.style.display="inline"
 	poll_check();
 	return
 }
@@ -53,10 +51,7 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 					if (this.XHR._q[j].url == '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>'){
 						this.XHR._q.splice(j,1);
 						updatebtn.disabled = false;
-						forceupdatebtn.disabled = false;
 						updatebtn.value    = '<%:Updated%>';
-						forceupdatebtn.value="<%:Force update%>"
-						forceupdatebtn.style.display="inline"
 						break;
 					}
 				}
@@ -72,14 +67,11 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>', nul
 );}
 <% if fs.access("/var/run/update_core") then %>
 	updatebtn.disabled = true;
-	forceupdatebtn.disabled = true;
 	updatebtn.value    = '<%:Check...%>';
-poll_check();
+	forceupdatebtn.style.display="inline"
+	poll_check();
 <%elseif fs.access("/var/run/update_core_error") then %>
-poll_check();
-<%else%>
-var	btn = document.getElementById('apply_update_button');
-	updatebtn.value    = '<%:Update core version%>';
+	poll_check();
 <%end%>
 //]]>
 </script>
