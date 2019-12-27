@@ -207,6 +207,7 @@ doupdate_core(){
 	rm -rf "/tmp/AdGuardHomeupdate" >/dev/null 2>&1
 	echo -e "Succeeded in updating core." 
 	echo -e "Local version: ${latest_ver}, cloud version: ${latest_ver}.\n" 
+	EXIT 0
 }
 EXIT(){
 	rm /var/run/update_core 2>/dev/null
