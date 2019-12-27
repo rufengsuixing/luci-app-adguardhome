@@ -209,8 +209,8 @@ doupdate_core(){
 	echo -e "Local version: ${latest_ver}, cloud version: ${latest_ver}.\n" 
 }
 EXIT(){
-	rm /var/run/update_core
-	[ "$1" != "0"] && touch /var/run/update_core_error
+	rm /var/run/update_core 2>/dev/null
+	[ "$1" != "0" ] && touch /var/run/update_core_error
 	exit $1
 }
 main(){
@@ -220,5 +220,5 @@ main(){
 }
 	trap "EXIT 1" SIGTERM SIGINT
 	touch /var/run/update_core
-	rm /var/run/update_core_error
+	rm /var/run/update_core_error 2>/dev/null
 	main $1
