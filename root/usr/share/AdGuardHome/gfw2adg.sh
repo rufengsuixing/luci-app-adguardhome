@@ -5,7 +5,7 @@ local nowmd5=$(md5sum /tmp/adguard.list 2>/dev/null)
 nowmd5=${nowmd5%% *}
 local lastmd5=$(uci get AdGuardHome.AdGuardHome.gfwlistmd5 2>/dev/null)
 if [ "$nowmd5" != "$lastmd5" ]; then
-	uci get AdGuardHome.AdGuardHome.gfwlistmd5="$nowmd5"
+	uci set AdGuardHome.AdGuardHome.gfwlistmd5="$nowmd5"
 	uci commit AdGuardHome
 	[ "$1" == "noreload" ] || /etc/init.d/AdGuardHome reload
 fi
