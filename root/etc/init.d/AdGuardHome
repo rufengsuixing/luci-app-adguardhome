@@ -396,6 +396,7 @@ start_service() {
 	config_load "${CONFIGURATION}"
 	# update password
 	config_get hashpass $CONFIGURATION hashpass ""
+	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	if [ -n "$hashpass" ]; then
 		config_editor "users.password" "$hashpass" "$configpath"
 		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
@@ -434,7 +435,6 @@ start_service() {
 		fi
 	fi
 	local ADDITIONAL_ARGS=""
-	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 
 	mkdir -p ${binpath%/*}
