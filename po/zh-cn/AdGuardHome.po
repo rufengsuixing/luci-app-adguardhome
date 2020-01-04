@@ -185,8 +185,8 @@ msgstr "日志文件"
 msgid "querylog.json"
 msgstr "审计日志.json"
 #
-msgid "Boot delay until network ok"
-msgstr "开机时直到网络准备好再启动"
+msgid "On boot when network ok restart"
+msgstr "开机后网络准备好时重启"
 
 msgid "Backup workdir files when shutdown"
 msgstr "在关机时备份工作目录文件"
@@ -261,3 +261,6 @@ msgstr "未知"
 
 msgid "Keep database when system upgrade"
 msgstr "系统升级时保留数据"
+
+msgid "Boot delay until network ok"
+msgstr "开机时直到网络准备好再启动"
