@@ -267,6 +267,10 @@ o.write = function(self, section, value)
 end
 fs.writefile("/var/run/lucilogpos","0")
 function m.on_commit(map)
+	if (fs.access("/var/run/AdGserverdis")) then
+		io.popen("/etc/init.d/AdGuardHome reload &")
+		return
+	end
 	local ucitracktest=uci:get("AdGuardHome","AdGuardHome","ucitracktest")
 	if ucitracktest=="1" then
 		return

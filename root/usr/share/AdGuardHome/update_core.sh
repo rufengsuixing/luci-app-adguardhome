@@ -37,7 +37,7 @@ check_latest_version(){
 					rm -fr /tmp/AdGuardHomeupdate/AdGuardHome/${binpath##*/}
 					/tmp/upx-${upx_latest_ver}-${Arch}_linux/upx $upxflag $binpath -o /tmp/AdGuardHomeupdate/AdGuardHome/${binpath##*/}
 					rm -rf /tmp/upx-${upx_latest_ver}-${Arch}_linux
-					/etc/init.d/AdGuardHome stop
+					/etc/init.d/AdGuardHome stop nobackup
 					rm $binpath
 					mv -f /tmp/AdGuardHomeupdate/AdGuardHome/${binpath##*/} $binpath
 					/etc/init.d/AdGuardHome start
