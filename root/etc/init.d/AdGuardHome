@@ -120,8 +120,8 @@ EOF
 }
 
 service_triggers() {
-	procd_add_reload_trigger firewall
 	procd_add_reload_trigger "$CONFIGURATION"
+	[ "$(uci get AdGuardHome.AdGuardHome.redirect)" == "redirect" ] && procd_add_reload_trigger firewall
 }
 
 get_tz()
@@ -187,10 +187,13 @@ use_port53()
 	uci commit dhcp
 	/etc/init.d/dnsmasq reload
 }
-
 do_redirect()
 {
 	config_load "${CONFIGURATION}"
+	_do_redirect $1
+}
+_do_redirect()
+{
 	local section="$CONFIGURATION"
 	args=""
 	ipv6_server=1
@@ -314,12 +317,13 @@ config_editor()
 }
 
 boot_service() {
+	rm /var/run/AdGserverdis >/dev/null 2>&1
 	config_load "${CONFIGURATION}"
 	config_get waitonboot $CONFIGURATION waitonboot "0"
 	config_get_bool enabled $CONFIGURATION enabled 0
 	if [ "$enabled" == "1" ]; then
 		if [ "$waitonboot" == "1" ]; then
-			do_redirect 0
+			_do_redirect 0
 			procd_open_instance "waitnet"
 			procd_set_param command "/usr/share/AdGuardHome/waitnet.sh"
 			procd_close_instance
@@ -372,6 +376,7 @@ backup() {
 }
 start_service() {
 	# Reading config
+	rm /var/run/AdGserverdis >/dev/null 2>&1
 	config_load "${CONFIGURATION}"
 	# update password
 	config_get hashpass $CONFIGURATION hashpass ""
@@ -384,8 +389,7 @@ start_service() {
 	# update crontab
 	do_crontab
 	if [ "$enabled" == "0" ]; then
-		procd_kill $CONFIGURATION
-		do_redirect 0
+		_do_redirect 0
 		return
 	fi
 	#what need to do before reload
@@ -436,7 +440,7 @@ start_service() {
 	fi
 
 	if [ ! -f "$binpath" ]; then
-		do_redirect 0
+		_do_redirect 0
 		/usr/share/AdGuardHome/update_core.sh 2>&1 >/tmp/AdGuardHome_update.log &
 		exit 0
 	fi
@@ -458,9 +462,9 @@ start_service() {
 	procd_set_param file "$configpath" "/etc/hosts" "/etc/config/AdGuardHome"
 	procd_close_instance
 	if [ -f "$configpath" ]; then
-		do_redirect 1
+		_do_redirect 1
 	else
-		do_redirect 0
+		_do_redirect 0
 		config_get "redirect" "AdGuardHome" "redirect" "none"
 		if [ "$redirect" != "none" ]; then
 			procd_open_instance "waitconfig"
@@ -469,12 +473,13 @@ start_service() {
 			echo "no config start watching"
 		fi
 	fi
-	echo "AdGuardHome turn on"
-	(sleep 10 && [ -z "$(pgrep $binpath)" ] && logger "AdGuardHome" "no process in 10s cancel redirect" && do_redirect 0 )&
+	echo "AdGuardHome service enabled"
+	echo "luci enable switch=$enabled"
+	(sleep 10 && [ -z "$(pgrep $binpath)" ] && logger "AdGuardHome" "no process in 10s cancel redirect" && _do_redirect 0 )&
 }
 reload_service()
 {
-	rm /var/run/AdGucitest >/dev/null 2>&1
+	rm /var/run/AdGlucitest >/dev/null 2>&1
 	echo "AdGuardHome reloading"
 	start
 }
@@ -499,14 +504,14 @@ fi
 stop_service()
 {
 	config_load "${CONFIGURATION}"
-	do_redirect 0
+	_do_redirect 0
 	do_crontab
 	config_get backupfile $CONFIGURATION backupfile "0"
 	if [ -n "$backupfile" ]; then
 		backup
 	fi
-	echo "AdGuardHome turn off"
-	echo "enabled=$enabled"
+	echo "AdGuardHome service disabled"
+	touch /var/run/AdGserverdis
 }
 boot() {
 	rc_procd boot_service "$@"
@@ -561,7 +566,6 @@ do_crontab(){
 	[ "$commit" -gt 0 ] && uci commit AdGuardHome
 }
 crontab_editor(){
-	#
 	local testline reload
 	local line="$(grep "$findstr" $CRON_FILE)"
 	[ -n "$replace" ] && [ -n "$line" ] && eval testline="\${line//$replace}" && [ "$testline" != "$line" ] && line="$testline" && reload="1" && replace="" 

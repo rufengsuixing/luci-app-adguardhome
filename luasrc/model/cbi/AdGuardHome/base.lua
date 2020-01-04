@@ -43,7 +43,6 @@ else
 		uci:set("AdGuardHome","AdGuardHome","version",version)
 		uci:set("AdGuardHome","AdGuardHome","binmtime",testtime)
 		uci:save("AdGuardHome")
-		uci:commit("AdGuardHome")
 	end
 	e=version..e
 end
@@ -260,7 +259,6 @@ o = s:option(TextValue, "downloadlinks",translate("Download links for update"))
 o.optional = false
 o.rows = 4
 o.wrap = "soft"
-o.size=111
 o.cfgvalue = function(self, section)
 	return fs.readfile("/usr/share/AdGuardHome/links.txt")
 end
@@ -275,11 +273,11 @@ function m.on_commit(map)
 	elseif ucitracktest=="0" then
 		io.popen("/etc/init.d/AdGuardHome reload &")
 	else
-		if (fs.access("/var/run/AdGucitest")) then
+		if (fs.access("/var/run/AdGlucitest")) then
 			uci:set("AdGuardHome","AdGuardHome","ucitracktest","0")
 			io.popen("/etc/init.d/AdGuardHome reload &")
 		else
-			fs.writefile("/var/run/AdGucitest","")
+			fs.writefile("/var/run/AdGlucitest","")
 			if (ucitracktest=="2") then
 				uci:set("AdGuardHome","AdGuardHome","ucitracktest","1")
 			else
@@ -287,7 +285,6 @@ function m.on_commit(map)
 			end
 		end
 		uci:save("AdGuardHome")
-		uci:commit("AdGuardHome")
 	end
 end
 return m
