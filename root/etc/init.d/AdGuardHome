@@ -429,7 +429,7 @@ start_service() {
 
 	# hack to save config file when upgrade system
 	config_get upprotect $CONFIGURATION upprotect ""
-	eval upprotect=${upprotect// /\\n}
+	eval upprotect=${upprotect// /\\\\n}
 	echo -e "$upprotect">/lib/upgrade/keep.d/luci-app-adguardhome
 	
 	config_get logfile $CONFIGURATION logfile ""
