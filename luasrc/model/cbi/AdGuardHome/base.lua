@@ -191,10 +191,18 @@ o.default     = ""
 o.datatype    = "string"
 o.template = "AdGuardHome/AdGuardHome_chpass"
 o.optional = true
----- database protect
-o = s:option(Flag, "keepdb", translate("Keep database when system upgrade"))
-o.default = 0
-o.optional = true
+---- upgrade protect
+o = s:option(MultiValue, "upprotect", translate("Keep files when system upgrade"))
+o:value("$binpath",translate("core bin"))
+o:value("$configpath",translate("config file"))
+o:value("$logfile",translate("log file"))
+o:value("$workdir/data/sessions.db",translate("sessions.db"))
+o:value("$workdir/data/stats.db",translate("stats.db"))
+o:value("$workdir/data/querylog.json",translate("querylog.json"))
+o:value("$workdir/data/filters",translate("filters"))
+o.widget = "checkbox"
+o.default = nil
+o.optional=true
 ---- wait net on boot
 o = s:option(Flag, "waitonboot", translate("Boot delay until network ok"))
 o.default = 1
@@ -207,13 +215,15 @@ local name
 o:value("filters","filters")
 o:value("stats.db","stats.db")
 o:value("querylog.json","querylog.json")
+o:value("sessions.db","sessions.db")
 o1:depends ("backupfile", "filters")
 o1:depends ("backupfile", "stats.db")
 o1:depends ("backupfile", "querylog.json")
+o1:depends ("backupfile", "sessions.db")
 for name in fs.glob(workdir.."/data/*")
 do
 	name=fs.basename (name)
-	if name~="filters" and name~="stats.db" and name~="querylog.json" then
+	if name~="filters" and name~="stats.db" and name~="querylog.json" and name~="sessions.db" then
 		o:value(name,name)
 		o1:depends ("backupfile", name)
 	end

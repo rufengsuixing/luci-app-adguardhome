@@ -421,19 +421,17 @@ start_service() {
 	config_get configpath $CONFIGURATION configpath "/etc/AdGuardHome.yaml"
 	config_get binpath $CONFIGURATION binpath "/usr/bin/AdGuardHome/AdGuardHome"
 
-	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	mkdir -p ${binpath%/*}
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -w $workdir"
 	config_get httpport $CONFIGURATION httpport 3000
 	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
 
-	echo -e "$configpath\n$binpath">/lib/upgrade/keep.d/luci-app-adguardhome
 	# hack to save config file when upgrade system
-	config_get keepdb $CONFIGURATION keepdb 0
-	if [ "$keepdb" -eq 1 ]; then
-		echo -e "$workdir/data/sessions.db\n$workdir/data/stats.db\n$workdir/data/querylog.json">>/lib/upgrade/keep.d/luci-app-adguardhome
-	fi
+	config_get upprotect $CONFIGURATION upprotect ""
+	eval upprotect=${upprotect// /\\n}
+	echo -e "$upprotect">/lib/upgrade/keep.d/luci-app-adguardhome
+	
 	config_get logfile $CONFIGURATION logfile ""
 	if [ -n "$logfile" ]; then
 		ADDITIONAL_ARGS="$ADDITIONAL_ARGS -l $logfile"
