@@ -52,6 +52,7 @@ VmRSS运存占用值<br>
   - 方法一gfw代理：dns重定向-作为dnsmasq的上游服务器 
   - 方法二gfw代理：手动设置adh上游dns为自己即127.0.0.1:[自己监听的端口]，然后使用 dns重定向-使用53端口替换dnsmasq，（因为端口互换后就是dnsmasq为上游了）
   - 方法三国外ip代理：任意重定向方式，adh加入gfw列表，开启计划任务定时更新gfw即可
+  - 方法四gfw代理：dns重定向-重定向53端口到AdGuardHome,设置adh上游dns 为127.0.0.1:53
 #### 项目已经基本稳定，有bug欢迎主动反馈
 
 Complex openwrt AdGuardHome luci
