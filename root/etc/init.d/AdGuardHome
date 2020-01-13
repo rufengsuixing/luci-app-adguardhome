@@ -32,8 +32,6 @@ set_forward_dnsmasq()
 	done
 	uci delete dhcp.@dnsmasq[0].resolvfile 2>/dev/null
 	uci set dhcp.@dnsmasq[0].noresolv=1
-	uci commit dhcp
-	/etc/init.d/dnsmasq restart
 }
 
 stop_forward_dnsmasq()
@@ -52,8 +50,6 @@ stop_forward_dnsmasq()
 		uci set dhcp.@dnsmasq[0].resolvfile=/tmp/resolv.conf.auto 2>/dev/null
 		uci delete dhcp.@dnsmasq[0].noresolv 2>/dev/null
 	fi
-	uci commit dhcp
-	/etc/init.d/dnsmasq restart
 }
 
 set_iptable()
@@ -182,8 +178,6 @@ rm_port53()
 	fi
 	config_editor "dns.port" "$dnsmasq_port" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="53"
-	uci commit dhcp
-	/etc/init.d/dnsmasq reload
 }
 
 use_port53()
@@ -202,8 +196,6 @@ use_port53()
 	fi
 	config_editor "dns.port" "53" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="$AdGuardHome_PORT"
-	uci commit dhcp
-	/etc/init.d/dnsmasq reload
 }
 do_redirect()
 {
@@ -258,17 +250,17 @@ _do_redirect()
 	uci add_list AdGuardHome.@AdGuardHome[0].old_port="$AdGuardHome_PORT" 2>/dev/null
 	uci add_list AdGuardHome.@AdGuardHome[0].old_enabled="$enabled" 2>/dev/null
 	uci commit AdGuardHome
-	[ "$enabled" == "0" ] && return 1
-	if [ "$AdGuardHome_PORT" == "0" ]; then
-		return 1
+	if [ "$enabled" != "0" ] && [ "$AdGuardHome_PORT" != "0" ] ; then
+		if [ "$redirect" = "redirect" ]; then
+			set_iptable $ipv6_server $tcp_server
+		elif [ "$redirect" = "dnsmasq-upstream" ]; then
+			set_forward_dnsmasq "$AdGuardHome_PORT"
+		elif [ "$redirect" == "exchange" -a "$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)" == "53" ]; then
+			use_port53
+		fi
 	fi
-	if [ "$redirect" = "redirect" ]; then
-		set_iptable $ipv6_server $tcp_server
-	elif [ "$redirect" = "dnsmasq-upstream" ]; then
-		set_forward_dnsmasq "$AdGuardHome_PORT"
-	elif [ "$redirect" == "exchange" -a "$(uci get dhcp.@dnsmasq[0].port 2>/dev/null)" == "53" ]; then
-		use_port53
-	fi
+	[ -n $(uci changes dhcp) ] && uci commit dhcp && /etc/init.d/dnsmasq restart
+	
 }
 get_filesystem()
 {
@@ -417,7 +409,7 @@ start_service() {
 	if [ -n "$backupfile" ] && [ ! -d "$workdir/data" ]; then
 		restore
 	fi
-	# for overlay data-stk-oo not suppport
+	# for jffs2 data-stk-oo not support
 	local cwdfs=$(get_filesystem $workdir)
 	echo "workdir is a $cwdfs filesystem"
 	if [ "$cwdfs" == "jffs2" ]; then
