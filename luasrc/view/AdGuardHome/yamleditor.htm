@@ -60,19 +60,23 @@ function addmore() {
 }
 //]]>
 </script> 
+
 <script type="text/javascript">//<![CDATA[
 function cheditor(){
-var editor = CodeMirror.fromTextArea(document.getElementById("cbid.AdGuardHome.AdGuardHome.escconf"), {
-mode: "text/yaml",    //实现groovy代码高亮
-styleActiveLine: true,
-lineNumbers: true,	//显示行号
-theme: "dracula",	//设置主题
-lineWrapping: true,	//代码折叠
-foldGutter: true,
-gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-matchBrackets: true //括号匹配
-}
-);
+	var editor = CodeMirror.fromTextArea(document.getElementById("cbid.AdGuardHome.AdGuardHome.escconf"), {
+		mode: "text/yaml",    //实现groovy代码高亮
+		styleActiveLine: true,
+		lineNumbers: true,	//显示行号
+		theme: "dracula",	//设置主题
+		lineWrapping: true,	//代码折叠
+		foldGutter: true,
+		gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+		matchBrackets: true //括号匹配
+	});
+	var he=window.innerHeight
+	console.debug(he)
+	if (he<300){he=300;}
+	editor.setSize("100%", he-120)
 }
 function reload_config(){
 	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[reloadconfig]])%>', null,
