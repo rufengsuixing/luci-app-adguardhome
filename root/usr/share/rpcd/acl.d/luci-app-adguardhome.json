@@ -1,0 +1,31 @@
+{
+	"luci-app-adguardhome": {
+		"description": "Grant UCI access for luci-app-adguardhome",
+		"read": {
+            "file": {
+                "/usr/share/AdGuardHome/addhost.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/AdGuardHome_template.yaml": [ "read" ],
+                "/usr/share/AdGuardHome/firewall.start": [ "read" ],
+                "/usr/share/AdGuardHome/getsyslog.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/gfw2adg.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/links.txt": [ "read" ],
+                "/usr/share/AdGuardHome/tailto.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/update_core.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/waitnet.sh": [ "exec" ],
+                "/usr/share/AdGuardHome/watchconfig.sh": [ "exec" ],
+                "/etc/init.d/AdGuardHome": [ "exec" ],
+                "/etc/init.d/dnsmasq": [ "exec" ],
+                "/usr/bin/AdGuardHome/AdGuardHome": [ "exec" ]
+            },
+			"uci": [ "AdGuardHome", "adguardhome" ]
+		},
+		"write": {
+            "file": {
+                "/usr/share/AdGuardHome/AdGuardHome_template.yaml": [ "write" ],
+                "/usr/share/AdGuardHome/firewall.start": [ "write" ],
+                "/usr/share/AdGuardHome/links.txt": [ "write" ]
+            },
+			"uci": [ "AdGuardHome", "adguardhome" ]
+		}
+	}
+}
