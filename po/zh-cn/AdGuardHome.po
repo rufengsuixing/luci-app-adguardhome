@@ -1,3 +1,7 @@
+
+msgid ""
+msgstr ""
+
 #/cgi-bin/luci/admin/services/AdGuardHome
 msgid "Base Setting"
 msgstr "基础设置"
@@ -34,6 +38,7 @@ msgstr "网页管理端口"
 
 msgid "Update"
 msgstr "更新"
+
 #button change
 msgid "Update core version"
 msgstr "更新核心版本"
@@ -50,17 +55,20 @@ msgstr "强制更新"
 
 msgid "Fast config"
 msgstr "快速配置"
-#
+
 msgid "core version:"
 msgstr "核心版本:"
+
 #description change
 msgid "no config"
 msgstr "没有配置文件"
+
 msgid "no core"
 msgstr "没有核心"
-#
+
 msgid "Redirect"
 msgstr "重定向"
+
 #inlist
 msgid "none"
 msgstr "无"
@@ -73,7 +81,7 @@ msgstr "重定向53端口到AdGuardHome"
 
 msgid "Use port 53 replace dnsmasq"
 msgstr "使用53端口替换dnsmasq"
-#
+
 msgid "AdGuardHome redirect mode"
 msgstr "AdGuardHome重定向模式"
 
@@ -85,6 +93,7 @@ msgstr "AdGuardHome 执行文件路径 如果没有执行文件将自动下载"
 
 msgid "use upx to compress bin after download"
 msgstr "下载后使用upx压缩执行文件"
+
 #inlist
 msgid "compress faster"
 msgstr "快速压缩"
@@ -103,7 +112,7 @@ msgstr "尝试更多变体压缩手段[很慢]"
 
 msgid "bin use less space,but may have compatibility issues"
 msgstr "减小执行文件空间占用，但是可能压缩后有兼容性问题"
-#
+
 msgid "Config Path"
 msgstr "配置文件路径"
 
@@ -124,6 +133,7 @@ msgstr "AdGuardHome 运行日志 如果填syslog将写入系统日志；如果�
 
 msgid "Verbose log"
 msgstr "详细日志"
+
 #hide div
 msgid "Add gfwlist"
 msgstr "加入gfw列表"
@@ -136,24 +146,28 @@ msgstr "已添加"
 
 msgid "Not added"
 msgstr "未添加"
+
 #hide div
 msgid "Del gfwlist"
 msgstr "删除gfw列表"
 
 msgid "Del"
 msgstr "删除"
+
 #hide div
 msgid "Gfwlist upstream dns server"
 msgstr "gfw列表上游服务器"
 
 msgid "Gfwlist domain upstream dns service"
 msgstr "gfw列表域名上游服务器"
+
 #hide div
 msgid "Change browser management password"
 msgstr "改变网页登录密码"
 
 msgid "Culculate"
 msgstr "计算"
+
 ##button change
 msgid "Load culculate model"
 msgstr "载入计算模块"
@@ -169,9 +183,10 @@ msgstr "为空"
 
 msgid "Press load culculate model and culculate finally save/apply"
 msgstr "按载入计算模块 然后计算 最后保存/提交"
-#
+
 msgid "Keep files when system upgrade"
 msgstr "系统升级时保留文件"
+
 #checkbox
 msgid "core bin"
 msgstr "核心执行文件"
@@ -184,7 +199,7 @@ msgstr "日志文件"
 
 msgid "querylog.json"
 msgstr "审计日志.json"
-#
+
 msgid "On boot when network ok restart"
 msgstr "开机后网络准备好时重启"
 
@@ -240,12 +255,14 @@ msgstr "下载日志"
 #/cgi-bin/luci//admin/services/AdGuardHome/manual/
 msgid "Use template"
 msgstr "使用模板"
+
 #hide button
 msgid "Reload Config"
 msgstr "重新载入配置"
 
 msgid "WARNING!!! no bin found apply config will not be test"
 msgstr "警告！！！未找到执行文件，提交配置将不会进行校验"
+
 #unused
 msgid "Change browser management username"
 msgstr "改变网页登录用户名"
