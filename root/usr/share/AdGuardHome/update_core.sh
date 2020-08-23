@@ -130,20 +130,16 @@ doupdate_core(){
 	Arch="amd64"
 	;;
 	"mipsel")
-	Arch="mipsle"
+	Arch="mipsle_softfloat"
 	;;
 	"mips64el")
-	Arch="mips64le"
-	Arch="mipsle"
-	echo -e "mips64el use $Arch may have bug" 
+	Arch="mips64le_softfloat"
 	;;
 	"mips")
-	Arch="mips"
+	Arch="mips_softfloat"
 	;;
 	"mips64")
-	Arch="mips64"
-	Arch="mips"
-	echo -e "mips64 use $Arch may have bug" 
+	Arch="mips64_softfloat"
 	;;
 	"arm")
 	Arch="arm"
