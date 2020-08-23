@@ -1,0 +1,99 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/main.yml'
+      - 'luasrc/**'
+      - 'htdocs/**'
+      - 'root/**'
+      - 'Makefile'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: build
+        id: build_ipk
+        run: |
+          PKGNAME="luci-app-adguardhome"
+          PKGNAME_SHORT="AdGuardHome"
+          echo "##[set-output name=pkg_name;]$PKGNAME"
+          mkdir -p /tmp/$PKGNAME/
+          rm -rf /tmp/$PKGNAME/*
+          mkdir -p /tmp/$PKGNAME/usr/lib/lua/luci /tmp/$PKGNAME/www/
+          [ -d $GITHUB_WORKSPACE/luasrc ] && cp -R $GITHUB_WORKSPACE/luasrc/* /tmp/$PKGNAME/usr/lib/lua/luci/
+          [ -d $GITHUB_WORKSPACE/root ] && cp -R $GITHUB_WORKSPACE/root/* /tmp/$PKGNAME/
+          [ -d $GITHUB_WORKSPACE/htdocs ] && cp -R $GITHUB_WORKSPACE/htdocs/* /tmp/$PKGNAME/www/
+          [ -d $GITHUB_WORKSPACE/po ] && sudo -E apt-get -y install gcc make && \
+          mkdir -p /tmp/po2lmo && mkdir -p /tmp/$PKGNAME/usr/lib/lua/luci/i18n/ && \
+          wget -O /tmp/po2lmo/po2lmo.c https://raw.githubusercontent.com/openwrt/luci/openwrt-18.06/modules/luci-base/src/po2lmo.c && \
+          wget -O /tmp/po2lmo/Makefile https://raw.githubusercontent.com/openwrt/luci/openwrt-18.06/modules/luci-base/src/Makefile && \
+          wget -O /tmp/po2lmo/template_lmo.h https://raw.githubusercontent.com/openwrt/luci/openwrt-18.06/modules/luci-base/src/template_lmo.h && \
+          wget -O /tmp/po2lmo/template_lmo.c https://raw.githubusercontent.com/openwrt/luci/openwrt-18.06/modules/luci-base/src/template_lmo.c && \
+          cd /tmp/po2lmo && make po2lmo && \
+          ./po2lmo $GITHUB_WORKSPACE/po/zh-cn/$PKGNAME_SHORT.po /tmp/$PKGNAME/usr/lib/lua/luci/i18n/$PKGNAME_SHORT.zh-cn.lmo
+          mkdir -p /tmp/$PKGNAME/CONTROL
+          cat >/tmp/$PKGNAME/CONTROL/control <<EOF
+          Package: ${PKGNAME}
+          Version: 1.8-$(date +%Y%m%d)k
+          Depends: libc
+          Architecture: all
+          Maintainer: kongfl888<kongfl888@outlook.com>
+          Section: luci
+          Description: Luci app for AdGuardHome
+          Source: package/$PKGNAME
+          EOF
+          cp -R $GITHUB_WORKSPACE/CONTROL/* /tmp/$PKGNAME/CONTROL/
+          chmod +x /tmp/$PKGNAME/CONTROL/conffiles
+          chmod +x /tmp/$PKGNAME/CONTROL/postinst
+          chmod +x /tmp/$PKGNAME/CONTROL/postinst-pkg
+          chmod +x /tmp/$PKGNAME/CONTROL/prerm
+          chmod +x /tmp/$PKGNAME/CONTROL/prerm-pkg
+          wget -O /tmp/ipkg-build https://raw.githubusercontent.com/openwrt/openwrt/v19.07.1/scripts/ipkg-build && \
+          chmod +x /tmp/ipkg-build && \
+          /tmp/ipkg-build -o root -g root /tmp/$PKGNAME /tmp
+      - name: Assemble Artifact
+        id: assemble_artifact
+        run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          cp /tmp/${{ steps.build_ipk.outputs.pkg_name }}*.ipk ./artifact/
+          cd ./artifact/
+          sha256sum *ipk* > sha256sum.txt
+          cd ..
+          zip -r artifact.zip ./artifact/
+          release_tag="${{ steps.build_ipk.outputs.pkg_name }}-$(date +%Y-%m-%d-%H-%M)"
+          echo "##[set-output name=release_tag;]$release_tag"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.sec_token1 }}
+        with:
+          tag_name: ${{ steps.assemble_artifact.outputs.release_tag }}
+          release_name: ${{ steps.assemble_artifact.outputs.release_tag }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.sec_token1 }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./artifact.zip
+          asset_name: ${{ steps.assemble_artifact.outputs.release_tag }}.zip
+          asset_content_type: application/zip

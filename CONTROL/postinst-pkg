@@ -1,0 +1,9 @@
+#!/bin/sh
+	/etc/init.d/AdGuardHome enable >/dev/null 2>&1
+	enable=
+	if [ "nable" == "1" ]; then
+		/etc/init.d/AdGuardHome reload
+	fi
+	rm -f /tmp/luci-indexcache
+	rm -f /tmp/luci-modulecache/*
+exit 0
