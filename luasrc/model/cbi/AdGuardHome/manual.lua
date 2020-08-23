@@ -8,10 +8,13 @@ require("table")
 function gen_template_config()
 	local b
 	local d=""
-	for cnt in io.lines("/tmp/resolv.conf.auto") do
-		b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
-		if (b~=nil) then
-			d=d.."  - "..b.."\n"
+	local reconf=uci:get_first("dhcp","dnsmasq","resolvfile")
+	if fs.access(reconf) then
+		for cnt in io.lines(reconf) do
+			b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
+			if (b~=nil) then
+				d=d.."  - "..b.."\n"
+			end
 		end
 	end
 	local f=io.open("/usr/share/AdGuardHome/AdGuardHome_template.yaml", "r+")
