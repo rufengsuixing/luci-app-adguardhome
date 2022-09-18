@@ -1,10 +1,14 @@
-#提交就可以直接用的配置模板文件
-#a template config can be use with a apply
+#提交就可以直接用的配置模板文件。 user: root/password: admin
+#a template config can be use with a apply. user: root/password: admin
+
 bind_host: 0.0.0.0
+#上方的bind_host: 0.0.0.0可根据自己的情况修改，比如路由IP或者保留。
+#You can modify this "bind_host: 0.0.0.0" above by yourself,  set as the routing IP according to your requirements, or keep.
+
 bind_port: 3000
 users:
 - name: root
-  password: $2y$10$FfeQavihMUiXCuJhHuQwy.6EOXDvkXb/S50qI5fXizqarNT/ShhQm
+  password: $2y$10$ML7v5WXsM1xN12YpR15f4uSGGAzk.QXhwu99lczQ8NgrPcTYRY9Ei
 language: ""
 rlimit_nofile: 0
 dns:
@@ -74,11 +78,11 @@ filters:
   name: tvbox
   id: 1575018007
 - enabled: true
-  url: https://hosts.nfz.moe/full/hosts
+  url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/full/hosts.txt
   name: neoHosts full
   id: 1575618240
 - enabled: false
-  url: https://hosts.nfz.moe/basic/hosts
+  url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/basic/hosts.txt
   name: neoHosts basic
   id: 1575618241
 - enabled: false
@@ -90,7 +94,7 @@ filters:
   name: StevenBlack host+fakenews + gambling + porn + social
   id: 1575618243
 - enabled: false
-  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD/anti-ad-easylist.txt
+  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD@master/adblock-for-dnsmasq.conf
   name: anti-AD(Adblock+neohosts+yhosts+cjxlist+adhlist)
   id: 1577113202
 user_rules: []
