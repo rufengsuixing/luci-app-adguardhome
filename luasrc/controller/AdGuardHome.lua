@@ -18,6 +18,7 @@ end
 function get_template_config()
 	local b
 	local d=""
+	d=d.."  - 114.114.114.114\n"
 	local rcauto=uci:get("dhcp","@dnsmasq[0]","resolvfile")
 	if (rcauto == nil) then
 		for fle in fs.dir("/var/etc") do
