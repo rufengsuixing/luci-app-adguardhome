@@ -27,9 +27,9 @@ check_latest_version(){
 	if [ -z "${latest_ver}" ]; then
 		echo -e "\nFailed to check latest version, please try again later."  && EXIT 1
 	fi
-	now_ver="$($binpath --version 2>/dev/null | grep -m 1 -E '[0-9]+[.][0-9.]+' -o)"
+	now_ver="$($binpath --version 2>/dev/null | grep -m 1 -E 'v[0-9]+[.][0-9.]+' -o)"
 	if [ "${latest_ver}"x != "${now_ver}"x ] || [ "$1" == "force" ]; then
-		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." 
+		echo -e "Local version: ${now_ver}. Cloud version: ${latest_ver}."
 		doupdate_core
 	else
 			echo -e "\nLocal version: ${now_ver}, cloud version: ${latest_ver}." 
@@ -120,10 +120,7 @@ doupdate_core(){
 	rm -rf /tmp/AdGuardHomeupdate/* >/dev/null 2>&1
 	Archt="$(opkg info kernel | grep Architecture | awk -F "[ _]" '{print($2)}')"
 	case $Archt in
-	"i386")
-	Arch="386"
-	;;
-	"i686")
+	"i386"|"i486"|"i686"|"i786")
 	Arch="386"
 	;;
 	"x86")
@@ -142,7 +139,14 @@ doupdate_core(){
 	Arch="mips64_softfloat"
 	;;
 	"arm")
-	Arch="arm"
+	um=`uname -m`
+	if [ $um = "armv8l" ]; then
+		Arch="armv7"
+	elif [ $um = "armv6l" ]; then
+		Arch="armv6"
+	else
+		Arch="armv5"
+	fi
 	;;
 	"aarch64")
 	Arch="arm64"
@@ -153,9 +157,7 @@ doupdate_core(){
 	EXIT 1
 	;;
 	"powerpc64")
-	Arch="ppc64"
-	echo -e "error not support $Archt" 
-	EXIT 1
+	Arch="ppc64le"
 	;;
 	*)
 	echo -e "error not support $Archt if you can use offical release please issue a bug" 
