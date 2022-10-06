@@ -317,6 +317,7 @@ get_filesystem()
 
 config_editor()
 {
+	[ -n "$3" -a -f $3 ] || return
 	awk -v yaml="$1" -v value="$2" -v file="$3" -v ro="$4" '
 	BEGIN{split(yaml,part,"\.");s="";i=1;l=length(part);}
     {
