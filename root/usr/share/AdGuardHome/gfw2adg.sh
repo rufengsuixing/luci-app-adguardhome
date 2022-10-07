@@ -70,16 +70,16 @@ if (RSTART==1 && RLENGTH==length(fin)) {print "ipset add gfwlist "fin>"/tmp/doip
 if (fin=="" || finl==fin) next;
 finl=fin;
 if (white==0)
-    {print("  - '\''[/"fin"/]"upst"'\''");}
+    {print("    - '\''[/"fin"/]"upst"'\''");}
 else{
-    print("  - '\''[/"fin"/]#'\''");}
-}END{print("  - '\''[/programaddend/]#'\''")}' > /tmp/adguard.list
+    print("    - '\''[/"fin"/]#'\''");}
+}END{print("    - '\''[/programaddend/]#'\''")}' > /tmp/adguard.list
 grep programaddstart $configpath
 if [ "$?" == "0" ]; then
-	sed -i '/programaddstart/,/programaddend/c\  - '\''\[\/programaddstart\/\]#'\''' $configpath
+	sed -i '/programaddstart/,/programaddend/c\    - '\''\[\/programaddstart\/\]#'\''' $configpath
 	sed -i '/programaddstart/'r/tmp/adguard.list $configpath
 else
-	sed -i '1i\  - '\''[/programaddstart/]#'\''' /tmp/adguard.list
+	sed -i '1i\    - '\''[/programaddstart/]#'\''' /tmp/adguard.list
 	sed -i '/upstream_dns:/'r/tmp/adguard.list $configpath
 fi
 checkmd5 "$2"
