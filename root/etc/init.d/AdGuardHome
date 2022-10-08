@@ -7,6 +7,7 @@ STOP=01
 
 CONFIGURATION=AdGuardHome
 CRON_FILE=/etc/crontabs/root
+GFWSET="gfwlist"
 EXTRA_COMMANDS="do_redirect testbackup test_crontab force_reload isrunning"
 EXTRA_HELP="        do_redirect 0 or 1\
         testbackup backup or restore\
@@ -407,6 +408,7 @@ start_service() {
 		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
 	fi
 	local enabled
+	local ipst=0
 	config_get_bool enabled $CONFIGURATION enabled 0
 	# update crontab
 	do_crontab
@@ -416,12 +418,16 @@ start_service() {
 	fi
 	#what need to do before reload
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
-
+	grep -q "ipset.txt" $configpath 2>/dev/null && ipst=1
+	if [ $ipst -eq 1 ];then
+		ipset list $GFWSET >/dev/null 2>&1 || ipset create $GFWSET hash:ip 2>/dev/null
+	fi
 	config_get backupfile $CONFIGURATION backupfile ""
 	mkdir -p $workdir/data
 	if [ -n "$backupfile" ] && [ ! -d "$workdir/data" ]; then
 		restore
 	fi
+
 	# for overlay data-stk-oo not suppport
 	local cwdfs=$(get_filesystem $workdir)
 	echo "workdir is a $cwdfs filesystem"
