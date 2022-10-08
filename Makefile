@@ -72,4 +72,10 @@ fi
 exit 0
 endef
 
+define Package/luci-app-adguardhome/postrm
+#!/bin/sh
+rm -rf /etc/AdGuardHome/
+exit 0
+endef
+
 $(eval $(call BuildPackage,luci-app-adguardhome))

@@ -230,6 +230,9 @@ msgstr "自动更新ipv6主机并重启adh"
 msgid "Auto update gfwlist and restart adh"
 msgstr "自动更新gfw列表并重启adh"
 
+msgid "Auto update ipset list and restart adh"
+msgstr "自动更新gfw ipset列表并重启adh"
+
 msgid "Please change time and args in crontab"
 msgstr "请在计划任务中修改时间和参数"
 

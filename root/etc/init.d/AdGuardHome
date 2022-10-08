@@ -583,6 +583,11 @@ do_crontab(){
 	default="30 3 * * * /usr/share/AdGuardHome/gfw2adg.sh"
 	[ "$enabled" == "0" ] || [ "${crontab//autogfw/}" == "$crontab" ] && cronenable=0 || cronenable=1
 	crontab_editor
+
+	findstr="/usr/share/AdGuardHome/gfwipset2adg.sh"
+	default="31 3 * * * /usr/share/AdGuardHome/gfwipset2adg.sh"
+	[ "$enabled" == "0" ] || [ "${crontab//autogfwipset/}" == "$crontab" ] && cronenable=0 || cronenable=1
+	crontab_editor
 	[ "$cronreload" -gt 0 ] && /etc/init.d/cron restart
 	#[ "$commit" -gt 0 ] && uci commit AdGuardHome
 }

@@ -186,6 +186,30 @@ o.write=function()
 	luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
 	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
+if fs.access(configpath) then
+a=luci.sys.call("grep -m 1 -q ipset.txt "..configpath)
+else
+a=1
+end
+if (a==0) then
+a="Added"
+else
+a="Not added"
+end
+o=s:option(Button,"gfwipsetdel",translate("Del gfwlist").."(ipset)",translate(a))
+o.optional = true
+o.inputtitle=translate("Del")
+o.write=function()
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfwipset2adg.sh del 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
+o=s:option(Button,"gfwipsetadd",translate("Add gfwlist").."(ipset)",translate(a))
+o.optional = true
+o.inputtitle=translate("Add")
+o.write=function()
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfwipset2adg.sh 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
 o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service")..translate(a))
 o.default     = "tcp://208.67.220.220:5353"
 o.datatype    = "string"
@@ -265,6 +289,7 @@ o:value("cutquerylog",translate("Auto tail querylog"))
 o:value("cutruntimelog",translate("Auto tail runtime log"))
 o:value("autohost",translate("Auto update ipv6 hosts and restart adh"))
 o:value("autogfw",translate("Auto update gfwlist and restart adh"))
+o:value("autogfwipset",translate("Auto update gfwlist and restart adh").."(ipset)")
 o.widget = "checkbox"
 o.default = nil
 o.optional=true
