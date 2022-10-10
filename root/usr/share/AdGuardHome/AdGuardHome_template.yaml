@@ -69,7 +69,7 @@ filters:
   url: https://hosts-file.net/ad_servers.txt
   name: hpHosts - Ad and Tracking servers only
   id: 3
-- enabled: true
+- enabled: false
   url: https://www.malwaredomainlist.com/hostslist/hosts.txt
   name: MalwareDomainList.com Hosts List
   id: 4
@@ -77,7 +77,7 @@ filters:
   url: https://raw.githubusercontent.com/vokins/yhosts/master/data/tvbox.txt
   name: tvbox
   id: 1575018007
-- enabled: true
+- enabled: false
   url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/full/hosts.txt
   name: neoHosts full
   id: 1575618240
@@ -94,7 +94,7 @@ filters:
   name: StevenBlack host+fakenews + gambling + porn + social
   id: 1575618243
 - enabled: false
-  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD@master/adblock-for-dnsmasq.conf
+  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD@master/anti-ad-easylist.txt
   name: anti-AD(Adblock+neohosts+yhosts+cjxlist+adhlist)
   id: 1577113202
 user_rules: []
