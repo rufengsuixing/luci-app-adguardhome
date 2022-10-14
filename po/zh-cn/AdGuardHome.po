@@ -154,6 +154,12 @@ msgstr "删除gfw列表"
 msgid "Del"
 msgstr "删除"
 
+msgid "will set to name gfwlist"
+msgstr "将会配置给名为gfwlist的ipset集合"
+
+msgid "(ipset only)"
+msgstr "（仅ipset）"
+
 #hide div
 msgid "Gfwlist upstream dns server"
 msgstr "gfw列表上游服务器"
@@ -284,6 +290,3 @@ msgstr "系统升级时保留数据"
 
 msgid "Boot delay until network ok"
 msgstr "开机时直到网络准备好再启动"
-
-msgid "will set to name gfwlist"
-msgstr "将会配置给名为gfwlist的ipset集合"

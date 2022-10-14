@@ -196,14 +196,14 @@ a="Added"
 else
 a="Not added"
 end
-o=s:option(Button,"gfwipsetdel",translate("Del gfwlist").."(ipset)",translate(a))
+o=s:option(Button,"gfwipsetdel",translate("Del gfwlist")..translate("(ipset only)"),translate(a))
 o.optional = true
 o.inputtitle=translate("Del")
 o.write=function()
 	luci.sys.exec("sh /usr/share/AdGuardHome/gfwipset2adg.sh del 2>&1")
 	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
-o=s:option(Button,"gfwipsetadd",translate("Add gfwlist").."(ipset)",translate(a).." "..translate("will set to name gfwlist"))
+o=s:option(Button,"gfwipsetadd",translate("Add gfwlist")..translate("(ipset only)"),translate(a).." "..translate("will set to name gfwlist"))
 o.optional = true
 o.inputtitle=translate("Add")
 o.write=function()
