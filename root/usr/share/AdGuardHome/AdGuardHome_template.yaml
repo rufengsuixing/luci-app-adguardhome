@@ -26,6 +26,8 @@ dns:
   ratelimit_whitelist: []
   refuse_any: false
   bootstrap_dns:
+    - 1.1.1.1
+    - 114.114.114.114
 #bootstrap_dns
   all_servers: false
   allowed_clients: []
@@ -45,6 +47,8 @@ dns:
   cache_time: 30
   rewrites: []
   upstream_dns:
+    - 1.1.1.1
+    - 114.114.114.114
 #upstream_dns
 tls:
   enabled: false
