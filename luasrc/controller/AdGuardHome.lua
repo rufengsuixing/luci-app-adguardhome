@@ -40,7 +40,7 @@ function get_template_config()
 		for cnt in io.lines(rcauto) do
 			b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
 			if (b~=nil) then
-				d=d.."  - "..b.."\n"
+				d=d.."    - "..b.."\n"
 			end
 		end
 	end
