@@ -118,52 +118,55 @@ doupdate_core(){
 	echo -e "Updating core..." 
 	mkdir -p "/tmp/AdGuardHomeupdate"
 	rm -rf /tmp/AdGuardHomeupdate/* >/dev/null 2>&1
-	Archt="$(opkg info kernel | grep Architecture | awk -F "[ _]" '{print($2)}')"
-	case $Archt in
-	"i386"|"i486"|"i686"|"i786")
-	Arch="386"
-	;;
-	"x86")
-	Arch="amd64"
-	;;
-	"mipsel")
-	Arch="mipsle_softfloat"
-	;;
-	"mips64el")
-	Arch="mips64le_softfloat"
-	;;
-	"mips")
-	Arch="mips_softfloat"
-	;;
-	"mips64")
-	Arch="mips64_softfloat"
-	;;
-	"arm")
-	um=`uname -m`
-	if [ $um = "armv8l" ]; then
-		Arch="armv7"
-	elif [ $um = "armv6l" ]; then
-		Arch="armv6"
-	else
-		Arch="armv5"
+	Arch=$(uci -q get AdGuardHome.AdGuardHome.arch)
+	if [ -z "$Arch" ]; then
+		Archt="$(opkg info kernel | grep Architecture | awk -F "[ _]" '{print($2)}')"
+		case $Archt in
+		"i386"|"i486"|"i686"|"i786")
+		Arch="386"
+		;;
+		"x86")
+		Arch="amd64"
+		;;
+		"mipsel")
+		Arch="mipsle_softfloat"
+		;;
+		"mips64el")
+		Arch="mips64le_softfloat"
+		;;
+		"mips")
+		Arch="mips_softfloat"
+		;;
+		"mips64")
+		Arch="mips64_softfloat"
+		;;
+		"arm")
+		um=`uname -m`
+		if [ $um = "armv8l" ]; then
+			Arch="armv7"
+		elif [ $um = "armv6l" ]; then
+			Arch="armv6"
+		else
+			Arch="armv5"
+		fi
+		;;
+		"aarch64")
+		Arch="arm64"
+		;;
+		"powerpc")
+		Arch="ppc"
+		echo -e "error not support $Archt"
+		EXIT 1
+		;;
+		"powerpc64")
+		Arch="ppc64le"
+		;;
+		*)
+		echo -e "error not support $Archt if you can use offical release please issue a bug" 
+		EXIT 1
+		;;
+		esac
 	fi
-	;;
-	"aarch64")
-	Arch="arm64"
-	;;
-	"powerpc")
-	Arch="ppc"
-	echo -e "error not support $Archt" 
-	EXIT 1
-	;;
-	"powerpc64")
-	Arch="ppc64le"
-	;;
-	*)
-	echo -e "error not support $Archt if you can use offical release please issue a bug" 
-	EXIT 1
-	;;
-	esac
 	echo -e "start download" 
 	grep -v "^#" /usr/share/AdGuardHome/links.txt >/tmp/run/AdHlinks.txt
 	while read link

@@ -84,6 +84,24 @@ if fs.stat(value,"type")=="dir" then
 end 
 return value
 end
+--- arch
+o = s:option(ListValue, "arch", translate("choose Arch for download"))
+o:value("",translate("Auto"))
+o:value("386",translate("i386"))
+o:value("amd64",translate("x86_64"))
+o:value("armv5",translate("armv5"))
+o:value("armv6",translate("armv6"))
+o:value("armv7",translate("armv7"))
+o:value("arm64",translate("aarch64"))
+o:value("mips_softfloat",translate("mips"))
+o:value("mips64_softfloat",translate("mips64"))
+o:value("mipsle_softfloat",translate("mipsel"))
+o:value("mips64le_softfloat",translate("mips64el"))
+o:value("ppc64le",translate("powerpc64"))
+o.description=translate("Need to save to config first before downloading.")
+o.default=""
+o.rmempty=true
+
 --- upx
 o = s:option(ListValue, "upxflag", translate("use upx to compress bin after download"))
 o:value("", translate("none"))
