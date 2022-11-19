@@ -248,6 +248,19 @@ msgstr "自动更新gfw ipset列表并重启adh"
 msgid "Please change time and args in crontab"
 msgstr "请在计划任务中修改时间和参数"
 
+#download option
+msgid "Choose Release Version for download"
+msgstr "选择需要更新的版本"
+
+msgid "Release(Default)"
+msgstr "正式版（默认）"
+
+msgid "Beta"
+msgstr "测试版"
+
+msgid "If this option is modified, please confirm the download links"
+msgstr "如果修改了版本选项，请自行确认下方升级用的下载链接"
+
 msgid "Download links for update"
 msgstr "升级用的下载链接"
 
@@ -267,7 +280,7 @@ msgstr "删除日志"
 msgid "download log"
 msgstr "下载日志"
 
-#/cgi-bin/luci//admin/services/AdGuardHome/manual/
+#/cgi-bin/luci/admin/services/AdGuardHome/manual/
 msgid "Use template"
 msgstr "使用模板"
 

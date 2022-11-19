@@ -37,7 +37,7 @@ else
 	local version=uci:get("AdGuardHome","AdGuardHome","version")
 	local testtime=fs.stat(binpath,"mtime")
 	if testtime~=tonumber(binmtime) or version==nil then
-		local tmp=luci.sys.exec(binpath.." --version 2>/dev/null | grep -m 1 -E '[0-9]+[.][0-9.]+' -o")
+		local tmp=luci.sys.exec(binpath.." --version 2>/dev/null | grep -m 1 -E '[0-9]+[.][Bbeta0-9\.\-]+' -o")
 		version=string.sub(tmp, 1, -2)
 		if version=="" then version="core error" end
 		uci:set("AdGuardHome","AdGuardHome","version",version)
@@ -311,6 +311,14 @@ o:value("autogfwipset",translate("Auto update ipset list and restart adh"))
 o.widget = "checkbox"
 o.default = nil
 o.optional=true
+
+----downloadtarge
+o = s:option(ListValue, "tagname", translate("Choose Release Version for download"))
+o:value("release",translate("Release(Default)"))
+o:value("beta",translate("Beta"))
+o.description=translate("If this option is modified, please confirm the download links")
+o.default="release"
+o.rmempty=true
 
 ----downloadpath
 o = s:option(TextValue, "downloadlinks",translate("Download links for update"))

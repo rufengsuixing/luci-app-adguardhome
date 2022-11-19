@@ -7,6 +7,7 @@ binpath="/tmp/AdGuardHome/AdGuardHome"
 fi
 mkdir -p ${binpath%/*}
 upxflag=$(uci get AdGuardHome.AdGuardHome.upxflag 2>/dev/null)
+tagname=$(uci get AdGuardHome.AdGuardHome.tagname 2>/dev/null)
 
 check_if_already_running(){
 	running_tasks="$(ps |grep "AdGuardHome" |grep "update_core" |grep -v "grep" |awk '{print $1}' |wc -l)"
@@ -23,11 +24,16 @@ check_wgetcurl(){
 }
 check_latest_version(){
 	check_wgetcurl
-	latest_ver="$($downloader - https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
+	echo -e "Check for update..."
+	if [ "$tagname" = "beta" ]; then
+		latest_ver="$(echo `$downloader - https://api.github.com/repos/AdguardTeam/AdGuardHome/releases 2>/dev/null|grep -E '(tag_name|prerelease)'`|sed 's#"tag#\n"tag#g'|grep "true"|head -n1|cut -d '"' -f4 2>/dev/null)"
+	else
+		latest_ver="$($downloader - https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name'|head -n1|cut -d '"' -f4 2>/dev/null)"
+	fi
 	if [ -z "${latest_ver}" ]; then
 		echo -e "\nFailed to check latest version, please try again later."  && EXIT 1
 	fi
-	now_ver="$($binpath --version 2>/dev/null | grep -m 1 -E 'v[0-9]+[.][0-9.]+' -o)"
+	now_ver="$($binpath --version 2>/dev/null | grep -m 1 -oE '[v]{0,1}[0-9]+[.][Bbeta0-9\.\-]+')"
 	if [ "${latest_ver}"x != "${now_ver}"x ] || [ "$1" == "force" ]; then
 		echo -e "Local version: ${now_ver}. Cloud version: ${latest_ver}."
 		doupdate_core
@@ -171,6 +177,7 @@ doupdate_core(){
 	grep -v "^#" /usr/share/AdGuardHome/links.txt >/tmp/run/AdHlinks.txt
 	while read link
 	do
+		[ -n "$link" ] || continue
 		eval link="$link"
 		$downloader /tmp/AdGuardHomeupdate/${link##*/} "$link" 2>&1
 		if [ "$?" != "0" ]; then
