@@ -204,7 +204,7 @@ doupdate_core(){
 	fi
 	echo -e "start copy" 
 	/etc/init.d/AdGuardHome stop nobackup
-	rm "$binpath"
+	rm -f "$binpath"
 	mv -f "$downloadbin" "$binpath"
 	if [ "$?" == "1" ]; then
 		echo "mv failed maybe not enough space please use upx or change bin to /tmp/AdGuardHome" 
