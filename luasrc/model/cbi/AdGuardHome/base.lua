@@ -37,12 +37,12 @@ else
 	local version=uci:get("AdGuardHome","AdGuardHome","version")
 	local testtime=fs.stat(binpath,"mtime")
 	if testtime~=tonumber(binmtime) or version==nil then
-		local tmp=luci.sys.exec(binpath.." -c /dev/null --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o")
+		local tmp=luci.sys.exec(binpath.." --version 2>/dev/null | grep -m 1 -E '[0-9]+[.][Bbeta0-9\.\-]+' -o")
 		version=string.sub(tmp, 1, -2)
 		if version=="" then version="core error" end
 		uci:set("AdGuardHome","AdGuardHome","version",version)
 		uci:set("AdGuardHome","AdGuardHome","binmtime",testtime)
-		uci:save("AdGuardHome")
+		uci:commit("AdGuardHome")
 	end
 	e=version..e
 end
@@ -84,6 +84,24 @@ if fs.stat(value,"type")=="dir" then
 end 
 return value
 end
+--- arch
+o = s:option(ListValue, "arch", translate("choose Arch for download"))
+o:value("",translate("Auto"))
+o:value("386",translate("i386"))
+o:value("amd64",translate("x86_64"))
+o:value("armv5",translate("armv5"))
+o:value("armv6",translate("armv6"))
+o:value("armv7",translate("armv7"))
+o:value("arm64",translate("aarch64"))
+o:value("mips_softfloat",translate("mips"))
+o:value("mips64_softfloat",translate("mips64"))
+o:value("mipsle_softfloat",translate("mipsel"))
+o:value("mips64le_softfloat",translate("mips64el"))
+o:value("ppc64le",translate("powerpc64"))
+o.description=translate("Need to save to config first before downloading.")
+o.default=""
+o.rmempty=true
+
 --- upx
 o = s:option(ListValue, "upxflag", translate("use upx to compress bin after download"))
 o:value("", translate("none"))
@@ -161,7 +179,12 @@ o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
 o.optional = true
 ---- gfwlist 
-local a=luci.sys.call("grep -m 1 -q programadd "..configpath)
+local a
+if fs.access(configpath) then
+a=luci.sys.call("grep -m 1 -q programadd "..configpath)
+else
+a=1
+end
 if (a==0) then
 a="Added"
 else
@@ -179,6 +202,30 @@ o.optional = true
 o.inputtitle=translate("Add")
 o.write=function()
 	luci.sys.exec("sh /usr/share/AdGuardHome/gfw2adg.sh 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
+if fs.access(configpath) then
+a=luci.sys.call("grep -m 1 -q ipset.txt "..configpath)
+else
+a=1
+end
+if (a==0) then
+a="Added"
+else
+a="Not added"
+end
+o=s:option(Button,"gfwipsetdel",translate("Del gfwlist")..translate("(ipset only)"),translate(a))
+o.optional = true
+o.inputtitle=translate("Del")
+o.write=function()
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfwipset2adg.sh del 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
+end
+o=s:option(Button,"gfwipsetadd",translate("Add gfwlist")..translate("(ipset only)"),translate(a).." "..translate("will set to name gfwlist"))
+o.optional = true
+o.inputtitle=translate("Add")
+o.write=function()
+	luci.sys.exec("sh /usr/share/AdGuardHome/gfwipset2adg.sh 2>&1")
 	luci.http.redirect(luci.dispatcher.build_url("admin","services","AdGuardHome"))
 end
 o = s:option(Value, "gfwupstream", translate("Gfwlist upstream dns server"), translate("Gfwlist domain upstream dns service")..translate(a))
@@ -260,9 +307,18 @@ o:value("cutquerylog",translate("Auto tail querylog"))
 o:value("cutruntimelog",translate("Auto tail runtime log"))
 o:value("autohost",translate("Auto update ipv6 hosts and restart adh"))
 o:value("autogfw",translate("Auto update gfwlist and restart adh"))
+o:value("autogfwipset",translate("Auto update ipset list and restart adh"))
 o.widget = "checkbox"
 o.default = nil
 o.optional=true
+
+----downloadtarge
+o = s:option(ListValue, "tagname", translate("Choose Release Version for download"))
+o:value("release",translate("Release(Default)"))
+o:value("beta",translate("Beta"))
+o.description=translate("If this option is modified, please confirm the download links")
+o.default="release"
+o.rmempty=true
 
 ----downloadpath
 o = s:option(TextValue, "downloadlinks",translate("Download links for update"))
@@ -298,7 +354,7 @@ function m.on_commit(map)
 				uci:set("AdGuardHome","AdGuardHome","ucitracktest","2")
 			end
 		end
-		uci:save("AdGuardHome")
+		uci:commit("AdGuardHome")
 	end
 end
 return m

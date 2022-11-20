@@ -1,17 +1,24 @@
 #!/bin/sh
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
+mkdir -p "/etc/AdGuardHome"
 checkmd5(){
 local nowmd5=$(md5sum /tmp/adguard.list 2>/dev/null)
 nowmd5=${nowmd5%% *}
-local lastmd5=$(uci get AdGuardHome.AdGuardHome.gfwlistmd5 2>/dev/null)
+local lastmd5=$(uci get AdGuardHome.AdGuardHome.ipsetlistmd5 2>/dev/null)
 if [ "$nowmd5" != "$lastmd5" ]; then
-	uci set AdGuardHome.AdGuardHome.gfwlistmd5="$nowmd5"
+	uci set AdGuardHome.AdGuardHome.ipsetlistmd5="$nowmd5"
 	uci commit AdGuardHome
 	[ "$1" == "noreload" ] || /etc/init.d/AdGuardHome reload
 fi
 }
+ipstok=1
 configpath=$(uci get AdGuardHome.AdGuardHome.configpath 2>/dev/null)
-[ "$1" == "del" ] && sed -i '/programaddstart/,/programaddend/d' $configpath && checkmd5 "$2" && exit 0
+if [ "$1" == "del" ]; then
+	#sed -i -r 's/upstream_dns_file:\s*['\"]?.*['\"]?/upstream_dns_file: ""/' $configpath
+	sed -i -r 's/ipset_file:\s*['\"]?.*['\"]?/ipset_file: ""/' $configpath
+	checkmd5 "$2"
+	exit 0
+fi
 gfwupstream=$(uci get AdGuardHome.AdGuardHome.gfwupstream 2>/dev/null)
 if [ -z $gfwupstream ]; then
 gfwupstream="tcp://208.67.220.220:5353"
@@ -74,13 +81,13 @@ if (white==0)
 else{
     print("    - '\''[/"fin"/]#'\''");}
 }END{print("    - '\''[/programaddend/]#'\''")}' > /tmp/adguard.list
-grep programaddstart $configpath
-if [ "$?" == "0" ]; then
-	sed -i '/programaddstart/,/programaddend/c\    - '\''\[\/programaddstart\/\]#'\''' $configpath
-	sed -i '/programaddstart/'r/tmp/adguard.list $configpath
-else
-	sed -i '1i\    - '\''[/programaddstart/]#'\''' /tmp/adguard.list
-	sed -i '/upstream_dns:/'r/tmp/adguard.list $configpath
+cat /tmp/adguard.list 2>/dev/null |sed -r -e "s/\s+\-\s+'//" -e "s/'//" -e "/programaddend/d" > /etc/AdGuardHome/gfw.txt
+cat /etc/AdGuardHome/gfw.txt 2>/dev/null |sed -e 's:\[\/::' -e 's:\/\].*:\/gfwlist:' -e "/#/d" |sort -u > /etc/AdGuardHome/ipset.txt
+#sed -i -r 's/upstream_dns_file:\s*['\"].*['\"]/upstream_dns_file: \/etc\/AdGuardHome\/gfw.txt/' $configpath
+which ipset >/dev/null || ipstok=0
+if [ -s /etc/AdGuardHome/ipset.txt -a $ipstok -eq 1 ];then
+	ipset list gfwlist >/dev/null 2>&1 || ipset create gfwlist hash:ip 2>/dev/null
+	sed -i -r 's/ipset_file:\s*['\"].*['\"]/ipset_file: \/etc\/AdGuardHome\/ipset.txt/' $configpath
 fi
 checkmd5 "$2"
 rm -f /tmp/gfwlist.txt /tmp/adguard.list

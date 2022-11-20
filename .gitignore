@@ -1,2 +1,6 @@
 
 *.bak
+
+CONTROL/
+
+.github/workflows/test.yml

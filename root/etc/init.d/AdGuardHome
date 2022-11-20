@@ -7,6 +7,7 @@ STOP=01
 
 CONFIGURATION=AdGuardHome
 CRON_FILE=/etc/crontabs/root
+GFWSET="gfwlist"
 EXTRA_COMMANDS="do_redirect testbackup test_crontab force_reload isrunning"
 EXTRA_HELP="        do_redirect 0 or 1\
         testbackup backup or restore\
@@ -47,9 +48,13 @@ stop_forward_dnsmasq()
 	fi
 
 	uci del_list dhcp.@dnsmasq[0].server=$addr 2>/dev/null
+	rcauto="/tmp/resolv.conf.auto"
+	if [ -e "/tmp/resolv.conf.d/resolv.conf.auto" ]; then
+		rcauto="/tmp/resolv.conf.d/resolv.conf.auto"
+	fi
 	addrlist="`uci get dhcp.@dnsmasq[0].server 2>/dev/null`"
 	if [ -z "$addrlist" ] ; then
-		uci set dhcp.@dnsmasq[0].resolvfile=/tmp/resolv.conf.auto 2>/dev/null
+		uci set dhcp.@dnsmasq[0].resolvfile="$rcauto" 2>/dev/null
 		uci delete dhcp.@dnsmasq[0].noresolv 2>/dev/null
 	fi
 	uci commit dhcp
@@ -183,7 +188,7 @@ rm_port53()
 	config_editor "dns.port" "$dnsmasq_port" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="53"
 	uci commit dhcp
-	/etc/init.d/dnsmasq reload
+	/etc/init.d/dnsmasq restart
 }
 
 use_port53()
@@ -203,7 +208,7 @@ use_port53()
 	config_editor "dns.port" "53" "$configpath"
 	uci set dhcp.@dnsmasq[0].port="$AdGuardHome_PORT"
 	uci commit dhcp
-	/etc/init.d/dnsmasq reload
+	/etc/init.d/dnsmasq restart
 }
 do_redirect()
 {
@@ -313,6 +318,7 @@ get_filesystem()
 
 config_editor()
 {
+	[ -n "$3" -a -f $3 ] || return
 	awk -v yaml="$1" -v value="$2" -v file="$3" -v ro="$4" '
 	BEGIN{split(yaml,part,"\.");s="";i=1;l=length(part);}
     {
@@ -402,6 +408,7 @@ start_service() {
 		uci set $CONFIGURATION.$CONFIGURATION.hashpass=""
 	fi
 	local enabled
+	local ipst=0
 	config_get_bool enabled $CONFIGURATION enabled 0
 	# update crontab
 	do_crontab
@@ -411,12 +418,16 @@ start_service() {
 	fi
 	#what need to do before reload
 	config_get workdir $CONFIGURATION workdir "/usr/bin/AdGuardHome"
-
+	grep -q "ipset.txt" $configpath 2>/dev/null && ipst=1
+	if [ $ipst -eq 1 ];then
+		ipset list $GFWSET >/dev/null 2>&1 || ipset create $GFWSET hash:ip 2>/dev/null
+	fi
 	config_get backupfile $CONFIGURATION backupfile ""
 	mkdir -p $workdir/data
 	if [ -n "$backupfile" ] && [ ! -d "$workdir/data" ]; then
 		restore
 	fi
+
 	# for overlay data-stk-oo not suppport
 	local cwdfs=$(get_filesystem $workdir)
 	echo "workdir is a $cwdfs filesystem"
@@ -479,7 +490,7 @@ start_service() {
 		_do_redirect 1
 	else
 		_do_redirect 0
-		config_get "redirect" "AdGuardHome" "redirect" "none"
+		config_get "redirect" $CONFIGURATION "redirect" "none"
 		if [ "$redirect" != "none" ]; then
 			procd_open_instance "waitconfig"
 			procd_set_param command "/usr/share/AdGuardHome/watchconfig.sh"
@@ -577,6 +588,11 @@ do_crontab(){
 	findstr="/usr/share/AdGuardHome/gfw2adg.sh"
 	default="30 3 * * * /usr/share/AdGuardHome/gfw2adg.sh"
 	[ "$enabled" == "0" ] || [ "${crontab//autogfw/}" == "$crontab" ] && cronenable=0 || cronenable=1
+	crontab_editor
+
+	findstr="/usr/share/AdGuardHome/gfwipset2adg.sh"
+	default="31 3 * * * /usr/share/AdGuardHome/gfwipset2adg.sh"
+	[ "$enabled" == "0" ] || [ "${crontab//autogfwipset/}" == "$crontab" ] && cronenable=0 || cronenable=1
 	crontab_editor
 	[ "$cronreload" -gt 0 ] && /etc/init.d/cron restart
 	#[ "$commit" -gt 0 ] && uci commit AdGuardHome
