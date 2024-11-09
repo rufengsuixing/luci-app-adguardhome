@@ -56,70 +56,54 @@ stop_forward_dnsmasq()
 	/etc/init.d/dnsmasq restart
 }
 
-set_iptable()
+set_iptable() 
 {
-	local ipv6_server=$1
-	local tcp_server=$2
-	uci -q batch <<-EOF >/dev/null 2>&1
-  delete firewall.AdGuardHome
-	set firewall.AdGuardHome=include
-	set firewall.AdGuardHome.type=script
-	set firewall.AdGuardHome.path=/usr/share/AdGuardHome/firewall.start
-	set firewall.AdGuardHome.reload=1
-	commit firewall
+    local ipv6_server=$1
+    local tcp_server=$2
+    uci -q batch <<-EOF >/dev/null 2>&1
+        delete firewall.AdGuardHome
+        set firewall.AdGuardHome=include
+        set firewall.AdGuardHome.type=script
+        set firewall.AdGuardHome.path=/usr/share/AdGuardHome/firewall.start
+        set firewall.AdGuardHome.reload=1
+        commit firewall
 EOF
 
-	IPS="`ifconfig | grep "inet addr" | grep -v ":127" | grep "Bcast" | awk '{print $2}' | awk -F : '{print $2}'`"
-	for IP in $IPS
-	do
-		if [ "$tcp_server" == "1" ]; then
-			iptables -t nat -A PREROUTING -p tcp -d $IP --dport 53 -j REDIRECT --to-ports $AdGuardHome_PORT >/dev/null 2>&1
-		fi
-		iptables -t nat -A PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-ports $AdGuardHome_PORT >/dev/null 2>&1
-	done
+    IPS="`ifconfig | grep "inet addr" | grep -v ":127" | grep "Bcast" | awk '{print $2}' | awk -F : '{print $2}'`"
+    for IP in $IPS
+    do
+        if [ "$tcp_server" == "1" ]; then
+            nft add rule inet fw4 dstnat ip daddr $IP tcp dport 53 redirect to :$AdGuardHome_PORT comment "nft_dstnat_AdGuardHome" >/dev/null 2>&1
+        fi
+        nft add inet fw4 dstnat ip daddr $IP udp dport 53 redirect to :$AdGuardHome_PORT comment "nft_dstnat_AdGuardHome" >/dev/null 2>&1
+    done
 
-	if [ "$ipv6_server" == 0 ]; then
-		return
-	fi
+    if [ "$ipv6_server" == 0 ]; then
+        return
+    fi
 
-	IPS="`ifconfig | grep "inet6 addr" | grep -v " fe80::" | grep -v " ::1" | grep "Global" | awk '{print $3}'`"
-	for IP in $IPS
-	do
-		if [ "$tcp_server" == "1" ]; then
-			ip6tables -t nat -A PREROUTING -p tcp -d $IP --dport 53 -j REDIRECT --to-ports $AdGuardHome_PORT >/dev/null 2>&1
-		fi
-		ip6tables -t nat -A PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-ports $AdGuardHome_PORT >/dev/null 2>&1
-	done
-
+    IPS="`ifconfig | grep "inet6 addr" | grep -v " fe80::" | grep -v " ::1" | grep "Global" | awk '{print $3}'`"
+    for IP in $IPS
+    do
+        if [ "$tcp_server" == "1" ]; then
+            nft add rule inet fw4 dstnat ip6 daddr $IP tcp dport 53 redirect to :$AdGuardHome_PORT comment "nft_dstnat_AdGuardHome" >/dev/null 2>&1
+        fi
+        nft add rule inet fw4 dstnat ip6 daddr $IP udp dport 53 redirect to :$AdGuardHome_PORT comment "nft_dstnat_AdGuardHome" >/dev/null 2>&1
+    done
 }
 
 clear_iptable()
 {
-	uci -q batch <<-EOF >/dev/null 2>&1
-  delete firewall.AdGuardHome
-	commit firewall
+    uci -q batch <<-EOF >/dev/null 2>&1
+        delete firewall.AdGuardHome
+        commit firewall
 EOF
-	local OLD_PORT="$1"
-	local ipv6_server=$2
-	IPS="`ifconfig | grep "inet addr" | grep -v ":127" | grep "Bcast" | awk '{print $2}' | awk -F : '{print $2}'`"
-	for IP in $IPS
-	do
-		iptables -t nat -D PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-ports $OLD_PORT >/dev/null 2>&1
-		iptables -t nat -D PREROUTING -p tcp -d $IP --dport 53 -j REDIRECT --to-ports $OLD_PORT >/dev/null 2>&1
-	done
 
-	if [ "$ipv6_server" == 0 ]; then
-		return
-	fi
-	echo "warn ip6tables nat mod is needed"
-	IPS="`ifconfig | grep "inet6 addr" | grep -v " fe80::" | grep -v " ::1" | grep "Global" | awk '{print $3}'`"
-	for IP in $IPS
-	do
-		ip6tables -t nat -D PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-ports $OLD_PORT >/dev/null 2>&1
-		ip6tables -t nat -D PREROUTING -p tcp -d $IP --dport 53 -j REDIRECT --to-ports $OLD_PORT >/dev/null 2>&1
-	done
-
+    for handle in $(nft -a list chain inet fw4 dstnat 2>/dev/null | grep -E "nft_dstnat_AdGuardHome" | awk -F '# handle ' '{print $2}'); do
+        nft delete rule inet fw4 dstnat handle ${handle} 2>/dev/null
+    done
 }
+
 
 service_triggers() {
 	procd_add_reload_trigger "$CONFIGURATION"
