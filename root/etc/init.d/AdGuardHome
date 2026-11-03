@@ -520,7 +520,7 @@ stop_service()
 	config_load "${CONFIGURATION}"
 	_do_redirect 0
 	do_crontab
-	if [ "$1" != "nobackup" ]; then
+	if [ "${ADGUARDHOME_SKIP_BACKUP:-0}" != "1" ]; then
 		config_get backupfile $CONFIGURATION backupfile "0"
 		if [ -n "$backupfile" ]; then
 			backup
