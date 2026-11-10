@@ -12,7 +12,7 @@ FUNCTIONS = SOURCE[SOURCE.index("check_if_already_running(){"):
 class UpdateMetadataTest(unittest.TestCase):
     def run_shell(self, script):
         return subprocess.run(
-            ["bash", "-c", "set -e\n" + FUNCTIONS + "\n" + script],
+            ["sh", "-c", "set -e\n" + FUNCTIONS + "\n" + script],
             capture_output=True, text=True,
         )
 
@@ -20,7 +20,8 @@ class UpdateMetadataTest(unittest.TestCase):
         result = self.run_shell("""
 uci() { printf '%s' "$selected_channel"; }
 curl() {
-    case "${*: -1}" in
+    for url do :; done
+    case "$url" in
         */beta/version.json) printf 'v1.0.0-b.2';;
         */release/version.json) printf 'v0.107.80';;
         *) return 1;;

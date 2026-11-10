@@ -40,7 +40,7 @@ load_update_metadata(){
 	esac
 	update_metadata=$(fetch_official - "https://static.adguard.com/adguardhome/$channel/version.json") || return 1
 	latest_ver=$(metadata_value version) || return 1
-	[[ "$latest_ver" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[[:alnum:].-]+)?$ ]]
+	printf '%s\n' "$latest_ver" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[[:alnum:].-]+)?$'
 }
 core_version(){
 	"$1" --version 2>/dev/null | grep -m 1 -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[[:alnum:].-]+)?'
