@@ -21,13 +21,37 @@ check_wgetcurl(){
 	[ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
 	echo error curl and wget && EXIT 1
 }
+fetch_official(){
+	if command -v curl >/dev/null; then
+		curl -fsSL --retry 2 --connect-timeout 20 --max-time 120 -o "$1" "$2"
+	else
+		wget-ssl -t 2 -T 20 -O "$1" "$2"
+	fi
+}
+metadata_value(){
+	jsonfilter -s "$update_metadata" -e "@.$1"
+}
+load_update_metadata(){
+	local channel
+	channel=$(uci -q get AdGuardHome.AdGuardHome.tagname) || channel=release
+	case "$channel" in
+		beta) ;;
+		*) channel=release ;;
+	esac
+	update_metadata=$(fetch_official - "https://static.adguard.com/adguardhome/$channel/version.json") || return 1
+	latest_ver=$(metadata_value version) || return 1
+	[[ "$latest_ver" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[[:alnum:].-]+)?$ ]]
+}
+core_version(){
+	"$1" --version 2>/dev/null | grep -m 1 -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[[:alnum:].-]+)?'
+}
 check_latest_version(){
 	check_wgetcurl
-	latest_ver="$($downloader - https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>/dev/null|grep -E 'tag_name' |grep -E 'v[0-9.]+' -o 2>/dev/null)"
-	if [ -z "${latest_ver}" ]; then
-		echo -e "\nFailed to check latest version, please try again later."  && EXIT 1
+	if ! load_update_metadata; then
+		echo "Failed to read version metadata from the AdGuard update server."
+		EXIT 1
 	fi
-	now_ver="$($binpath -c /dev/null --check-config 2>&1| grep -m 1 -E 'v[0-9.]+' -o)"
+	now_ver=$(core_version "$binpath")
 	if [ "${latest_ver}"x != "${now_ver}"x ] || [ "$1" == "force" ]; then
 		echo -e "Local version: ${now_ver}., cloud version: ${latest_ver}." 
 		doupdate_core
@@ -146,7 +170,11 @@ doupdate_core(){
 	echo -e "mips64 use $Arch may have bug" 
 	;;
 	"arm")
-	Arch="arm"
+	case "$(uname -m)" in
+		armv7l|armv8l) Arch="armv7" ;;
+		armv6l) Arch="armv6" ;;
+		*) Arch="armv5" ;;
+	esac
 	;;
 	"aarch64")
 	Arch="arm64"
@@ -166,21 +194,34 @@ doupdate_core(){
 	EXIT 1
 	;;
 	esac
-	echo -e "start download" 
-	grep -v "^#" /usr/share/AdGuardHome/links.txt >/tmp/run/AdHlinks.txt
-	while read link
-	do
-		eval link="$link"
-		$downloader /tmp/AdGuardHomeupdate/${link##*/} "$link" 2>&1
-		if [ "$?" != "0" ]; then
-			echo "download failed try another download"
-			rm -f /tmp/AdGuardHomeupdate/${link##*/}
-		else
-			local success="1"
-			break
-		fi 
-	done < "/tmp/run/AdHlinks.txt"
-	rm /tmp/run/AdHlinks.txt
+	local official_url success
+	echo -e "start download"
+	official_url=$(metadata_value "download_linux_${Arch}")
+	case "$official_url" in
+		https://static.adtidy.org/*|https://static.adguard.com/*)
+			link="$official_url"
+			if fetch_official "/tmp/AdGuardHomeupdate/${link##*/}" "$link"; then
+				success=1
+			fi
+			;;
+	esac
+	if [ -z "$success" ]; then
+		grep -v "^#" /usr/share/AdGuardHome/links.txt >/tmp/run/AdHlinks.txt
+		while read link
+		do
+			[ -n "$link" ] || continue
+			eval link="$link"
+			$downloader "/tmp/AdGuardHomeupdate/${link##*/}" "$link" 2>&1
+			if [ "$?" != "0" ]; then
+				echo "download failed try another download"
+				rm -f "/tmp/AdGuardHomeupdate/${link##*/}"
+			else
+				success=1
+				break
+			fi
+		done < "/tmp/run/AdHlinks.txt"
+		rm /tmp/run/AdHlinks.txt
+	fi
 	[ -z "$success" ] && echo "no download success" && EXIT 1
 	if [ "${link##*.}" == "gz" ]; then
 		tar -zxf "/tmp/AdGuardHomeupdate/${link##*/}" -C "/tmp/AdGuardHomeupdate/"
@@ -193,7 +234,11 @@ doupdate_core(){
 	else
 		downloadbin="/tmp/AdGuardHomeupdate/${link##*/}"
 	fi
-	chmod 755 $downloadbin
+	chmod 755 "$downloadbin"
+	if [ "$(core_version "$downloadbin")" != "$latest_ver" ]; then
+		echo "Downloaded core does not match target version $latest_ver."
+		EXIT 1
+	fi
 	echo -e "download success start copy" 
 	if [ -n "$upxflag" ]; then
 		echo -e "start upx may take a long time" 
